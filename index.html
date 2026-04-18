@@ -13,9 +13,18 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <div class="background-art" aria-hidden="true">
+      <span class="nebula nebula-one"></span>
+      <span class="nebula nebula-two"></span>
+      <span class="streak streak-one"></span>
+      <span class="streak streak-two"></span>
+    </div>
     <div class="app-shell">
       <header class="topbar">
-        <a class="brand" href="./index.html">Metamor</a>
+        <a class="brand" href="./index.html" aria-label="Metamor home">
+          <span class="brand-mark">M</span>
+          <span class="brand-text">Metamor</span>
+        </a>
         <div class="user-menu">
           <button
             class="user-menu-trigger"
@@ -42,6 +51,11 @@
 
       <main class="page">
         <section class="hero">
+          <div class="logo-crest" aria-hidden="true">
+            <span class="logo-ring"></span>
+            <span class="logo-core">M</span>
+            <span class="logo-spark"></span>
+          </div>
           <p class="eyebrow">Change Manager Home</p>
           <h1>Change management, reimagined.</h1>
           <p class="subtitle">
