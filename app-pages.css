@@ -339,3 +339,95 @@ p {
 .icon-custom {
   background: radial-gradient(circle at 30% 25%, rgba(204, 229, 255, 0.24), rgba(112, 145, 255, 0.17));
 }
+
+.approach-page {
+  width: min(980px, 100%);
+  margin: 0 auto;
+  padding: 1.35rem 1.2rem 2.4rem;
+}
+
+.approach-header {
+  border: 1px solid rgba(193, 227, 255, 0.34);
+  border-radius: 1rem;
+  padding: 1.05rem;
+  background: rgba(9, 20, 54, 0.74);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.35);
+}
+
+.approach-header p {
+  margin-top: 0.55rem;
+  color: #d2e6ff;
+  max-width: 700px;
+}
+
+.approach-grid {
+  margin-top: 1.2rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.approach-step {
+  border: 1px solid rgba(193, 227, 255, 0.34);
+  border-radius: 1rem;
+  padding: 1rem;
+  background: linear-gradient(160deg, rgba(13, 29, 70, 0.84), rgba(7, 16, 43, 0.76));
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.32);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.9rem;
+  align-items: start;
+}
+
+.approach-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid rgba(208, 236, 255, 0.4);
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  background: radial-gradient(circle at 30% 22%, rgba(190, 238, 255, 0.3), rgba(76, 127, 246, 0.18));
+  box-shadow: 0 0 16px rgba(122, 198, 255, 0.3), inset 0 0 12px rgba(218, 243, 255, 0.14);
+}
+
+.approach-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.approach-icon path,
+.approach-icon circle,
+.approach-icon ellipse,
+.approach-icon rect {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.approach-step h2 {
+  margin: 0;
+  font-size: 1.02rem;
+}
+
+.approach-step p {
+  margin-top: 0.45rem;
+  color: #d2e6ff;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.42rem;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #0a1a45;
+  background: #b9e7ff;
+}
