@@ -276,8 +276,8 @@ p {
 }
 
 .alien-icon svg {
-  width: 22px;
-  height: 22px;
+  width: 30px;
+  height: 30px;
 }
 
 .alien-icon path,
@@ -286,23 +286,29 @@ p {
 .alien-icon rect {
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.8;
+  stroke-width: 1.65;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
-.alien-icon .mascot-body,
-.alien-icon .mascot-fill {
+.alien-icon .alien-body,
+.alien-icon .alien-tip,
+.alien-icon .alien-console {
   fill: #ffffff;
-  stroke: none;
+  stroke: #ffffff;
 }
 
-.alien-icon .mascot-eye {
+.alien-icon .alien-eye,
+.alien-icon .alien-pupil {
   fill: #13305f;
   stroke: none;
 }
 
-.alien-icon .mascot-line {
+.alien-icon .alien-line,
+.alien-icon .alien-smile,
+.alien-icon .alien-shield,
+.alien-icon .alien-check,
+.alien-icon .alien-star {
   fill: none;
   stroke: #ffffff;
   stroke-width: 1.5;

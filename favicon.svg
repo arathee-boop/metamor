@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Metamorphose logo">
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="28%" r="78%">
+      <stop offset="0%" stop-color="#f2fbff" />
+      <stop offset="45%" stop-color="#9bd8ff" />
+      <stop offset="78%" stop-color="#3f73d8" />
+      <stop offset="100%" stop-color="#1c356f" />
+    </radialGradient>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="18" fill="url(#bg)" />
+  <path
+    d="M17 44V20h6.8l8.2 11.1L40.2 20H47v24h-6V30.3l-8.5 11h-1.1l-8.4-11V44H17z"
+    fill="#07132f"
+  />
+</svg>
