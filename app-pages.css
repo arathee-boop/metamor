@@ -464,6 +464,91 @@ p {
   padding: 1.35rem 1.2rem 2.4rem;
 }
 
+.project-memory-bar {
+  margin-top: 1.1rem;
+  border: 1px solid rgba(193, 227, 255, 0.34);
+  border-radius: 1.05rem;
+  background: linear-gradient(160deg, rgba(13, 29, 70, 0.82), rgba(7, 16, 43, 0.74));
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.35),
+    inset 0 0 18px rgba(170, 217, 255, 0.08);
+  padding: 0.9rem;
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) auto;
+  gap: 0.7rem 0.9rem;
+  align-items: end;
+}
+
+.project-field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.project-field label {
+  font-size: 0.78rem;
+  letter-spacing: 0.05rem;
+  text-transform: uppercase;
+  color: #b8d9ff;
+  font-weight: 700;
+}
+
+.project-field input {
+  width: 100%;
+  border: 1px solid rgba(193, 227, 255, 0.42);
+  border-radius: 0.65rem;
+  background: rgba(8, 17, 44, 0.88);
+  color: #ecf7ff;
+  padding: 0.55rem 0.68rem;
+  font: inherit;
+}
+
+.project-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.ghost-btn {
+  cursor: pointer;
+  border: 1px solid rgba(193, 227, 255, 0.34);
+  border-radius: 999px;
+  background: rgba(9, 20, 54, 0.6);
+  color: #d8ecff;
+  padding: 0.42rem 0.72rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.ghost-btn:hover,
+.ghost-btn:focus-visible {
+  background: rgba(145, 214, 255, 0.2);
+}
+
+.ghost-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.ghost-btn.danger {
+  border-color: rgba(255, 183, 197, 0.42);
+  color: #ffd6df;
+  background: rgba(73, 24, 38, 0.38);
+}
+
+.ghost-btn.danger:hover,
+.ghost-btn.danger:focus-visible {
+  background: rgba(110, 40, 58, 0.5);
+}
+
+.memory-meta {
+  grid-column: 1 / -1;
+  min-height: 1rem;
+  color: #bfdcff;
+  font-size: 0.77rem;
+  font-family: "Space Grotesk", "Inter", sans-serif;
+}
+
 .chat-shell {
   margin-top: 1.15rem;
   border: 1px solid rgba(193, 227, 255, 0.34);
@@ -510,6 +595,11 @@ p {
   gap: 0.65rem;
 }
 
+.chat-composer-main {
+  display: grid;
+  gap: 0.52rem;
+}
+
 .chat-composer textarea {
   width: 100%;
   min-height: 68px;
@@ -520,6 +610,65 @@ p {
   color: #ecf7ff;
   padding: 0.6rem 0.68rem;
   font: inherit;
+}
+
+.chat-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chat-attachments input[type="file"] {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.attach-btn {
+  cursor: pointer;
+  border: 1px solid rgba(193, 227, 255, 0.34);
+  border-radius: 999px;
+  background: rgba(9, 20, 54, 0.6);
+  color: #d8ecff;
+  padding: 0.42rem 0.72rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.attach-btn:hover,
+.attach-btn:focus-visible {
+  background: rgba(145, 214, 255, 0.2);
+}
+
+.attachment-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.attachment-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  border-radius: 999px;
+  border: 1px solid rgba(193, 227, 255, 0.34);
+  background: rgba(16, 35, 80, 0.72);
+  color: #e6f4ff;
+  font-size: 0.72rem;
+  padding: 0.28rem 0.55rem;
+  font-family: "Space Grotesk", "Inter", sans-serif;
+}
+
+.chat-status {
+  min-height: 1.15rem;
+  margin-top: 0.45rem;
+  color: #b8d9ff;
+  font-size: 0.78rem;
+  font-family: "Space Grotesk", "Inter", sans-serif;
 }
 
 .chat-composer button {
@@ -538,6 +687,126 @@ p {
   background: #c1e9ff;
 }
 
+.chat-composer button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.memo-shell {
+  margin-top: 1.1rem;
+  border: 1px solid rgba(193, 227, 255, 0.34);
+  border-radius: 1.05rem;
+  background: linear-gradient(160deg, rgba(13, 29, 70, 0.82), rgba(7, 16, 43, 0.74));
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.35),
+    inset 0 0 18px rgba(170, 217, 255, 0.08);
+  padding: 1rem;
+  display: grid;
+  gap: 0.78rem;
+}
+
+.memo-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.memo-top h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.memo-sub {
+  margin-top: 0.3rem;
+  color: #cfe5ff;
+  font-size: 0.83rem;
+}
+
+.memo-top button {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.55rem 0.9rem;
+  font-weight: 700;
+  background: #a8ddff;
+  color: #071530;
+  cursor: pointer;
+}
+
+.memo-top button:hover,
+.memo-top button:focus-visible {
+  background: #c1e9ff;
+}
+
+.memo-top button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.memo-label {
+  font-size: 0.78rem;
+  letter-spacing: 0.05rem;
+  text-transform: uppercase;
+  color: #b8d9ff;
+  font-weight: 700;
+}
+
+.memo-shell textarea {
+  width: 100%;
+  min-height: 60px;
+  resize: vertical;
+  border-radius: 0.7rem;
+  border: 1px solid rgba(193, 227, 255, 0.42);
+  background: rgba(8, 17, 44, 0.88);
+  color: #ecf7ff;
+  padding: 0.56rem 0.68rem;
+  font: inherit;
+}
+
+.memo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.72rem;
+}
+
+.memo-card {
+  border: 1px solid rgba(193, 227, 255, 0.32);
+  border-radius: 0.9rem;
+  background: rgba(13, 27, 67, 0.68);
+  padding: 0.72rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.memo-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.memo-card-head h3 {
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.memo-output {
+  margin: 0;
+  min-height: 240px;
+  max-height: 360px;
+  overflow: auto;
+  white-space: pre-wrap;
+  border-radius: 0.7rem;
+  border: 1px solid rgba(193, 227, 255, 0.28);
+  background: rgba(8, 17, 44, 0.78);
+  padding: 0.65rem;
+  color: #e7f4ff;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  font-family: "Space Grotesk", "Inter", sans-serif;
+}
+
 @media (max-width: 980px) {
   .flow-track {
     grid-template-columns: repeat(3, minmax(190px, 1fr));
@@ -545,6 +814,10 @@ p {
 
   .flow-step:nth-child(3)::after {
     content: "";
+  }
+
+  .memo-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -564,5 +837,18 @@ p {
     top: auto;
     bottom: -0.78rem;
     transform: translateX(50%);
+  }
+
+  .project-memory-bar {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .project-actions {
+    justify-content: flex-start;
+  }
+
+  .chat-composer {
+    grid-template-columns: 1fr;
   }
 }

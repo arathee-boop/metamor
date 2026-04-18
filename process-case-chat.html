@@ -22,41 +22,335 @@
         change is necessary now.
       </p>
 
+      <section class="project-memory-bar" aria-label="Project memory controls">
+        <div class="project-field">
+          <label for="projectIdInput">Project memory</label>
+          <input
+            id="projectIdInput"
+            type="text"
+            maxlength="64"
+            placeholder="e.g. procurement-redesign-q3"
+          />
+        </div>
+        <div class="project-actions">
+          <button type="button" class="ghost-btn" id="switchProjectBtn">Load Project</button>
+          <button type="button" class="ghost-btn danger" id="clearProjectBtn">Clear Memory</button>
+        </div>
+        <p class="memory-meta" id="memoryMeta"></p>
+      </section>
+
       <section class="chat-shell" aria-label="Case for change assistant">
-        <div class="chat-thread">
-          <article class="bubble agent">
-            <p>
-              Hi Casey — I can help you draft the case for change. Tell me the
-              current pain points and the business outcome you want.
-            </p>
-          </article>
-
-          <article class="bubble user">
-            <p>
-              We have handoff delays between Finance Ops and HR, and it is slowing
-              payroll issue resolution.
-            </p>
-          </article>
-
-          <article class="bubble agent">
-            <p>
-              Great. I can frame this as urgency, impact, and expected gains.
-              Share target metrics (time saved, error reduction, cycle-time goal)
-              and I will draft the full case narrative.
-            </p>
-          </article>
+        <div class="chat-thread" id="chatThread">
         </div>
 
-        <form class="chat-composer" aria-label="Chat input">
-          <label class="sr-only" for="case-chat-input">Message</label>
-          <textarea
-            id="case-chat-input"
-            rows="3"
-            placeholder="Describe current process pain, impact, and desired outcome..."
-          ></textarea>
-          <button type="button">Send</button>
+        <form class="chat-composer" id="chatComposer" aria-label="Chat input">
+          <div class="chat-composer-main">
+            <label class="sr-only" for="case-chat-input">Message</label>
+            <textarea
+              id="case-chat-input"
+              rows="3"
+              placeholder="Describe current process pain, impact, and desired outcome..."
+            ></textarea>
+            <div class="chat-attachments">
+              <label class="attach-btn" for="case-chat-files">Attach files</label>
+              <input
+                id="case-chat-files"
+                name="files"
+                type="file"
+                multiple
+                accept=".txt,.md,.pdf,.csv,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.json"
+              />
+              <div class="attachment-list" id="attachmentList"></div>
+            </div>
+            <p class="chat-status" id="chatStatus"></p>
+          </div>
+          <button type="submit" id="chatSend">Send</button>
         </form>
       </section>
+
+      <section class="memo-shell" aria-label="Executive memo generator">
+        <div class="memo-top">
+          <div>
+            <h2>Generate Executive 1-page Memo</h2>
+            <p class="memo-sub">
+              Turn the current project conversation into a leadership memo and slide-ready outline.
+            </p>
+          </div>
+          <button type="button" id="generateMemoBtn">Generate Memo</button>
+        </div>
+
+        <label for="memoObjective" class="memo-label">Optional objective override</label>
+        <textarea
+          id="memoObjective"
+          rows="2"
+          placeholder="Example: secure executive approval for phased rollout in Q4."
+        ></textarea>
+
+        <div class="memo-grid">
+          <article class="memo-card">
+            <div class="memo-card-head">
+              <h3>Executive Memo</h3>
+              <button type="button" class="ghost-btn" id="downloadMemoBtn" disabled>
+                Download .md
+              </button>
+            </div>
+            <pre id="memoOutput" class="memo-output">No memo generated yet.</pre>
+          </article>
+
+          <article class="memo-card">
+            <div class="memo-card-head">
+              <h3>Slide-ready Outline</h3>
+              <button type="button" class="ghost-btn" id="downloadSlidesBtn" disabled>
+                Download .md
+              </button>
+            </div>
+            <pre id="slidesOutput" class="memo-output">No slide outline generated yet.</pre>
+          </article>
+        </div>
+      </section>
     </main>
+
+    <script>
+      const chatThread = document.getElementById("chatThread");
+      const chatComposer = document.getElementById("chatComposer");
+      const chatInput = document.getElementById("case-chat-input");
+      const chatFiles = document.getElementById("case-chat-files");
+      const chatSend = document.getElementById("chatSend");
+      const attachmentList = document.getElementById("attachmentList");
+      const chatStatus = document.getElementById("chatStatus");
+      const projectIdInput = document.getElementById("projectIdInput");
+      const switchProjectBtn = document.getElementById("switchProjectBtn");
+      const clearProjectBtn = document.getElementById("clearProjectBtn");
+      const memoryMeta = document.getElementById("memoryMeta");
+      const memoObjective = document.getElementById("memoObjective");
+      const generateMemoBtn = document.getElementById("generateMemoBtn");
+      const memoOutput = document.getElementById("memoOutput");
+      const slidesOutput = document.getElementById("slidesOutput");
+      const downloadMemoBtn = document.getElementById("downloadMemoBtn");
+      const downloadSlidesBtn = document.getElementById("downloadSlidesBtn");
+
+      const DEFAULT_GREETING =
+        "Hi Casey — I can help you draft the case for change. Tell me the current pain points and the business outcome you want.";
+      const PROJECT_KEY = "metamor.case.projectId";
+
+      function normalizeProjectId(value) {
+        const cleaned = String(value || "")
+          .trim()
+          .toLowerCase()
+          .replace(/[^a-z0-9-_ ]/g, "")
+          .replace(/\s+/g, "-")
+          .slice(0, 64);
+        return cleaned || "default-project";
+      }
+
+      function getCurrentProjectId() {
+        const normalized = normalizeProjectId(projectIdInput.value);
+        projectIdInput.value = normalized;
+        localStorage.setItem(PROJECT_KEY, normalized);
+        return normalized;
+      }
+
+      function appendMessage(role, text) {
+        const article = document.createElement("article");
+        article.className = `bubble ${role === "assistant" ? "agent" : "user"}`;
+        const paragraph = document.createElement("p");
+        paragraph.textContent = text;
+        article.appendChild(paragraph);
+        chatThread.appendChild(article);
+        chatThread.scrollTop = chatThread.scrollHeight;
+      }
+
+      function renderThread(messages) {
+        chatThread.innerHTML = "";
+        if (!messages.length) {
+          appendMessage("assistant", DEFAULT_GREETING);
+          memoryMeta.textContent = "New project memory. No saved conversation yet.";
+          return;
+        }
+
+        for (const item of messages) {
+          appendMessage(item.role, item.content);
+        }
+        memoryMeta.textContent = `Loaded ${messages.length} saved messages.`;
+      }
+
+      function renderAttachments(files) {
+        attachmentList.innerHTML = "";
+        for (const file of files) {
+          const chip = document.createElement("span");
+          chip.className = "attachment-chip";
+          chip.textContent = file.name;
+          attachmentList.appendChild(chip);
+        }
+      }
+
+      async function loadProjectHistory() {
+        const projectId = getCurrentProjectId();
+        chatStatus.textContent = `Loading memory for "${projectId}"...`;
+        try {
+          const response = await fetch(
+            `/api/case-assistant/history/${encodeURIComponent(projectId)}`,
+          );
+          if (!response.ok) {
+            throw new Error(`Request failed (${response.status})`);
+          }
+          const data = await response.json();
+          const messages = Array.isArray(data.messages) ? data.messages : [];
+          renderThread(messages);
+          chatStatus.textContent =
+            messages.length > 0
+              ? `Project "${projectId}" memory loaded.`
+              : `Started fresh memory for "${projectId}".`;
+        } catch (error) {
+          renderThread([]);
+          chatStatus.textContent = "Could not load memory. Using fresh local session.";
+        }
+      }
+
+      async function clearProjectHistory() {
+        const projectId = getCurrentProjectId();
+        chatStatus.textContent = `Clearing memory for "${projectId}"...`;
+        try {
+          const response = await fetch(
+            `/api/case-assistant/history/${encodeURIComponent(projectId)}`,
+            {
+              method: "DELETE",
+            },
+          );
+          if (!response.ok) {
+            throw new Error(`Request failed (${response.status})`);
+          }
+          renderThread([]);
+          chatStatus.textContent = `Memory cleared for "${projectId}".`;
+        } catch (error) {
+          chatStatus.textContent = "Could not clear memory. Please try again.";
+        }
+      }
+
+      function setMemoOutputs(memoText, slidesText) {
+        memoOutput.textContent = memoText || "No memo generated.";
+        slidesOutput.textContent = slidesText || "No slide outline generated.";
+      }
+
+      function downloadTextFile(filename, text) {
+        const blob = new Blob([text], { type: "text/markdown;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = filename;
+        anchor.click();
+        URL.revokeObjectURL(url);
+      }
+
+      async function generateMemo() {
+        const projectId = getCurrentProjectId();
+        chatStatus.textContent = `Generating executive memo for "${projectId}"...`;
+        generateMemoBtn.disabled = true;
+        generateMemoBtn.textContent = "Generating...";
+
+        try {
+          const response = await fetch("/api/case-assistant/memo", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              projectId,
+              objective: memoObjective.value.trim(),
+            }),
+          });
+
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data.error || `Request failed (${response.status})`);
+          }
+
+          setMemoOutputs(data.memo, data.slides);
+          downloadMemoBtn.disabled = false;
+          downloadSlidesBtn.disabled = false;
+          chatStatus.textContent = `Memo and slide outline ready for "${projectId}".`;
+        } catch (error) {
+          chatStatus.textContent =
+            error.message ||
+            "Could not generate memo. Start the conversation first and try again.";
+        } finally {
+          generateMemoBtn.disabled = false;
+          generateMemoBtn.textContent = "Generate Memo";
+        }
+      }
+
+      chatFiles.addEventListener("change", () => {
+        renderAttachments(chatFiles.files);
+      });
+
+      switchProjectBtn.addEventListener("click", loadProjectHistory);
+      clearProjectBtn.addEventListener("click", clearProjectHistory);
+      generateMemoBtn.addEventListener("click", generateMemo);
+
+      downloadMemoBtn.addEventListener("click", () => {
+        const projectId = getCurrentProjectId();
+        downloadTextFile(`${projectId}-executive-memo.md`, memoOutput.textContent);
+      });
+
+      downloadSlidesBtn.addEventListener("click", () => {
+        const projectId = getCurrentProjectId();
+        downloadTextFile(`${projectId}-slide-outline.md`, slidesOutput.textContent);
+      });
+
+      chatComposer.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const message = chatInput.value.trim();
+        if (!message) return;
+
+        const projectId = getCurrentProjectId();
+        appendMessage("user", message);
+        chatInput.value = "";
+        chatSend.disabled = true;
+        chatSend.textContent = "Thinking...";
+        chatStatus.textContent = `Generating response for "${projectId}"...`;
+
+        try {
+          const payload = new FormData();
+          payload.append("message", message);
+          payload.append("projectId", projectId);
+
+          for (const file of chatFiles.files) {
+            payload.append("files", file);
+          }
+
+          const response = await fetch("/api/case-assistant", {
+            method: "POST",
+            body: payload,
+          });
+
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data.error || `Request failed (${response.status})`);
+          }
+          const reply = data.reply || "No response returned.";
+          appendMessage("assistant", reply);
+          chatFiles.value = "";
+          renderAttachments([]);
+          memoryMeta.textContent = `Saved memory items: ${data.memoryCount || "n/a"}.`;
+          chatStatus.textContent = "Response ready.";
+        } catch (error) {
+          appendMessage(
+            "assistant",
+            "I could not reach the case assistant service. Please confirm the server is running and the Claude API key is configured.",
+          );
+          chatStatus.textContent = error.message || "Connection issue. Check server/API key.";
+        } finally {
+          chatSend.disabled = false;
+          chatSend.textContent = "Send";
+        }
+      });
+
+      projectIdInput.value = normalizeProjectId(
+        localStorage.getItem(PROJECT_KEY) || "process-change-alpha",
+      );
+      setMemoOutputs("", "");
+      loadProjectHistory();
+    </script>
   </body>
 </html>
