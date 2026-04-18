@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Metamor | Make Case for Change Chat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;500;700&family=Space+Grotesk:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="stylesheet" href="./app-pages.css" />
+  </head>
+  <body>
+    <main class="chat-page">
+      <a class="back-link" href="./process-change.html">← Back to Process Flow</a>
+      <h1>Make Case for Change Assistant</h1>
+      <p class="lead">
+        Capture context and generate a first draft narrative for why this process
+        change is necessary now.
+      </p>
+
+      <section class="chat-shell" aria-label="Case for change assistant">
+        <div class="chat-thread">
+          <article class="bubble agent">
+            <p>
+              Hi Casey — I can help you draft the case for change. Tell me the
+              current pain points and the business outcome you want.
+            </p>
+          </article>
+
+          <article class="bubble user">
+            <p>
+              We have handoff delays between Finance Ops and HR, and it is slowing
+              payroll issue resolution.
+            </p>
+          </article>
+
+          <article class="bubble agent">
+            <p>
+              Great. I can frame this as urgency, impact, and expected gains.
+              Share target metrics (time saved, error reduction, cycle-time goal)
+              and I will draft the full case narrative.
+            </p>
+          </article>
+        </div>
+
+        <form class="chat-composer" aria-label="Chat input">
+          <label class="sr-only" for="case-chat-input">Message</label>
+          <textarea
+            id="case-chat-input"
+            rows="3"
+            placeholder="Describe current process pain, impact, and desired outcome..."
+          ></textarea>
+          <button type="button">Send</button>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>
