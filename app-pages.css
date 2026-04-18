@@ -206,3 +206,39 @@ p {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 0.85rem;
 }
+
+.project-types {
+  margin-top: 1.2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.9rem;
+}
+
+.project-type-card {
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid rgba(193, 227, 255, 0.34);
+  border-radius: 0.95rem;
+  padding: 1rem;
+  background: rgba(9, 20, 54, 0.7);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.28);
+  transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.project-type-card:hover,
+.project-type-card:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(209, 236, 255, 0.7);
+  background: rgba(17, 36, 82, 0.8);
+}
+
+.project-type-card h2 {
+  margin: 0;
+  font-size: 1.08rem;
+}
+
+.project-type-card p {
+  margin-top: 0.45rem;
+  color: #d2e6ff;
+  font-size: 0.94rem;
+}

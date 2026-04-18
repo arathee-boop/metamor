@@ -15,33 +15,67 @@
   <body>
     <main class="simple-page">
       <a class="back-link" href="./index.html">← Back to Home</a>
-      <h1>Create a New Change Project</h1>
+      <h1>Choose a Change Project Type</h1>
       <p class="lead">
-        Capture the basics below and Metamor will scaffold your change plan.
+        Start with a standard template and Metamor will generate your project
+        workspace.
       </p>
 
-      <form class="panel">
-        <label>
-          Project Name
-          <input type="text" placeholder="Example: Global Payroll Refresh" />
-        </label>
-        <label>
-          Business Unit
-          <input type="text" placeholder="Example: Finance Operations" />
-        </label>
-        <label>
-          Target Go-Live Date
-          <input type="date" />
-        </label>
-        <label>
-          Change Summary
-          <textarea
-            rows="4"
-            placeholder="Briefly describe what will change for impacted teams."
-          ></textarea>
-        </label>
-        <button type="button">Save Draft</button>
-      </form>
+      <section class="project-types" aria-label="Standard project templates">
+        <article class="project-type-card">
+          <h2>Process Change</h2>
+          <p>
+            Use this for workflow redesigns, handoff updates, and new operating
+            procedures.
+          </p>
+          <a class="button-link" href="#">Use Template</a>
+        </article>
+
+        <article class="project-type-card">
+          <h2>Policy Change</h2>
+          <p>
+            Ideal for governance updates, compliance rollouts, and policy
+            communication plans.
+          </p>
+          <a class="button-link" href="#">Use Template</a>
+        </article>
+
+        <article class="project-type-card">
+          <h2>Org Restructuring</h2>
+          <p>
+            Built for role redesign, team reshuffles, and manager transition
+            support plans.
+          </p>
+          <a class="button-link" href="#">Use Template</a>
+        </article>
+
+        <article class="project-type-card">
+          <h2>Technology Implementation</h2>
+          <p>
+            Best for system launches, platform migrations, and adoption
+            readiness tracking.
+          </p>
+          <a class="button-link" href="#">Use Template</a>
+        </article>
+
+        <article class="project-type-card">
+          <h2>Merger &amp; Integration</h2>
+          <p>
+            Supports communication, culture alignment, and staged integration
+            milestones.
+          </p>
+          <a class="button-link" href="#">Use Template</a>
+        </article>
+
+        <article class="project-type-card">
+          <h2>Custom Change Initiative</h2>
+          <p>
+            Start from a blank framework when your project does not match a
+            standard category.
+          </p>
+          <a class="button-link" href="#">Start Custom Project</a>
+        </article>
+      </section>
     </main>
   </body>
 </html>
