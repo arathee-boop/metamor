@@ -291,9 +291,23 @@ p {
   stroke-linejoin: round;
 }
 
-.alien-icon .fill-white {
+.alien-icon .mascot-body,
+.alien-icon .mascot-fill {
   fill: #ffffff;
+  stroke: none;
+}
+
+.alien-icon .mascot-eye {
+  fill: #13305f;
+  stroke: none;
+}
+
+.alien-icon .mascot-line {
+  fill: none;
   stroke: #ffffff;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .icon-process {
