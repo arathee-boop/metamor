@@ -510,6 +510,11 @@ p {
   gap: 0.65rem;
 }
 
+.chat-composer-main {
+  display: grid;
+  gap: 0.52rem;
+}
+
 .chat-composer textarea {
   width: 100%;
   min-height: 68px;
@@ -520,6 +525,65 @@ p {
   color: #ecf7ff;
   padding: 0.6rem 0.68rem;
   font: inherit;
+}
+
+.chat-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chat-attachments input[type="file"] {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.attach-btn {
+  cursor: pointer;
+  border: 1px solid rgba(193, 227, 255, 0.34);
+  border-radius: 999px;
+  background: rgba(9, 20, 54, 0.6);
+  color: #d8ecff;
+  padding: 0.42rem 0.72rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.attach-btn:hover,
+.attach-btn:focus-visible {
+  background: rgba(145, 214, 255, 0.2);
+}
+
+.attachment-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.attachment-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  border-radius: 999px;
+  border: 1px solid rgba(193, 227, 255, 0.34);
+  background: rgba(16, 35, 80, 0.72);
+  color: #e6f4ff;
+  font-size: 0.72rem;
+  padding: 0.28rem 0.55rem;
+  font-family: "Space Grotesk", "Inter", sans-serif;
+}
+
+.chat-status {
+  min-height: 1.15rem;
+  margin-top: 0.45rem;
+  color: #b8d9ff;
+  font-size: 0.78rem;
+  font-family: "Space Grotesk", "Inter", sans-serif;
 }
 
 .chat-composer button {
@@ -536,6 +600,11 @@ p {
 .chat-composer button:hover,
 .chat-composer button:focus-visible {
   background: #c1e9ff;
+}
+
+.chat-composer button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
 }
 
 @media (max-width: 980px) {

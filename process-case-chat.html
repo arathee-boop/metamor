@@ -23,40 +23,130 @@
       </p>
 
       <section class="chat-shell" aria-label="Case for change assistant">
-        <div class="chat-thread">
+        <div class="chat-thread" id="chatThread">
           <article class="bubble agent">
             <p>
               Hi Casey — I can help you draft the case for change. Tell me the
               current pain points and the business outcome you want.
             </p>
           </article>
-
-          <article class="bubble user">
-            <p>
-              We have handoff delays between Finance Ops and HR, and it is slowing
-              payroll issue resolution.
-            </p>
-          </article>
-
-          <article class="bubble agent">
-            <p>
-              Great. I can frame this as urgency, impact, and expected gains.
-              Share target metrics (time saved, error reduction, cycle-time goal)
-              and I will draft the full case narrative.
-            </p>
-          </article>
         </div>
 
-        <form class="chat-composer" aria-label="Chat input">
-          <label class="sr-only" for="case-chat-input">Message</label>
-          <textarea
-            id="case-chat-input"
-            rows="3"
-            placeholder="Describe current process pain, impact, and desired outcome..."
-          ></textarea>
-          <button type="button">Send</button>
+        <form class="chat-composer" id="chatComposer" aria-label="Chat input">
+          <div class="chat-composer-main">
+            <label class="sr-only" for="case-chat-input">Message</label>
+            <textarea
+              id="case-chat-input"
+              rows="3"
+              placeholder="Describe current process pain, impact, and desired outcome..."
+            ></textarea>
+            <div class="chat-attachments">
+              <label class="attach-btn" for="case-chat-files">Attach files</label>
+              <input
+                id="case-chat-files"
+                name="files"
+                type="file"
+                multiple
+                accept=".txt,.md,.pdf,.csv,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.json"
+              />
+              <div class="attachment-list" id="attachmentList"></div>
+            </div>
+            <p class="chat-status" id="chatStatus"></p>
+          </div>
+          <button type="submit" id="chatSend">Send</button>
         </form>
       </section>
     </main>
+
+    <script>
+      const chatThread = document.getElementById("chatThread");
+      const chatComposer = document.getElementById("chatComposer");
+      const chatInput = document.getElementById("case-chat-input");
+      const chatFiles = document.getElementById("case-chat-files");
+      const chatSend = document.getElementById("chatSend");
+      const attachmentList = document.getElementById("attachmentList");
+      const chatStatus = document.getElementById("chatStatus");
+      const history = [
+        {
+          role: "assistant",
+          content:
+            "Hi Casey — I can help you draft the case for change. Tell me the current pain points and the business outcome you want.",
+        },
+      ];
+
+      function appendMessage(role, text) {
+        const article = document.createElement("article");
+        article.className = `bubble ${role}`;
+        const paragraph = document.createElement("p");
+        paragraph.textContent = text;
+        article.appendChild(paragraph);
+        chatThread.appendChild(article);
+        chatThread.scrollTop = chatThread.scrollHeight;
+      }
+
+      function renderAttachments(files) {
+        attachmentList.innerHTML = "";
+        for (const file of files) {
+          const chip = document.createElement("span");
+          chip.className = "attachment-chip";
+          chip.textContent = file.name;
+          attachmentList.appendChild(chip);
+        }
+      }
+
+      chatFiles.addEventListener("change", () => {
+        renderAttachments(chatFiles.files);
+      });
+
+      chatComposer.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const message = chatInput.value.trim();
+        if (!message) return;
+
+        appendMessage("user", message);
+        history.push({ role: "user", content: message });
+        chatInput.value = "";
+        chatSend.disabled = true;
+        chatSend.textContent = "Thinking...";
+        chatStatus.textContent = "Generating case-for-change draft...";
+
+        try {
+          const payload = new FormData();
+          payload.append("message", message);
+          payload.append("history", JSON.stringify(history.slice(-12)));
+
+          for (const file of chatFiles.files) {
+            payload.append("files", file);
+          }
+
+          const response = await fetch("/api/case-assistant", {
+            method: "POST",
+            body: payload,
+          });
+
+          if (!response.ok) {
+            throw new Error(`Request failed (${response.status})`);
+          }
+
+          const data = await response.json();
+          const reply = data.reply || "No response returned.";
+          appendMessage("agent", reply);
+          history.push({ role: "assistant", content: reply });
+          chatFiles.value = "";
+          renderAttachments([]);
+          chatStatus.textContent = "Response ready.";
+        } catch (error) {
+          appendMessage(
+            "agent",
+            "I could not reach the case assistant service. Please confirm the server is running and the Claude API key is configured.",
+          );
+          chatStatus.textContent = "Connection issue. Check server/API key.";
+        } finally {
+          chatSend.disabled = false;
+          chatSend.textContent = "Send";
+        }
+      });
+    </script>
   </body>
 </html>
