@@ -270,21 +270,48 @@ p {
   border-radius: 12px;
   display: grid;
   place-items: center;
-  color: #cdeeff;
+  color: #ffffff;
   border: 1px solid rgba(210, 238, 255, 0.34);
   box-shadow: 0 0 16px rgba(120, 194, 255, 0.28), inset 0 0 14px rgba(210, 240, 255, 0.14);
 }
 
 .alien-icon svg {
-  width: 22px;
-  height: 22px;
+  width: 30px;
+  height: 30px;
 }
 
 .alien-icon path,
-.alien-icon circle {
+.alien-icon circle,
+.alien-icon ellipse,
+.alien-icon rect {
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.8;
+  stroke-width: 1.65;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.alien-icon .alien-body,
+.alien-icon .alien-tip,
+.alien-icon .alien-console {
+  fill: #ffffff;
+  stroke: #ffffff;
+}
+
+.alien-icon .alien-eye,
+.alien-icon .alien-pupil {
+  fill: #13305f;
+  stroke: none;
+}
+
+.alien-icon .alien-line,
+.alien-icon .alien-smile,
+.alien-icon .alien-shield,
+.alien-icon .alien-check,
+.alien-icon .alien-star {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
