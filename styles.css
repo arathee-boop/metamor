@@ -129,8 +129,7 @@ body::after {
 }
 
 .topbar {
-  width: min(1200px, 100%);
-  margin: 0 auto;
+  width: 100%;
   padding: 1.2rem 1.5rem 0;
   display: flex;
   justify-content: space-between;
@@ -203,19 +202,15 @@ body::after {
 
 .page {
   min-height: calc(100vh - 84px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 1.6rem 1.5rem 2.3rem;
-  gap: 2.8rem;
+  position: relative;
+  padding: 0 1.5rem 2.3rem;
   width: min(1200px, 100%);
   margin: 0 auto;
 }
 
 .center-stage {
-  width: 100%;
-  flex: 1;
+  position: absolute;
+  inset: 0;
   display: grid;
   place-items: center;
 }
@@ -224,7 +219,7 @@ body::after {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4.8rem;
+  gap: 6.2rem;
   flex-wrap: wrap;
   margin-top: 0;
 }
@@ -295,8 +290,11 @@ body::after {
 }
 
 .previous-projects {
-  width: min(980px, 100%);
-  margin-top: auto;
+  width: min(980px, calc(100% - 3rem));
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 2rem;
 }
 
 .previous-projects h2 {
@@ -391,7 +389,7 @@ body::after {
   }
 
   .actions {
-    gap: 2.7rem;
+    gap: 3rem;
   }
 
   .previous-projects h2 {
