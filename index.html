@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Metamor | Change Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="background-art" aria-hidden="true">
+      <span class="nebula nebula-one"></span>
+      <span class="nebula nebula-two"></span>
+      <span class="streak streak-one"></span>
+      <span class="streak streak-two"></span>
+    </div>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="./index.html" aria-label="Metamor home">
+          <span class="brand-mark">M</span>
+          <span class="brand-text">Metamor</span>
+        </a>
+        <div class="user-menu">
+          <button
+            class="user-menu-trigger"
+            id="userMenuTrigger"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="accountDropdown"
+          >
+            <span>Hi, Kacie</span>
+            <span class="menu-arrow" aria-hidden="true">▾</span>
+          </button>
+          <ul class="user-dropdown" id="accountDropdown" hidden>
+            <li><a href="./account.html#my-profile">My Profile</a></li>
+            <li><a href="./account.html#account-settings">Account Settings</a></li>
+            <li><a href="./account.html#billing-plans">Billing &amp; Plans</a></li>
+            <li><a href="./account.html#notification-preferences">Notification Preferences</a></li>
+            <li><a href="./account.html#team-management">Team Management</a></li>
+            <li><a href="./account.html#help-center">Help Center</a></li>
+            <li><a href="./account.html#sign-out">Sign Out</a></li>
+          </ul>
+        </div>
+      </header>
+
+      <main class="page">
+        <section class="hero">
+          <div class="logo-crest" aria-hidden="true">
+            <span class="logo-ring"></span>
+            <span class="logo-core">M</span>
+            <span class="logo-spark"></span>
+          </div>
+          <p class="eyebrow">Change Manager Home</p>
+          <h1>Change management, reimagined.</h1>
+          <p class="subtitle">
+            Guide every transformation with clarity, confidence, and instant
+            support.
+          </p>
+        </section>
+
+        <section class="actions" aria-label="Primary actions">
+          <a
+            class="patronus-button"
+            href="./new-project.html"
+            aria-label="Start a new project"
+          >
+            <span>New Project</span>
+          </a>
+          <a
+            class="patronus-button"
+            href="./quick-support.html"
+            aria-label="Get quick support"
+          >
+            <span>Quick Support</span>
+          </a>
+        </section>
+
+        <section class="previous-projects" aria-label="Previous projects">
+          <h2>Previous Projects</h2>
+          <div class="project-row">
+            <a class="project-pill" href="./projects.html#phoenix-erp-rollout"
+              >Phoenix ERP Rollout</a
+            >
+            <a class="project-pill" href="./projects.html#atlas-org-redesign"
+              >Atlas Org Redesign</a
+            >
+            <a class="project-pill" href="./projects.html#nimbus-policy-migration"
+              >Nimbus Policy Migration</a
+            >
+            <a class="project-pill" href="./projects.html#summit-crm-consolidation"
+              >Summit CRM Consolidation</a
+            >
+            <a class="project-pill" href="./projects.html#orion-training-launch"
+              >Orion Training Launch</a
+            >
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const trigger = document.getElementById("userMenuTrigger");
+      const dropdown = document.getElementById("accountDropdown");
+
+      function closeMenu() {
+        trigger.setAttribute("aria-expanded", "false");
+        dropdown.hidden = true;
+      }
+
+      trigger.addEventListener("click", () => {
+        const isOpen = trigger.getAttribute("aria-expanded") === "true";
+        trigger.setAttribute("aria-expanded", String(!isOpen));
+        dropdown.hidden = isOpen;
+      });
+
+      document.addEventListener("click", (event) => {
+        if (!event.target.closest(".user-menu")) {
+          closeMenu();
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          closeMenu();
+        }
+      });
+    </script>
+  </body>
+</html>
