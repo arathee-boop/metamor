@@ -13,23 +13,91 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <main class="page">
-      <section class="hero">
-        <p class="eyebrow">Metamor</p>
-        <h1>Change management, reimagined.</h1>
-        <p class="subtitle">
-          Guide every transformation with clarity, confidence, and instant support.
-        </p>
-      </section>
+    <div class="app-shell">
+      <header class="topbar">
+        <p class="brand">Metamor</p>
+        <div class="user-menu">
+          <button
+            class="user-menu-trigger"
+            id="userMenuTrigger"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="accountDropdown"
+          >
+            <span>Hi, Kacie</span>
+            <span class="menu-arrow" aria-hidden="true">▾</span>
+          </button>
+          <ul class="user-dropdown" id="accountDropdown" hidden>
+            <li><a href="#">My Profile</a></li>
+            <li><a href="#">Account Settings</a></li>
+            <li><a href="#">Billing &amp; Plans</a></li>
+            <li><a href="#">Notification Preferences</a></li>
+            <li><a href="#">Team Management</a></li>
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Sign Out</a></li>
+          </ul>
+        </div>
+      </header>
 
-      <section class="actions" aria-label="Primary actions">
-        <a class="patronus-button" href="#" aria-label="Start a new project">
-          <span>New Project</span>
-        </a>
-        <a class="patronus-button" href="#" aria-label="Get quick support">
-          <span>Quick Support</span>
-        </a>
-      </section>
-    </main>
+      <main class="page">
+        <section class="hero">
+          <p class="eyebrow">Change Manager Home</p>
+          <h1>Change management, reimagined.</h1>
+          <p class="subtitle">
+            Guide every transformation with clarity, confidence, and instant
+            support.
+          </p>
+        </section>
+
+        <section class="actions" aria-label="Primary actions">
+          <a class="patronus-button" href="#" aria-label="Start a new project">
+            <span>New Project</span>
+          </a>
+          <a class="patronus-button" href="#" aria-label="Get quick support">
+            <span>Quick Support</span>
+          </a>
+        </section>
+
+        <section class="previous-projects" aria-label="Previous projects">
+          <h2>Previous Projects</h2>
+          <div class="project-row">
+            <a class="project-pill" href="#">Phoenix ERP Rollout</a>
+            <a class="project-pill" href="#">Atlas Org Redesign</a>
+            <a class="project-pill" href="#">Nimbus Policy Migration</a>
+            <a class="project-pill" href="#">Summit CRM Consolidation</a>
+            <a class="project-pill" href="#">Orion Training Launch</a>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const trigger = document.getElementById("userMenuTrigger");
+      const dropdown = document.getElementById("accountDropdown");
+
+      function closeMenu() {
+        trigger.setAttribute("aria-expanded", "false");
+        dropdown.hidden = true;
+      }
+
+      trigger.addEventListener("click", () => {
+        const isOpen = trigger.getAttribute("aria-expanded") === "true";
+        trigger.setAttribute("aria-expanded", String(!isOpen));
+        dropdown.hidden = isOpen;
+      });
+
+      document.addEventListener("click", (event) => {
+        if (!event.target.closest(".user-menu")) {
+          closeMenu();
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          closeMenu();
+        }
+      });
+    </script>
   </body>
 </html>
