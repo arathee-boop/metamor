@@ -270,7 +270,7 @@ p {
   border-radius: 12px;
   display: grid;
   place-items: center;
-  color: #cdeeff;
+  color: #ffffff;
   border: 1px solid rgba(210, 238, 255, 0.34);
   box-shadow: 0 0 16px rgba(120, 194, 255, 0.28), inset 0 0 14px rgba(210, 240, 255, 0.14);
 }
@@ -281,12 +281,19 @@ p {
 }
 
 .alien-icon path,
-.alien-icon circle {
+.alien-icon circle,
+.alien-icon ellipse,
+.alien-icon rect {
   fill: none;
   stroke: currentColor;
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+.alien-icon .fill-white {
+  fill: #ffffff;
+  stroke: #ffffff;
 }
 
 .icon-process {
