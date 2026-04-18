@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Metamor | New Project</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./app-pages.css" />
+  </head>
+  <body>
+    <main class="simple-page">
+      <a class="back-link" href="./index.html">← Back to Home</a>
+      <h1>Create a New Change Project</h1>
+      <p class="lead">
+        Capture the basics below and Metamor will scaffold your change plan.
+      </p>
+
+      <form class="panel">
+        <label>
+          Project Name
+          <input type="text" placeholder="Example: Global Payroll Refresh" />
+        </label>
+        <label>
+          Business Unit
+          <input type="text" placeholder="Example: Finance Operations" />
+        </label>
+        <label>
+          Target Go-Live Date
+          <input type="date" />
+        </label>
+        <label>
+          Change Summary
+          <textarea
+            rows="4"
+            placeholder="Briefly describe what will change for impacted teams."
+          ></textarea>
+        </label>
+        <button type="button">Save Draft</button>
+      </form>
+    </main>
+  </body>
+</html>
