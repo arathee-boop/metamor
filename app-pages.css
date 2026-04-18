@@ -208,37 +208,107 @@ p {
 }
 
 .project-types {
-  margin-top: 1.2rem;
+  margin-top: 1.6rem;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 0.9rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.35rem;
 }
 
 .project-type-card {
-  text-decoration: none;
-  color: inherit;
   border: 1px solid rgba(193, 227, 255, 0.34);
-  border-radius: 0.95rem;
-  padding: 1rem;
-  background: rgba(9, 20, 54, 0.7);
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.28);
-  transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+  border-radius: 1.05rem;
+  padding: 1.1rem;
+  background: linear-gradient(160deg, rgba(13, 29, 70, 0.82), rgba(7, 16, 43, 0.75));
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.35),
+    inset 0 0 18px rgba(170, 217, 255, 0.08);
+  transition: transform 0.22s ease, border-color 0.22s ease, background-color 0.22s ease, box-shadow 0.22s ease;
+  display: flex;
+  flex-direction: column;
+  min-height: 238px;
 }
 
 .project-type-card:hover,
 .project-type-card:focus-visible {
-  transform: translateY(-2px);
-  border-color: rgba(209, 236, 255, 0.7);
-  background: rgba(17, 36, 82, 0.8);
+  transform: translateY(-4px);
+  border-color: rgba(214, 238, 255, 0.76);
+  background: linear-gradient(160deg, rgba(19, 40, 94, 0.86), rgba(9, 20, 55, 0.8));
+  box-shadow:
+    0 16px 38px rgba(0, 0, 0, 0.4),
+    inset 0 0 20px rgba(168, 222, 255, 0.11);
+}
+
+.project-type-head {
+  display: flex;
+  align-items: center;
+  gap: 0.72rem;
 }
 
 .project-type-card h2 {
   margin: 0;
-  font-size: 1.08rem;
+  font-size: 1.05rem;
+  letter-spacing: 0.02rem;
 }
 
-.project-type-card p {
-  margin-top: 0.45rem;
+.template-desc {
+  margin-top: 0.72rem;
   color: #d2e6ff;
-  font-size: 0.94rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  font-family: "Space Grotesk", "Inter", sans-serif;
+  letter-spacing: 0.01rem;
+}
+
+.project-type-cta {
+  margin-top: auto;
+  align-self: flex-start;
+}
+
+.alien-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  color: #cdeeff;
+  border: 1px solid rgba(210, 238, 255, 0.34);
+  box-shadow: 0 0 16px rgba(120, 194, 255, 0.28), inset 0 0 14px rgba(210, 240, 255, 0.14);
+}
+
+.alien-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.alien-icon path,
+.alien-icon circle {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icon-process {
+  background: radial-gradient(circle at 30% 25%, rgba(182, 235, 255, 0.28), rgba(79, 129, 248, 0.16));
+}
+
+.icon-policy {
+  background: radial-gradient(circle at 30% 25%, rgba(190, 241, 255, 0.26), rgba(83, 166, 255, 0.16));
+}
+
+.icon-restructure {
+  background: radial-gradient(circle at 30% 25%, rgba(190, 255, 246, 0.25), rgba(70, 178, 244, 0.15));
+}
+
+.icon-tech {
+  background: radial-gradient(circle at 30% 25%, rgba(209, 230, 255, 0.24), rgba(106, 126, 255, 0.18));
+}
+
+.icon-merger {
+  background: radial-gradient(circle at 30% 25%, rgba(186, 224, 255, 0.24), rgba(73, 141, 255, 0.16));
+}
+
+.icon-custom {
+  background: radial-gradient(circle at 30% 25%, rgba(204, 229, 255, 0.24), rgba(112, 145, 255, 0.17));
 }
