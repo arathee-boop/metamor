@@ -1,125 +1,415 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Metamor</title>
-    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="./styles.css" />
-  </head>
-  <body>
-    <div class="background-art" aria-hidden="true">
-      <span class="star star-one"></span>
-      <span class="star star-two"></span>
-      <span class="star star-three"></span>
-      <span class="star star-four"></span>
-      <span class="star star-five"></span>
-      <span class="star star-six"></span>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Morp</title>
+  <link rel="icon" type="image/svg+xml" href="./alien-favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:          #f9f8f5;
+      --bg-card:     #ffffff;
+      --bg-subtle:   #f1efe9;
+      --border:      #e5e2d9;
+      --text:        #1c1a17;
+      --text-muted:  #7a7568;
+      --accent:      #ff6b35;
+      --accent-soft: #fff0eb;
+      --accent2:     #4a90d9;
+      --accent2-soft:#eef4fc;
+      --green:       #3cb97a;
+      --radius:      16px;
+      --radius-sm:   10px;
+      --shadow:      0 2px 12px rgba(0,0,0,0.07);
+      --shadow-md:   0 4px 24px rgba(0,0,0,0.10);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Sora', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* TOPBAR */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 32px;
+      background: var(--bg-card);
+      border-bottom: 1.5px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 900; font-size: 1.5rem;
+      color: var(--text); letter-spacing: -0.5px;
+    }
+    .brand-mascot { width: 36px; height: 36px; }
+    .user-menu { position: relative; }
+    .user-menu-trigger {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 14px;
+      border: 1.5px solid var(--border); border-radius: 999px;
+      background: var(--bg); cursor: pointer;
+      font-family: 'Sora', sans-serif; font-size: 0.875rem; font-weight: 600;
+      color: var(--text);
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .user-menu-trigger:hover { background: var(--bg-subtle); border-color: var(--accent); }
+    .avatar-mini { width: 26px; height: 26px; }
+    .menu-arrow { font-size: 0.65rem; color: var(--text-muted); }
+    .user-dropdown {
+      position: absolute; right: 0; top: calc(100% + 8px);
+      background: var(--bg-card); border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm); box-shadow: var(--shadow-md);
+      list-style: none; min-width: 200px; overflow: hidden;
+      animation: dropIn 0.15s ease;
+    }
+    @keyframes dropIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+    .user-dropdown li a {
+      display: block; padding: 10px 16px;
+      text-decoration: none; color: var(--text);
+      font-size: 0.875rem; font-weight: 500;
+      transition: background 0.1s;
+    }
+    .user-dropdown li a:hover { background: var(--bg-subtle); color: var(--accent); }
+
+    /* MAIN */
+    .page { max-width: 900px; margin: 0 auto; padding: 48px 24px 80px; }
+
+    /* HERO */
+    .hero {
+      display: flex; align-items: center; gap: 32px; margin-bottom: 52px;
+    }
+    .hero-text h1 {
+      font-family: 'Nunito', sans-serif; font-weight: 900;
+      font-size: 2.6rem; line-height: 1.1; letter-spacing: -1px; margin-bottom: 10px;
+    }
+    .hero-text h1 span { color: var(--accent); }
+    .hero-text p { color: var(--text-muted); font-size: 1.05rem; }
+    .hero-aliens { display: flex; gap: 12px; flex-shrink: 0; }
+    .hero-aliens svg { width: 70px; height: 70px; animation: float 3s ease-in-out infinite; }
+    .hero-aliens svg:nth-child(2) { animation-delay: 0.5s; }
+    .hero-aliens svg:nth-child(3) { animation-delay: 1s; }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+    /* ACTION CARDS */
+    .actions-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 48px;
+    }
+    .action-card {
+      display: flex; align-items: center; gap: 20px; padding: 28px 24px;
+      background: var(--bg-card); border: 1.5px solid var(--border);
+      border-radius: var(--radius); text-decoration: none; color: var(--text);
+      box-shadow: var(--shadow);
+      transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s, background 0.18s;
+    }
+    .action-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+    .action-card.new-project { border-color: var(--accent); }
+    .action-card.new-project:hover { background: var(--accent-soft); }
+    .action-card.quick-support { border-color: var(--accent2); }
+    .action-card.quick-support:hover { background: var(--accent2-soft); }
+    .action-card .card-alien { width: 72px; height: 72px; flex-shrink: 0; }
+    .card-info { flex: 1; }
+    .card-info h2 { font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1.2rem; margin-bottom: 4px; }
+    .card-info p { font-size: 0.85rem; color: var(--text-muted); }
+    .card-arrow { font-size: 1.4rem; color: var(--text-muted); transition: transform 0.18s; }
+    .action-card:hover .card-arrow { transform: translateX(4px); }
+
+    /* PROJECTS */
+    .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+    .section-header h2 { font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1.15rem; }
+    .section-header .pill-alien { width: 28px; height: 28px; }
+    .project-list { display: flex; flex-direction: column; gap: 10px; }
+    .project-pill {
+      display: flex; align-items: center; gap: 14px; padding: 16px 20px;
+      background: var(--bg-card); border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm); text-decoration: none;
+      color: var(--text); font-size: 0.925rem; font-weight: 600;
+      transition: background 0.15s, border-color 0.15s, transform 0.15s;
+    }
+    .project-pill:hover { background: var(--bg-subtle); border-color: var(--accent); transform: translateX(4px); }
+    .project-pill .pill-icon { width: 32px; height: 32px; flex-shrink: 0; }
+    .project-pill .pill-meta { margin-left: auto; font-size: 0.78rem; color: var(--text-muted); font-weight: 400; }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="./index.html" aria-label="Morp home">
+    <svg class="brand-mascot" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="20" cy="24" rx="13" ry="12" fill="#3cb97a"/>
+      <ellipse cx="20" cy="17" rx="10" ry="9" fill="#4fd48c"/>
+      <circle cx="20" cy="16" r="5.5" fill="white"/>
+      <circle cx="20" cy="16" r="3.2" fill="#1c1a17"/>
+      <circle cx="21.3" cy="14.8" r="1.1" fill="white"/>
+      <line x1="16" y1="8" x2="13" y2="3" stroke="#3cb97a" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="13" cy="3" r="2" fill="#ff6b35"/>
+      <line x1="24" y1="8" x2="27" y2="3" stroke="#3cb97a" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="27" cy="3" r="2" fill="#ff6b35"/>
+      <path d="M15 26 Q20 31 25 26" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+      <ellipse cx="8" cy="24" rx="3" ry="5" fill="#3cb97a" transform="rotate(-15 8 24)"/>
+      <ellipse cx="32" cy="24" rx="3" ry="5" fill="#3cb97a" transform="rotate(15 32 24)"/>
+    </svg>
+    Morp
+  </a>
+
+  <div class="user-menu">
+    <button class="user-menu-trigger" id="userMenuTrigger" type="button"
+      aria-haspopup="true" aria-expanded="false" aria-controls="accountDropdown">
+      <svg class="avatar-mini" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="13" cy="13" r="13" fill="#fff0eb"/>
+        <ellipse cx="13" cy="15" rx="7" ry="6" fill="#ff6b35"/>
+        <circle cx="13" cy="12" r="4.5" fill="#ff8c5a"/>
+        <circle cx="13" cy="11" r="2.5" fill="#1c1a17"/>
+        <circle cx="14" cy="10.2" r="0.8" fill="white"/>
+      </svg>
+      <span>Hi Casey</span>
+      <span class="menu-arrow" aria-hidden="true">▾</span>
+    </button>
+    <ul class="user-dropdown" id="accountDropdown" hidden>
+      <li><a href="./account.html#my-profile">My Profile</a></li>
+      <li><a href="./account.html#account-settings">Account Settings</a></li>
+      <li><a href="./account.html#billing-plans">Billing &amp; Plans</a></li>
+      <li><a href="./account.html#notification-preferences">Notification Preferences</a></li>
+      <li><a href="./account.html#team-management">Team Management</a></li>
+      <li><a href="./account.html#help-center">Help Center</a></li>
+      <li><a href="./account.html#sign-out">Sign Out</a></li>
+    </ul>
+  </div>
+</header>
+
+<main class="page">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-text">
+      <h1>Welcome back,<br><span>Casey 👋</span></h1>
+      <p>Your change-management crew is ready to help.</p>
     </div>
-    <div class="app-shell">
-      <header class="topbar">
-        <a class="brand" href="./index.html" aria-label="Metamorphose home"
-          >Metamorphose</a
-        >
-        <div class="user-menu">
-          <button
-            class="user-menu-trigger"
-            id="userMenuTrigger"
-            type="button"
-            aria-haspopup="true"
-            aria-expanded="false"
-            aria-controls="accountDropdown"
-          >
-            <span>Hi Casey</span>
-            <span class="menu-arrow" aria-hidden="true">▾</span>
-          </button>
-          <ul class="user-dropdown" id="accountDropdown" hidden>
-            <li><a href="./account.html#my-profile">My Profile</a></li>
-            <li><a href="./account.html#account-settings">Account Settings</a></li>
-            <li><a href="./account.html#billing-plans">Billing &amp; Plans</a></li>
-            <li><a href="./account.html#notification-preferences">Notification Preferences</a></li>
-            <li><a href="./account.html#team-management">Team Management</a></li>
-            <li><a href="./account.html#help-center">Help Center</a></li>
-            <li><a href="./account.html#sign-out">Sign Out</a></li>
-          </ul>
-        </div>
-      </header>
+    <div class="hero-aliens">
 
-      <main class="page">
-        <section class="center-stage" aria-label="Primary actions">
-          <div class="actions">
-            <a
-              class="patronus-button"
-              href="./new-project.html"
-              aria-label="Start a new project"
-            >
-              <span>New Project</span>
-            </a>
-            <a
-              class="patronus-button"
-              href="./quick-support.html"
-              aria-label="Get quick support"
-            >
-              <span>Quick Support</span>
-            </a>
-          </div>
-        </section>
+      <!-- Blue waving alien -->
+      <svg viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="35" cy="42" rx="17" ry="15" fill="#4a90d9"/>
+        <ellipse cx="35" cy="30" rx="13" ry="12" fill="#6aaee8"/>
+        <circle cx="35" cy="28" r="7" fill="white"/>
+        <circle cx="35" cy="28" r="4" fill="#1c1a17"/>
+        <circle cx="37" cy="26.5" r="1.4" fill="white"/>
+        <line x1="29" y1="18" x2="26" y2="12" stroke="#4a90d9" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="26" cy="12" r="2.5" fill="#ff6b35"/>
+        <line x1="41" y1="18" x2="44" y2="12" stroke="#4a90d9" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="44" cy="12" r="2.5" fill="#ff6b35"/>
+        <path d="M28 45 Q35 51 42 45" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <path d="M18 37 Q11 29 15 23" stroke="#4a90d9" stroke-width="4" stroke-linecap="round" fill="none"/>
+        <circle cx="15" cy="22" r="3.5" fill="#4a90d9"/>
+        <ellipse cx="35" cy="56" rx="10" ry="4.5" fill="#4a90d9"/>
+      </svg>
 
-        <section class="previous-projects" aria-label="Previous projects">
-          <h2>Previous Projects</h2>
-          <div class="project-row">
-            <a class="project-pill" href="./projects.html#phoenix-erp-rollout"
-              >Phoenix ERP Rollout</a
-            >
-            <a class="project-pill" href="./projects.html#atlas-org-redesign"
-              >Atlas Org Redesign</a
-            >
-            <a class="project-pill" href="./projects.html#nimbus-policy-migration"
-              >Nimbus Policy Migration</a
-            >
-            <a class="project-pill" href="./projects.html#summit-crm-consolidation"
-              >Summit CRM Consolidation</a
-            >
-            <a class="project-pill" href="./projects.html#orion-training-launch"
-              >Orion Training Launch</a
-            >
-          </div>
-        </section>
-      </main>
+      <!-- Purple two-eyed alien holding doc -->
+      <svg viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="35" cy="42" rx="16" ry="14" fill="#8b5cf6"/>
+        <ellipse cx="35" cy="30" rx="13" ry="12" fill="#a78bfa"/>
+        <circle cx="31" cy="29" r="4.5" fill="white"/>
+        <circle cx="31" cy="29" r="2.5" fill="#1c1a17"/>
+        <circle cx="39" cy="29" r="4.5" fill="white"/>
+        <circle cx="39" cy="29" r="2.5" fill="#1c1a17"/>
+        <circle cx="32" cy="27.8" r="1" fill="white"/>
+        <circle cx="40" cy="27.8" r="1" fill="white"/>
+        <line x1="31" y1="18" x2="29" y2="12" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="29" cy="12" r="2" fill="#f5a623"/>
+        <line x1="39" y1="18" x2="41" y2="12" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="41" cy="12" r="2" fill="#f5a623"/>
+        <path d="M29 45 Q35 50 41 45" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <rect x="42" y="38" width="14" height="17" rx="2" fill="white" stroke="#e5e2d9" stroke-width="1"/>
+        <line x1="45" y1="43" x2="53" y2="43" stroke="#8b5cf6" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="45" y1="47" x2="53" y2="47" stroke="#8b5cf6" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="45" y1="51" x2="50" y2="51" stroke="#8b5cf6" stroke-width="1.5" stroke-linecap="round"/>
+        <ellipse cx="35" cy="55" rx="9" ry="4" fill="#8b5cf6"/>
+      </svg>
+
+      <!-- Orange happy alien thumbs up -->
+      <svg viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="35" cy="42" rx="15" ry="13" fill="#ff6b35"/>
+        <ellipse cx="35" cy="30" rx="12" ry="11" fill="#ff8c5a"/>
+        <circle cx="35" cy="28" r="6" fill="white"/>
+        <circle cx="35" cy="28" r="3.5" fill="#1c1a17"/>
+        <circle cx="36.5" cy="26.8" r="1.2" fill="white"/>
+        <line x1="30" y1="19" x2="27" y2="13" stroke="#ff6b35" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="27" cy="13" r="2.2" fill="#4a90d9"/>
+        <line x1="40" y1="19" x2="43" y2="13" stroke="#ff6b35" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="43" cy="13" r="2.2" fill="#4a90d9"/>
+        <path d="M29 45 Q35 51 41 45" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M20 40 Q13 38 12 32" stroke="#ff6b35" stroke-width="4" stroke-linecap="round" fill="none"/>
+        <circle cx="12" cy="30" r="4" fill="#ff6b35"/>
+        <path d="M10 30 Q12 25 15 27" stroke="#ff8c5a" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <ellipse cx="35" cy="54" rx="9" ry="4" fill="#ff6b35"/>
+      </svg>
+
     </div>
+  </div>
 
-    <script>
-      const trigger = document.getElementById("userMenuTrigger");
-      const dropdown = document.getElementById("accountDropdown");
+  <!-- Action Cards -->
+  <div class="actions-grid">
 
-      function closeMenu() {
-        trigger.setAttribute("aria-expanded", "false");
-        dropdown.hidden = true;
-      }
+    <a class="action-card new-project" href="./new-project.html" aria-label="Start a new project">
+      <svg class="card-alien" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="36" cy="46" rx="17" ry="15" fill="#3cb97a"/>
+        <ellipse cx="36" cy="32" rx="13" ry="12" fill="#4fd48c"/>
+        <circle cx="36" cy="30" r="7" fill="white"/>
+        <circle cx="36" cy="30" r="4" fill="#1c1a17"/>
+        <circle cx="37.5" cy="28.5" r="1.4" fill="white"/>
+        <line x1="30" y1="20" x2="27" y2="14" stroke="#3cb97a" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="27" cy="14" r="2.5" fill="#ff6b35"/>
+        <line x1="42" y1="20" x2="45" y2="14" stroke="#3cb97a" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="45" cy="12" r="4" fill="#f5a623"/>
+        <rect x="43.5" y="15" width="3" height="2" rx="1" fill="#e59000"/>
+        <path d="M30 49 Q36 55 42 49" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <ellipse cx="36" cy="59" rx="10" ry="4.5" fill="#3cb97a"/>
+        <rect x="48" y="38" width="14" height="4" rx="2" fill="#ff6b35"/>
+        <rect x="53" y="33" width="4" height="14" rx="2" fill="#ff6b35"/>
+      </svg>
+      <div class="card-info">
+        <h2>New Project</h2>
+        <p>Kick off a new change initiative with your alien crew.</p>
+      </div>
+      <span class="card-arrow">→</span>
+    </a>
 
-      trigger.addEventListener("click", () => {
-        const isOpen = trigger.getAttribute("aria-expanded") === "true";
-        trigger.setAttribute("aria-expanded", String(!isOpen));
-        dropdown.hidden = isOpen;
-      });
+    <a class="action-card quick-support" href="./quick-support.html" aria-label="Get quick support">
+      <svg class="card-alien" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="36" cy="46" rx="17" ry="15" fill="#4a90d9"/>
+        <ellipse cx="36" cy="32" rx="13" ry="12" fill="#6aaee8"/>
+        <circle cx="36" cy="30" r="7" fill="white"/>
+        <circle cx="36" cy="30" r="4" fill="#1c1a17"/>
+        <circle cx="37.5" cy="28.5" r="1.4" fill="white"/>
+        <path d="M23 29 Q23 19 36 19 Q49 19 49 29" stroke="#2c6fad" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <rect x="20" y="28" width="6" height="8" rx="3" fill="#2c6fad"/>
+        <rect x="46" y="28" width="6" height="8" rx="3" fill="#2c6fad"/>
+        <line x1="49" y1="35" x2="51" y2="39" stroke="#2c6fad" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="52" cy="40" r="2.5" fill="#ff6b35"/>
+        <path d="M30 49 Q36 55 42 49" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <ellipse cx="36" cy="59" rx="10" ry="4.5" fill="#4a90d9"/>
+      </svg>
+      <div class="card-info">
+        <h2>Quick Support</h2>
+        <p>Get instant help from your friendly Morp assistant.</p>
+      </div>
+      <span class="card-arrow">→</span>
+    </a>
 
-      document.addEventListener("click", (event) => {
-        if (!event.target.closest(".user-menu")) {
-          closeMenu();
-        }
-      });
+  </div>
 
-      document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") {
-          closeMenu();
-        }
-      });
-    </script>
-  </body>
+  <!-- Previous Projects -->
+  <div class="section-header">
+    <svg class="pill-alien" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="14" cy="17" rx="10" ry="8" fill="#f5a623"/>
+      <ellipse cx="14" cy="12" rx="8" ry="7" fill="#ffc04d"/>
+      <circle cx="11.5" cy="11" r="3" fill="white"/><circle cx="11.5" cy="11" r="1.7" fill="#1c1a17"/>
+      <circle cx="16.5" cy="11" r="3" fill="white"/><circle cx="16.5" cy="11" r="1.7" fill="#1c1a17"/>
+      <line x1="11" y1="5" x2="9" y2="2" stroke="#f5a623" stroke-width="1.5" stroke-linecap="round"/>
+      <circle cx="9" cy="2" r="1.5" fill="#ff6b35"/>
+      <line x1="17" y1="5" x2="19" y2="2" stroke="#f5a623" stroke-width="1.5" stroke-linecap="round"/>
+      <circle cx="19" cy="2" r="1.5" fill="#ff6b35"/>
+    </svg>
+    <h2>Previous Projects</h2>
+  </div>
+
+  <div class="project-list">
+    <a class="project-pill" href="./projects.html#phoenix-erp-rollout">
+      <svg class="pill-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="16" cy="16" r="16" fill="#eaf8f1"/>
+        <ellipse cx="16" cy="19" rx="8" ry="7" fill="#3cb97a"/>
+        <circle cx="16" cy="14" r="5.5" fill="#4fd48c"/>
+        <circle cx="16" cy="13" r="3" fill="white"/><circle cx="16" cy="13" r="1.7" fill="#1c1a17"/>
+        <circle cx="17" cy="12.2" r="0.7" fill="white"/>
+        <path d="M13 21 Q16 24 19 21" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+      </svg>
+      Phoenix ERP Rollout
+      <span class="pill-meta">3 days ago</span>
+    </a>
+
+    <a class="project-pill" href="./projects.html#atlas-org-redesign">
+      <svg class="pill-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="16" cy="16" r="16" fill="#eef4fc"/>
+        <ellipse cx="16" cy="19" rx="8" ry="7" fill="#4a90d9"/>
+        <circle cx="16" cy="14" r="5.5" fill="#6aaee8"/>
+        <circle cx="13.5" cy="13" r="2.5" fill="white"/><circle cx="13.5" cy="13" r="1.4" fill="#1c1a17"/>
+        <circle cx="18.5" cy="13" r="2.5" fill="white"/><circle cx="18.5" cy="13" r="1.4" fill="#1c1a17"/>
+        <path d="M13 21 Q16 24 19 21" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+      </svg>
+      Atlas Org Redesign
+      <span class="pill-meta">1 week ago</span>
+    </a>
+
+    <a class="project-pill" href="./projects.html#nimbus-policy-migration">
+      <svg class="pill-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="16" cy="16" r="16" fill="#f3effe"/>
+        <ellipse cx="16" cy="19" rx="8" ry="7" fill="#8b5cf6"/>
+        <circle cx="16" cy="14" r="5.5" fill="#a78bfa"/>
+        <circle cx="16" cy="13" r="3" fill="white"/><circle cx="16" cy="13" r="1.7" fill="#1c1a17"/>
+        <circle cx="17" cy="12.2" r="0.7" fill="white"/>
+        <path d="M13 21 Q16 24 19 21" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+      </svg>
+      Nimbus Policy Migration
+      <span class="pill-meta">2 weeks ago</span>
+    </a>
+
+    <a class="project-pill" href="./projects.html#summit-crm-consolidation">
+      <svg class="pill-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="16" cy="16" r="16" fill="#fff8eb"/>
+        <ellipse cx="16" cy="19" rx="8" ry="7" fill="#f5a623"/>
+        <circle cx="16" cy="14" r="5.5" fill="#ffc04d"/>
+        <circle cx="13.5" cy="13" r="2.5" fill="white"/><circle cx="13.5" cy="13" r="1.4" fill="#1c1a17"/>
+        <circle cx="18.5" cy="13" r="2.5" fill="white"/><circle cx="18.5" cy="13" r="1.4" fill="#1c1a17"/>
+        <path d="M13 21 Q16 24 19 21" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+      </svg>
+      Summit CRM Consolidation
+      <span class="pill-meta">3 weeks ago</span>
+    </a>
+
+    <a class="project-pill" href="./projects.html#orion-training-launch">
+      <svg class="pill-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="16" cy="16" r="16" fill="#fff0eb"/>
+        <ellipse cx="16" cy="19" rx="8" ry="7" fill="#ff6b35"/>
+        <circle cx="16" cy="14" r="5.5" fill="#ff8c5a"/>
+        <circle cx="16" cy="13" r="3" fill="white"/><circle cx="16" cy="13" r="1.7" fill="#1c1a17"/>
+        <circle cx="17" cy="12.2" r="0.7" fill="white"/>
+        <path d="M13 21 Q16 24 19 21" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+      </svg>
+      Orion Training Launch
+      <span class="pill-meta">1 month ago</span>
+    </a>
+  </div>
+
+</main>
+
+<script>
+  const trigger = document.getElementById("userMenuTrigger");
+  const dropdown = document.getElementById("accountDropdown");
+  function closeMenu() {
+    trigger.setAttribute("aria-expanded", "false");
+    dropdown.hidden = true;
+  }
+  trigger.addEventListener("click", () => {
+    const isOpen = trigger.getAttribute("aria-expanded") === "true";
+    trigger.setAttribute("aria-expanded", String(!isOpen));
+    dropdown.hidden = isOpen;
+  });
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".user-menu")) closeMenu();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeMenu();
+  });
+</script>
+</body>
 </html>
