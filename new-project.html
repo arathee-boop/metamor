@@ -12,6 +12,171 @@
     />
     <link rel="icon" type="image/svg+xml" href="./alien-favicon.svg" />
     <link rel="stylesheet" href="./app-pages.css" />
+    <style>
+      /* Modal backdrop */
+      .project-modal {
+        border: none;
+        padding: 0;
+        border-radius: var(--radius);
+        box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+        width: min(520px, calc(100vw - 2rem));
+        background: var(--bg-card);
+      }
+      .project-modal::backdrop {
+        background: rgba(28, 26, 23, 0.45);
+        backdrop-filter: blur(3px);
+      }
+      .modal-inner {
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      .modal-head {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      .modal-alien {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: var(--accent-soft);
+        flex-shrink: 0;
+        display: grid;
+        place-items: center;
+      }
+      .modal-head h2 {
+        font-size: 1.25rem;
+        font-weight: 800;
+        margin-bottom: 4px;
+      }
+      .modal-head p {
+        font-size: 0.875rem;
+        color: var(--text-muted);
+        margin: 0;
+      }
+      .modal-field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+      }
+      .modal-field label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-muted);
+      }
+      .modal-field .optional-label {
+        font-weight: 400;
+        text-transform: none;
+        letter-spacing: 0;
+        font-size: 0.78rem;
+      }
+      .modal-field input[type="text"],
+      .modal-field input[type="email"] {
+        width: 100%;
+        padding: 0.65rem 0.85rem;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-sm);
+        font-family: inherit;
+        font-size: 0.925rem;
+        color: var(--text);
+        background: var(--bg);
+        transition: border-color 0.15s;
+      }
+      .modal-field input:focus {
+        outline: none;
+        border-color: var(--accent);
+      }
+      .collab-input-row {
+        display: flex;
+        gap: 0.5rem;
+      }
+      .collab-input-row input {
+        flex: 1;
+      }
+      .collab-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        min-height: 0;
+      }
+      .collab-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.3rem 0.65rem;
+        background: var(--bg-subtle);
+        border: 1.5px solid var(--border);
+        border-radius: 999px;
+        font-size: 0.8rem;
+        color: var(--text);
+      }
+      .collab-chip button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        padding: 0;
+        line-height: 1;
+        transition: color 0.1s;
+      }
+      .collab-chip button:hover { color: var(--accent); }
+      .modal-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 0 -2rem;
+      }
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        align-items: center;
+      }
+      .modal-cancel {
+        background: none;
+        border: 1.5px solid var(--border);
+        border-radius: 999px;
+        padding: 0.55rem 1.1rem;
+        font-family: inherit;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: background 0.15s, border-color 0.15s;
+      }
+      .modal-cancel:hover { background: var(--bg-subtle); border-color: var(--text-muted); }
+      .modal-save {
+        background: var(--accent);
+        border: none;
+        border-radius: 999px;
+        padding: 0.55rem 1.4rem;
+        font-family: inherit;
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: #fff;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      .modal-save:hover { background: #ea5b28; }
+      .modal-save:disabled { opacity: 0.5; cursor: not-allowed; }
+      .modal-template-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.3rem 0.7rem;
+        background: var(--bg-subtle);
+        border: 1.5px solid var(--border);
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        align-self: flex-start;
+      }
+    </style>
   </head>
   <body>
     <header class="topbar">
@@ -88,9 +253,7 @@
             Use this for workflow redesigns, handoff updates, and new operating
             procedures.
           </p>
-          <a class="button-link project-type-cta" href="./process-change.html"
-            >Use Template</a
-          >
+          <button class="button-link project-type-cta" data-destination="./process-change.html" data-template="Process Change">Use Template</button>
         </article>
 
         <article class="project-type-card">
@@ -118,7 +281,7 @@
             Ideal for governance updates, compliance rollouts, and policy
             communication plans.
           </p>
-          <a class="button-link project-type-cta" href="#">Use Template</a>
+          <button class="button-link project-type-cta" data-destination="#" data-template="Policy Change">Use Template</button>
         </article>
 
         <article class="project-type-card">
@@ -146,7 +309,7 @@
             Built for role redesign, team reshuffles, and manager transition
             support plans.
           </p>
-          <a class="button-link project-type-cta" href="#">Use Template</a>
+          <button class="button-link project-type-cta" data-destination="#" data-template="Org Restructuring">Use Template</button>
         </article>
 
         <article class="project-type-card">
@@ -171,7 +334,7 @@
             Best for system launches, platform migrations, and adoption
             readiness tracking.
           </p>
-          <a class="button-link project-type-cta" href="#">Use Template</a>
+          <button class="button-link project-type-cta" data-destination="#" data-template="Technology Implementation">Use Template</button>
         </article>
 
         <article class="project-type-card">
@@ -199,7 +362,7 @@
             Supports communication, culture alignment, and staged integration
             milestones.
           </p>
-          <a class="button-link project-type-cta" href="#">Use Template</a>
+          <button class="button-link project-type-cta" data-destination="#" data-template="Merger &amp; Integration">Use Template</button>
         </article>
 
         <article class="project-type-card">
@@ -224,38 +387,164 @@
             Start from a blank framework when your project does not match a
             standard category.
           </p>
-          <a class="button-link project-type-cta" href="#">Start Custom Project</a>
+          <button class="button-link project-type-cta" data-destination="#" data-template="Custom Change Initiative">Start Custom Project</button>
         </article>
       </section>
     </main>
 
+    <!-- Save Project Modal -->
+    <dialog class="project-modal" id="projectModal" aria-labelledby="modalTitle">
+      <div class="modal-inner">
+        <div class="modal-head">
+          <div class="modal-alien">
+            <svg width="30" height="30" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="16" cy="24" rx="11" ry="8" fill="rgba(255,107,53,0.2)"/>
+              <ellipse cx="16" cy="15" rx="9" ry="8" fill="rgba(255,107,53,0.3)"/>
+              <circle cx="16" cy="14" r="4.5" fill="#ff6b35"/>
+              <circle cx="16" cy="14" r="2.8" fill="#1c1a17"/>
+              <circle cx="17.3" cy="12.8" r="1" fill="white"/>
+              <line x1="12.5" y1="8" x2="10" y2="3.5" stroke="#ff6b35" stroke-width="1.4" stroke-linecap="round"/>
+              <circle cx="10" cy="3.5" r="1.6" fill="#ff6b35"/>
+              <line x1="19.5" y1="8" x2="22" y2="3.5" stroke="#ff6b35" stroke-width="1.4" stroke-linecap="round"/>
+              <circle cx="22" cy="3.5" r="1.6" fill="#ff6b35"/>
+              <path d="M12 20 Q16 23.5 20 20" stroke="#ff6b35" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+            </svg>
+          </div>
+          <div>
+            <h2 id="modalTitle">Save your project</h2>
+            <p>Give it a name before your crew gets to work.</p>
+          </div>
+        </div>
+
+        <span class="modal-template-badge" id="modalTemplateBadge">
+          📋 <span id="modalTemplateName"></span>
+        </span>
+
+        <form id="saveProjectForm">
+          <div class="modal-field" style="margin-bottom: 1.1rem;">
+            <label for="projectNameInput">Project name <span aria-hidden="true" style="color:var(--accent)">*</span></label>
+            <input id="projectNameInput" type="text" placeholder="e.g. Phoenix ERP Rollout" required maxlength="80" autocomplete="off" />
+          </div>
+
+          <div class="modal-field" style="margin-bottom: 1.5rem;">
+            <label>Invite collaborators <span class="optional-label">— optional</span></label>
+            <div class="collab-input-row">
+              <input id="collabEmailInput" type="email" placeholder="colleague@company.com" />
+              <button type="button" id="addCollabBtn" class="ghost-btn">Add</button>
+            </div>
+            <div class="collab-chips" id="collabChips"></div>
+          </div>
+
+          <div class="modal-divider"></div>
+
+          <div class="modal-actions" style="margin-top: 1.25rem;">
+            <button type="button" class="modal-cancel" id="modalCancel">Cancel</button>
+            <button type="submit" class="modal-save">Save &amp; Start →</button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
     <script>
       (() => {
+        // User menu
         const trigger = document.getElementById("userMenuTrigger");
         const dropdown = document.getElementById("accountDropdown");
-        if (!trigger || !dropdown) return;
-
-        function closeMenu() {
-          trigger.setAttribute("aria-expanded", "false");
-          dropdown.hidden = true;
+        if (trigger && dropdown) {
+          function closeMenu() {
+            trigger.setAttribute("aria-expanded", "false");
+            dropdown.hidden = true;
+          }
+          trigger.addEventListener("click", () => {
+            const isOpen = trigger.getAttribute("aria-expanded") === "true";
+            trigger.setAttribute("aria-expanded", String(!isOpen));
+            dropdown.hidden = isOpen;
+          });
+          document.addEventListener("click", (e) => {
+            if (!e.target.closest(".user-menu")) closeMenu();
+          });
+          document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") closeMenu();
+          });
         }
 
-        trigger.addEventListener("click", () => {
-          const isOpen = trigger.getAttribute("aria-expanded") === "true";
-          trigger.setAttribute("aria-expanded", String(!isOpen));
-          dropdown.hidden = isOpen;
+        // Modal
+        const modal = document.getElementById("projectModal");
+        const form = document.getElementById("saveProjectForm");
+        const projectNameInput = document.getElementById("projectNameInput");
+        const collabEmailInput = document.getElementById("collabEmailInput");
+        const addCollabBtn = document.getElementById("addCollabBtn");
+        const collabChips = document.getElementById("collabChips");
+        const modalCancel = document.getElementById("modalCancel");
+        const modalTemplateName = document.getElementById("modalTemplateName");
+
+        let destination = "#";
+        const collaborators = [];
+
+        function openModal(dest, templateName) {
+          destination = dest;
+          modalTemplateName.textContent = templateName;
+          projectNameInput.value = "";
+          collabEmailInput.value = "";
+          collaborators.length = 0;
+          collabChips.innerHTML = "";
+          modal.showModal();
+          setTimeout(() => projectNameInput.focus(), 50);
+        }
+
+        function closeModal() {
+          modal.close();
+        }
+
+        function addCollaborator() {
+          const email = collabEmailInput.value.trim();
+          if (!email || !email.includes("@")) return;
+          if (collaborators.includes(email)) {
+            collabEmailInput.value = "";
+            return;
+          }
+          collaborators.push(email);
+          const chip = document.createElement("span");
+          chip.className = "collab-chip";
+          chip.innerHTML = `${email} <button type="button" aria-label="Remove ${email}">✕</button>`;
+          chip.querySelector("button").addEventListener("click", () => {
+            collaborators.splice(collaborators.indexOf(email), 1);
+            chip.remove();
+          });
+          collabChips.appendChild(chip);
+          collabEmailInput.value = "";
+          collabEmailInput.focus();
+        }
+
+        addCollabBtn.addEventListener("click", addCollaborator);
+        collabEmailInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") { e.preventDefault(); addCollaborator(); }
         });
 
-        document.addEventListener("click", (event) => {
-          if (!event.target.closest(".user-menu")) {
-            closeMenu();
+        modalCancel.addEventListener("click", closeModal);
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) closeModal();
+        });
+
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const name = projectNameInput.value.trim();
+          if (!name) { projectNameInput.focus(); return; }
+          localStorage.setItem("metamor.project.name", name);
+          localStorage.setItem("metamor.project.collaborators", JSON.stringify(collaborators));
+          if (destination && destination !== "#") {
+            window.location.href = destination;
+          } else {
+            closeModal();
           }
         });
 
-        document.addEventListener("keydown", (event) => {
-          if (event.key === "Escape") {
-            closeMenu();
-          }
+        // Intercept all template buttons
+        document.querySelectorAll(".project-type-cta").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            e.preventDefault();
+            openModal(btn.dataset.destination, btn.dataset.template);
+          });
         });
       })();
     </script>
