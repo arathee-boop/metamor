@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Morp | Change Plan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/svg+xml" href="./alien-favicon.svg" />
+    <link rel="stylesheet" href="./app-pages.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="./index.html" aria-label="Morp home">
+        <svg class="brand-mascot" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="20" cy="24" rx="13" ry="12" fill="#3cb97a"/>
+          <ellipse cx="20" cy="17" rx="10" ry="9" fill="#4fd48c"/>
+          <circle cx="20" cy="16" r="5.5" fill="white"/>
+          <circle cx="20" cy="16" r="3.2" fill="#1c1a17"/>
+          <circle cx="21.3" cy="14.8" r="1.1" fill="white"/>
+          <line x1="16" y1="8" x2="13" y2="3" stroke="#3cb97a" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="13" cy="3" r="2" fill="#ff6b35"/>
+          <line x1="24" y1="8" x2="27" y2="3" stroke="#3cb97a" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="27" cy="3" r="2" fill="#ff6b35"/>
+          <path d="M15 26 Q20 31 25 26" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+          <ellipse cx="8" cy="24" rx="3" ry="5" fill="#3cb97a" transform="rotate(-15 8 24)"/>
+          <ellipse cx="32" cy="24" rx="3" ry="5" fill="#3cb97a" transform="rotate(15 32 24)"/>
+        </svg>
+        Morp
+      </a>
+      <div class="user-menu">
+        <button class="user-menu-trigger" id="userMenuTrigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="accountDropdown">
+          <svg class="avatar-mini" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="13" cy="13" r="13" fill="#fff0eb"/>
+            <ellipse cx="13" cy="15" rx="7" ry="6" fill="#ff6b35"/>
+            <circle cx="13" cy="12" r="4.5" fill="#ff8c5a"/>
+            <circle cx="13" cy="11" r="2.5" fill="#1c1a17"/>
+            <circle cx="14" cy="10.2" r="0.8" fill="white"/>
+          </svg>
+          <span>Hi Casey</span>
+          <span class="menu-arrow" aria-hidden="true">▾</span>
+        </button>
+        <ul class="user-dropdown" id="accountDropdown" hidden>
+          <li><a href="./account.html#my-profile">My Profile</a></li>
+          <li><a href="./account.html#account-settings">Account Settings</a></li>
+          <li><a href="./account.html#billing-plans">Billing &amp; Plans</a></li>
+          <li><a href="./account.html#notification-preferences">Notification Preferences</a></li>
+          <li><a href="./account.html#team-management">Team Management</a></li>
+          <li><a href="./account.html#help-center">Help Center</a></li>
+          <li><a href="./account.html#sign-out">Sign Out</a></li>
+        </ul>
+      </div>
+    </header>
+
+    <main class="simple-page">
+      <a class="back-link" href="./process-change.html">← Back to Project</a>
+
+      <div class="planner-header">
+        <span class="project-template-tag" id="planTemplatTag">Process Change</span>
+        <h1>Change Plan — <span id="planProjectName">My Project</span></h1>
+        <div class="planner-stats" id="plannerStats"></div>
+      </div>
+
+      <div class="planner-toolbar">
+        <button type="button" class="start-project-btn" id="addTaskBtn">+ Add Task</button>
+        <button type="button" class="generate-plan-btn" id="generatePlanBtn">✨ Generate AI Baseline</button>
+      </div>
+
+      <div id="planContainer"></div>
+    </main>
+
+    <!-- Task add/edit modal -->
+    <dialog class="task-modal" id="taskModal" aria-labelledby="taskModalTitle">
+      <div class="task-modal-inner">
+        <div class="task-modal-header">
+          <h2 id="taskModalTitle">Add Task</h2>
+          <button type="button" class="task-modal-close" id="taskModalClose" aria-label="Close">✕</button>
+        </div>
+
+        <form id="taskForm">
+          <div class="task-form-grid">
+            <div class="task-form-field full">
+              <label for="tf-title">Task title <span style="color:var(--accent)">*</span></label>
+              <input id="tf-title" type="text" required maxlength="140" placeholder="e.g. Map current process and identify pain points" />
+            </div>
+            <div class="task-form-field">
+              <label for="tf-group">Group</label>
+              <select id="tf-group">
+                <option value="prep">📋 General Preparation</option>
+                <option value="step-01">01 · Understand the Change</option>
+                <option value="step-02">02 · Make Case for Change</option>
+                <option value="step-03">03 · Assess Change Radius</option>
+                <option value="step-04">04 · Assess Change Readiness</option>
+                <option value="step-05">05 · Communication &amp; Alignment</option>
+                <option value="step-06">06 · Enable Workforce</option>
+                <option value="adhoc">✦ Ad Hoc</option>
+              </select>
+            </div>
+            <div class="task-form-field">
+              <label for="tf-status">Status</label>
+              <select id="tf-status">
+                <option value="not-started">Not started</option>
+                <option value="in-progress">In progress</option>
+                <option value="complete">Complete</option>
+                <option value="blocked">Blocked</option>
+              </select>
+            </div>
+            <div class="task-form-field">
+              <label for="tf-owner">Owner</label>
+              <input id="tf-owner" type="text" placeholder="e.g. Project Lead" maxlength="60" />
+            </div>
+            <div class="task-form-field">
+              <label for="tf-start">Start date</label>
+              <input id="tf-start" type="date" />
+            </div>
+            <div class="task-form-field">
+              <label for="tf-end">End date</label>
+              <input id="tf-end" type="date" />
+            </div>
+            <div class="task-form-field full">
+              <label for="tf-deps">Dependencies <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.78rem">— hold Ctrl/Cmd to select multiple</span></label>
+              <select id="tf-deps" multiple></select>
+            </div>
+            <div class="task-form-field full">
+              <label for="tf-comments">Comments</label>
+              <textarea id="tf-comments" placeholder="Any notes, risks, or context for this task…"></textarea>
+            </div>
+          </div>
+
+          <div class="task-modal-footer">
+            <button type="button" class="task-modal-delete" id="taskDeleteBtn" hidden>Delete task</button>
+            <div class="task-modal-actions">
+              <button type="button" class="modal-cancel" id="taskModalCancel">Cancel</button>
+              <button type="submit" class="modal-save" id="taskModalSave">Save task</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
+    <script>
+    (() => {
+      // ── User menu ────────────────────────────────────────────
+      const menuTrigger = document.getElementById('userMenuTrigger');
+      const menuDropdown = document.getElementById('accountDropdown');
+      function closeMenu() { menuTrigger.setAttribute('aria-expanded','false'); menuDropdown.hidden = true; }
+      menuTrigger.addEventListener('click', () => {
+        const open = menuTrigger.getAttribute('aria-expanded') === 'true';
+        menuTrigger.setAttribute('aria-expanded', String(!open));
+        menuDropdown.hidden = open;
+      });
+      document.addEventListener('click', e => { if (!e.target.closest('.user-menu')) closeMenu(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+
+      // ── Project state ────────────────────────────────────────
+      const projectName = localStorage.getItem('metamor.project.name') || 'My Project';
+      const projectId   = localStorage.getItem('metamor.project.id')   || '';
+      const template    = localStorage.getItem('metamor.project.template') || 'Process Change';
+
+      document.getElementById('planProjectName').textContent = projectName;
+      document.getElementById('planTemplatTag').textContent  = template;
+      document.title = `Morp | Change Plan — ${projectName}`;
+
+      // ── Group definitions ────────────────────────────────────
+      const GROUPS = [
+        { id:'prep',    label:'General Preparation',      chip:'📋' },
+        { id:'step-01', label:'Understand the Change',    chip:'01' },
+        { id:'step-02', label:'Make Case for Change',     chip:'02' },
+        { id:'step-03', label:'Assess Change Radius',     chip:'03' },
+        { id:'step-04', label:'Assess Change Readiness',  chip:'04' },
+        { id:'step-05', label:'Communication & Alignment',chip:'05' },
+        { id:'step-06', label:'Enable Workforce',         chip:'06' },
+        { id:'adhoc',   label:'Ad Hoc Tasks',             chip:'✦'  },
+      ];
+
+      const STATUS_META = {
+        'not-started': { label:'Not started', cls:'status-not-started', dot:'#bbb'    },
+        'in-progress' : { label:'In progress', cls:'status-in-progress',  dot:'#4a90d9' },
+        'complete'    : { label:'Complete',    cls:'status-complete',     dot:'#3cb97a' },
+        'blocked'     : { label:'Blocked',     cls:'status-blocked',      dot:'#ff6b35' },
+      };
+
+      // ── Plan storage ─────────────────────────────────────────
+      const PLAN_KEY = `metamor.${projectId}.plan`;
+
+      function loadTasks() {
+        try { return JSON.parse(localStorage.getItem(PLAN_KEY) || '[]'); }
+        catch { return []; }
+      }
+      function saveTasks(tasks) {
+        localStorage.setItem(PLAN_KEY, JSON.stringify(tasks));
+      }
+
+      let tasks = loadTasks();
+
+      // ── Static fallback baseline ─────────────────────────────
+      function addDays(base, n) {
+        const d = new Date(base);
+        d.setDate(d.getDate() + n);
+        return d.toISOString().split('T')[0];
+      }
+      function uid() { return 'task-' + Math.random().toString(36).slice(2,9); }
+
+      function buildFallbackPlan() {
+        const t = new Date().toISOString().split('T')[0];
+        return [
+          { id:uid(), group:'prep',    title:'Project kickoff and sponsor alignment',            owner:'Project Lead',    startDate:t,           endDate:addDays(t,2),  status:'not-started', dependencies:[], comments:'' },
+          { id:uid(), group:'prep',    title:'Stakeholder identification and RACI mapping',       owner:'Change Manager',  startDate:addDays(t,2), endDate:addDays(t,5),  status:'not-started', dependencies:[], comments:'' },
+          { id:uid(), group:'prep',    title:'Define project scope, goals, and success metrics',  owner:'Project Lead',    startDate:addDays(t,3), endDate:addDays(t,6),  status:'not-started', dependencies:[], comments:'' },
+          { id:uid(), group:'step-01', title:'Document current (as-is) process',                  owner:'Process Owner',   startDate:addDays(t,7), endDate:addDays(t,11), status:'not-started', dependencies:[], comments:'' },
+          { id:uid(), group:'step-01', title:'Map future (to-be) process',                        owner:'Process Owner',   startDate:addDays(t,10),endDate:addDays(t,14), status:'not-started', dependencies:[], comments:'' },
+          { id:uid(), group:'step-01', title:'Run Understand the Change assistant and review',    owner:'Change Manager',  startDate:addDays(t,13),endDate:addDays(t,15), status:'not-started', dependencies:[], comments:'' },
+          { id:uid(), group:'step-01', title:'Validate change analysis with process owner',       owner:'Project Sponsor', startDate:addDays(t,15),endDate:addDays(t,17), status:'not-started', dependencies:[], comments:'' },
+          { id:uid(), group:'step-02', title:'Identify urgency drivers and cost of inaction',     owner:'Project Lead',    startDate:addDays(t,17),endDate:addDays(t,21), status:'not-started', dependencies:[], comments:'' },
+          { id:uid(), group:'step-02', title:'Generate executive memo using AI assistant',        owner:'Change Manager',  startDate:addDays(t,21),endDate:addDays(t,22), status:'not-started', dependencies:[], comments:'' },
+          { id:uid(), group:'step-02', title:'Review and finalise executive memo',                owner:'Project Sponsor', startDate:addDays(t,22),endDate:addDays(t,24), status:'not-started', dependencies:[], comments:'' },
+          { id:uid(), group:'step-02', title:'Present case for change to leadership',             owner:'Project Sponsor', startDate:addDays(t,25),endDate:addDays(t,25), status:'not-started', dependencies:[], comments:'' },
+          { id:uid(), group:'step-03', title:'Map impacted roles, teams, and systems',            owner:'Change Manager',  startDate:addDays(t,26),endDate:addDays(t,30), status:'not-started', dependencies:[], comments:'' },
+          { id:uid(), group:'step-03', title:'Define handoff, SLA, and governance changes',       owner:'Operations Lead', startDate:addDays(t,28),endDate:addDays(t,32), status:'not-started', dependencies:[], comments:'' },
+          { id:uid(), group:'step-03', title:'Document ownership changes and decision rights',    owner:'Project Lead',    startDate:addDays(t,31),endDate:addDays(t,34), status:'not-started', dependencies:[], comments:'' },
+          { id:uid(), group:'step-04', title:'Leadership alignment and sponsorship check',         owner:'Project Sponsor', startDate:addDays(t,34),endDate:addDays(t,37), status:'not-started', dependencies:[], comments:'' },
+          { id:uid(), group:'step-04', title:'Manager readiness survey and debrief',              owner:'HR Lead',         startDate:addDays(t,36),endDate:addDays(t,40), status:'not-started', dependencies:[], comments:'' },
+          { id:uid(), group:'step-04', title:'Team capability gap analysis',                      owner:'HR Lead',         startDate:addDays(t,39),endDate:addDays(t,43), status:'not-started', dependencies:[], comments:'' },
+          { id:uid(), group:'step-05', title:'Draft stakeholder communication plan',              owner:'Comms Lead',      startDate:addDays(t,43),endDate:addDays(t,47), status:'not-started', dependencies:[], comments:'' },
+          { id:uid(), group:'step-05', title:'Schedule and run leader briefing forums',           owner:'Project Lead',    startDate:addDays(t,46),endDate:addDays(t,50), status:'not-started', dependencies:[], comments:'' },
+          { id:uid(), group:'step-05', title:'Deliver manager cascade sessions',                  owner:'Change Manager',  startDate:addDays(t,49),endDate:addDays(t,55), status:'not-started', dependencies:[], comments:'' },
+          { id:uid(), group:'step-05', title:'Send milestone updates to all impacted teams',      owner:'Comms Lead',      startDate:addDays(t,53),endDate:addDays(t,57), status:'not-started', dependencies:[], comments:'' },
+          { id:uid(), group:'step-06', title:'Develop training materials and job aids',           owner:'L&D Lead',        startDate:addDays(t,52),endDate:addDays(t,60), status:'not-started', dependencies:[], comments:'' },
+          { id:uid(), group:'step-06', title:'Deliver training sessions to impacted staff',       owner:'L&D Lead',        startDate:addDays(t,60),endDate:addDays(t,67), status:'not-started', dependencies:[], comments:'' },
+          { id:uid(), group:'step-06', title:'Deploy reinforcement loops and manager coaching',   owner:'Change Manager',  startDate:addDays(t,65),endDate:addDays(t,72), status:'not-started', dependencies:[], comments:'' },
+          { id:uid(), group:'step-06', title:'Monitor adoption metrics and resolve blockers',     owner:'Project Lead',    startDate:addDays(t,68),endDate:addDays(t,80), status:'not-started', dependencies:[], comments:'' },
+        ];
+      }
+
+      // ── Render ───────────────────────────────────────────────
+      function fmtDate(d) {
+        if (!d) return '—';
+        const dt = new Date(d + 'T00:00:00');
+        return dt.toLocaleDateString('en-GB', { day:'numeric', month:'short' });
+      }
+
+      function statusBadge(status) {
+        const m = STATUS_META[status] || STATUS_META['not-started'];
+        return `<span class="status-badge ${m.cls}">${m.label}</span>`;
+      }
+
+      function taskDepsLabel(task) {
+        if (!task.dependencies || !task.dependencies.length) return '—';
+        return task.dependencies.map(id => {
+          const t = tasks.find(t => t.id === id);
+          return t ? t.title.slice(0, 30) + (t.title.length > 30 ? '…' : '') : id;
+        }).join(', ');
+      }
+
+      function renderStats() {
+        const counts = { total: tasks.length, 'not-started':0, 'in-progress':0, complete:0, blocked:0 };
+        tasks.forEach(t => { if (counts[t.status] !== undefined) counts[t.status]++; });
+        const el = document.getElementById('plannerStats');
+        el.innerHTML = [
+          `<span class="plan-stat"><span class="plan-stat-dot" style="background:#bbb"></span>${counts.total} tasks</span>`,
+          counts['in-progress'] ? `<span class="plan-stat"><span class="plan-stat-dot" style="background:#4a90d9"></span>${counts['in-progress']} in progress</span>` : '',
+          counts.complete       ? `<span class="plan-stat"><span class="plan-stat-dot" style="background:#3cb97a"></span>${counts.complete} complete</span>` : '',
+          counts.blocked        ? `<span class="plan-stat"><span class="plan-stat-dot" style="background:#ff6b35"></span>${counts.blocked} blocked</span>` : '',
+        ].filter(Boolean).join('');
+      }
+
+      function renderPlan() {
+        renderStats();
+        const container = document.getElementById('planContainer');
+
+        if (!tasks.length) {
+          container.innerHTML = `<div class="plan-empty">
+            <h3>No plan yet</h3>
+            <p>Click <strong>Generate AI Baseline</strong> to auto-populate the plan from your project context, or add tasks manually.</p>
+          </div>`;
+          return;
+        }
+
+        container.innerHTML = '';
+        GROUPS.forEach(group => {
+          const groupTasks = tasks.filter(t => t.group === group.id);
+          const complete   = groupTasks.filter(t => t.status === 'complete').length;
+          const chipEl     = isNaN(Number(group.chip))
+            ? `<span style="font-size:0.9rem">${group.chip}</span>`
+            : `<span class="step-chip">${group.chip}</span>`;
+
+          const div = document.createElement('div');
+          div.className = 'plan-group';
+          div.dataset.groupId = group.id;
+
+          const rows = groupTasks.map(task => `
+            <tr data-task-id="${task.id}">
+              <td>${statusBadge(task.status)}</td>
+              <td class="task-title-cell">${escHtml(task.title)}</td>
+              <td class="task-muted">${escHtml(task.owner || '—')}</td>
+              <td class="task-muted">${fmtDate(task.startDate)}</td>
+              <td class="task-muted">${fmtDate(task.endDate)}</td>
+              <td class="task-muted" style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(taskDepsLabel(task))}</td>
+              <td>
+                <div class="task-actions">
+                  <button type="button" class="task-action-btn edit-task-btn" data-id="${task.id}">Edit</button>
+                  <button type="button" class="task-action-btn danger delete-task-btn" data-id="${task.id}">✕</button>
+                </div>
+              </td>
+            </tr>`).join('');
+
+          div.innerHTML = `
+            <div class="plan-group-header">
+              <div class="plan-group-meta">
+                ${chipEl}
+                <h2>${group.label}</h2>
+                <span class="plan-group-count">${groupTasks.length} task${groupTasks.length !== 1 ? 's' : ''}${groupTasks.length ? ` · ${complete} done` : ''}</span>
+              </div>
+              <span class="plan-group-chevron">▾</span>
+            </div>
+            <div class="plan-group-body">
+              ${groupTasks.length ? `
+              <table class="plan-table">
+                <thead><tr>
+                  <th>Status</th><th>Task</th><th>Owner</th><th>Start</th><th>End</th><th>Dependencies</th><th></th>
+                </tr></thead>
+                <tbody>${rows}</tbody>
+              </table>` : ''}
+              <button type="button" class="add-group-task-btn" data-group="${group.id}">+ Add task to this group</button>
+            </div>`;
+
+          container.appendChild(div);
+        });
+
+        // Collapse toggle
+        container.querySelectorAll('.plan-group-header').forEach(h => {
+          h.addEventListener('click', () => h.closest('.plan-group').classList.toggle('collapsed'));
+        });
+
+        // Edit buttons
+        container.querySelectorAll('.edit-task-btn').forEach(btn => {
+          btn.addEventListener('click', e => { e.stopPropagation(); openModal(btn.dataset.id); });
+        });
+
+        // Delete buttons
+        container.querySelectorAll('.delete-task-btn').forEach(btn => {
+          btn.addEventListener('click', e => {
+            e.stopPropagation();
+            if (confirm('Delete this task?')) {
+              tasks = tasks.filter(t => t.id !== btn.dataset.id);
+              saveTasks(tasks);
+              renderPlan();
+            }
+          });
+        });
+
+        // Add to group buttons
+        container.querySelectorAll('.add-group-task-btn').forEach(btn => {
+          btn.addEventListener('click', () => openModal(null, btn.dataset.group));
+        });
+      }
+
+      function escHtml(s) {
+        return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      }
+
+      // ── Modal ────────────────────────────────────────────────
+      const modal        = document.getElementById('taskModal');
+      const form         = document.getElementById('taskForm');
+      const tfTitle      = document.getElementById('tf-title');
+      const tfGroup      = document.getElementById('tf-group');
+      const tfStatus     = document.getElementById('tf-status');
+      const tfOwner      = document.getElementById('tf-owner');
+      const tfStart      = document.getElementById('tf-start');
+      const tfEnd        = document.getElementById('tf-end');
+      const tfDeps       = document.getElementById('tf-deps');
+      const tfComments   = document.getElementById('tf-comments');
+      const modalTitle   = document.getElementById('taskModalTitle');
+      const deleteBtn    = document.getElementById('taskDeleteBtn');
+      let editingId      = null;
+
+      function populateDepsSelect(excludeId) {
+        tfDeps.innerHTML = '';
+        tasks.filter(t => t.id !== excludeId).forEach(t => {
+          const opt = document.createElement('option');
+          opt.value = t.id;
+          opt.textContent = t.title.slice(0, 60) + (t.title.length > 60 ? '…' : '');
+          tfDeps.appendChild(opt);
+        });
+      }
+
+      function openModal(taskId, defaultGroup) {
+        editingId = taskId || null;
+        modalTitle.textContent = taskId ? 'Edit Task' : 'Add Task';
+        deleteBtn.hidden = !taskId;
+        populateDepsSelect(taskId);
+
+        if (taskId) {
+          const t = tasks.find(t => t.id === taskId);
+          if (!t) return;
+          tfTitle.value    = t.title;
+          tfGroup.value    = t.group;
+          tfStatus.value   = t.status;
+          tfOwner.value    = t.owner || '';
+          tfStart.value    = t.startDate || '';
+          tfEnd.value      = t.endDate || '';
+          tfComments.value = t.comments || '';
+          Array.from(tfDeps.options).forEach(opt => {
+            opt.selected = (t.dependencies || []).includes(opt.value);
+          });
+        } else {
+          form.reset();
+          if (defaultGroup) tfGroup.value = defaultGroup;
+          tfStatus.value = 'not-started';
+        }
+        modal.showModal();
+        setTimeout(() => tfTitle.focus(), 50);
+      }
+
+      document.getElementById('taskModalClose').addEventListener('click', () => modal.close());
+      document.getElementById('taskModalCancel').addEventListener('click', () => modal.close());
+      modal.addEventListener('click', e => { if (e.target === modal) modal.close(); });
+
+      deleteBtn.addEventListener('click', () => {
+        if (!editingId) return;
+        if (confirm('Delete this task?')) {
+          tasks = tasks.filter(t => t.id !== editingId);
+          saveTasks(tasks);
+          modal.close();
+          renderPlan();
+        }
+      });
+
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        const deps = Array.from(tfDeps.selectedOptions).map(o => o.value);
+        const taskData = {
+          id:          editingId || uid(),
+          group:       tfGroup.value,
+          title:       tfTitle.value.trim(),
+          owner:       tfOwner.value.trim(),
+          startDate:   tfStart.value || '',
+          endDate:     tfEnd.value   || '',
+          status:      tfStatus.value,
+          dependencies: deps,
+          comments:    tfComments.value.trim(),
+        };
+        if (!taskData.title) { tfTitle.focus(); return; }
+
+        if (editingId) {
+          const idx = tasks.findIndex(t => t.id === editingId);
+          if (idx >= 0) tasks[idx] = taskData;
+        } else {
+          tasks.push(taskData);
+        }
+        saveTasks(tasks);
+        modal.close();
+        renderPlan();
+      });
+
+      document.getElementById('addTaskBtn').addEventListener('click', () => openModal(null));
+
+      // ── AI Baseline generation ───────────────────────────────
+      const generateBtn = document.getElementById('generatePlanBtn');
+
+      generateBtn.addEventListener('click', async () => {
+        if (tasks.length && !confirm('This will replace any existing plan tasks with an AI-generated baseline. Continue?')) return;
+        generateBtn.disabled = true;
+        generateBtn.textContent = '⏳ Generating…';
+        document.getElementById('planContainer').innerHTML = '<div class="plan-generating">Generating your baseline plan with AI — this takes a few seconds…</div>';
+
+        try {
+          const changeAnalysis = projectId ? localStorage.getItem(`metamor.${projectId}.outputs.changeAnalysis`) || '' : '';
+          const executiveMemo  = projectId ? localStorage.getItem(`metamor.${projectId}.outputs.executiveMemo`)  || '' : '';
+
+          const res  = await fetch('/api/project-plan/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ projectName, template, changeAnalysis, executiveMemo }),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+
+          tasks = data.tasks.map(t => ({ ...t, id: t.id || uid(), dependencies: t.dependencies || [], comments: t.comments || '' }));
+          saveTasks(tasks);
+        } catch (err) {
+          console.warn('AI baseline failed, using static fallback:', err.message);
+          tasks = buildFallbackPlan();
+          saveTasks(tasks);
+        } finally {
+          generateBtn.disabled = false;
+          generateBtn.textContent = '✨ Generate AI Baseline';
+          renderPlan();
+        }
+      });
+
+      // ── Init ─────────────────────────────────────────────────
+      if (!tasks.length) {
+        // Auto-generate on first open
+        generateBtn.click();
+      } else {
+        renderPlan();
+      }
+    })();
+    </script>
+  </body>
+</html>

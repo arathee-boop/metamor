@@ -539,6 +539,70 @@ app.post("/api/understand-change/report", requireApiKey, async (req, res) => {
   }
 });
 
+app.post("/api/project-plan/generate", requireApiKey, async (req, res) => {
+  try {
+    const { projectName, template, changeAnalysis, executiveMemo } = req.body;
+    const today = new Date().toISOString().split("T")[0];
+
+    const contextParts = [];
+    if (changeAnalysis) contextParts.push(`Change Analysis Report:\n${String(changeAnalysis).slice(0, 1800)}`);
+    if (executiveMemo)  contextParts.push(`Executive Memo:\n${String(executiveMemo).slice(0, 900)}`);
+    const context = contextParts.length
+      ? `\n\nAvailable project context:\n${contextParts.join("\n\n")}`
+      : "";
+
+    const prompt = `Generate a project plan for a ${template || "Process Change"} initiative called "${sanitizeMessageText(projectName) || "Change Initiative"}".
+Today's date is ${today}.${context}
+
+Return a JSON array of tasks. Each task must use exactly this schema:
+{
+  "id": "unique-id",
+  "group": "prep" | "step-01" | "step-02" | "step-03" | "step-04" | "step-05" | "step-06" | "adhoc",
+  "title": "concise action-oriented task title",
+  "owner": "role name (e.g. Project Lead, Change Manager, HR Lead, Sponsor)",
+  "startDate": "YYYY-MM-DD",
+  "endDate": "YYYY-MM-DD",
+  "status": "not-started",
+  "dependencies": [],
+  "comments": ""
+}
+
+Group meanings (Process Change template):
+- prep:    General Preparation — 3 tasks, first 5 days
+- step-01: Understand the Change — 4 tasks, days 6-14
+- step-02: Make Case for Change — 4 tasks, days 15-24
+- step-03: Assess Change Radius — 3 tasks, days 25-32
+- step-04: Assess Change Readiness — 3 tasks, days 33-42
+- step-05: Communication and Alignment — 4 tasks, days 43-56
+- step-06: Enable Workforce — 4 tasks, days 57-72
+
+Rules:
+- Use specific, action-oriented titles tailored to the project context when available
+- Dates must be sequential within each group and realistic across groups
+- Owner must be a role, not a person name
+- Return ONLY the raw JSON array — no markdown fences, no explanation, no preamble`;
+
+    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const response = await anthropic.messages.create({
+      model: MODEL,
+      max_tokens: 2400,
+      system: "You are a change management project planner. Output only valid JSON arrays when asked.",
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    const text = extractTextResponse(response);
+    const jsonMatch = text.match(/\[[\s\S]*\]/);
+    if (!jsonMatch) throw new Error("No valid JSON array found in response");
+    const tasks = JSON.parse(jsonMatch[0]);
+    res.json({ tasks });
+  } catch (error) {
+    res.status(500).json({
+      error: "Failed to generate project plan.",
+      details: error?.message || String(error),
+    });
+  }
+});
+
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
   console.log(`Metamor server running at http://localhost:${PORT}`);
