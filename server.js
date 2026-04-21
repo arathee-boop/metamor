@@ -23,6 +23,7 @@ const MAX_MEMORY_PROJECTS = Number(process.env.CASE_MEMORY_PROJECTS || 50);
 const MAX_CONTEXT_MESSAGES = Number(process.env.CASE_CONTEXT_MESSAGES || 16);
 
 const projectMemory = new Map();
+const understandChangeMemory = new Map();
 
 app.use(express.static(path.resolve(__dirname)));
 app.use(express.json({ limit: "1mb" }));
@@ -72,37 +73,37 @@ function parseIncomingHistory(rawHistory) {
   }
 }
 
-function trimMemoryProjects() {
-  if (projectMemory.size <= MAX_MEMORY_PROJECTS) return;
-  const oldestProject = [...projectMemory.entries()].sort(
+function trimMemoryStore(store) {
+  if (store.size <= MAX_MEMORY_PROJECTS) return;
+  const oldestProject = [...store.entries()].sort(
     (a, b) => (a[1].updatedAt || 0) - (b[1].updatedAt || 0)
   )[0];
   if (oldestProject) {
-    projectMemory.delete(oldestProject[0]);
+    store.delete(oldestProject[0]);
   }
 }
 
-function getProjectState(projectId) {
+function getProjectState(store, projectId) {
   const normalized = normalizeProjectId(projectId);
-  if (!projectMemory.has(normalized)) {
-    projectMemory.set(normalized, { messages: [], updatedAt: Date.now() });
-    trimMemoryProjects();
+  if (!store.has(normalized)) {
+    store.set(normalized, { messages: [], updatedAt: Date.now() });
+    trimMemoryStore(store);
   }
-  return projectMemory.get(normalized);
+  return store.get(normalized);
 }
 
-function getProjectMessages(projectId) {
-  return [...getProjectState(projectId).messages];
+function getProjectMessages(store, projectId) {
+  return [...getProjectState(store, projectId).messages];
 }
 
-function setProjectMessages(projectId, messages) {
-  const state = getProjectState(projectId);
+function setProjectMessages(store, projectId, messages) {
+  const state = getProjectState(store, projectId);
   state.messages = sanitizeHistory(messages).slice(-MAX_MEMORY_MESSAGES);
   state.updatedAt = Date.now();
 }
 
-function appendProjectMessage(projectId, role, content) {
-  const state = getProjectState(projectId);
+function appendProjectMessage(store, projectId, role, content) {
+  const state = getProjectState(store, projectId);
   state.messages.push({
     role: role === "assistant" ? "assistant" : "user",
     content: sanitizeMessageText(content),
@@ -167,6 +168,59 @@ Output style rules:
 - If files are attached, synthesize key points from them and explicitly reference what was used.
 - Keep tone executive-ready but human.
 `;
+}
+
+function buildUnderstandChangeSystemPrompt() {
+  return `
+You are Morp Understand-the-Change Assistant.
+You are an expert in:
+1) operations design and process excellence
+2) management consulting problem-structuring
+3) stakeholder and organizational impact analysis
+
+Your mission:
+- Help the user understand what changed between current and future processes.
+- Ask sharp, targeted questions when information is missing.
+- Use uploaded documents and user inputs to infer concrete differences.
+
+Required behavior:
+- If context is incomplete, ask 4-7 high-value questions before finalizing.
+- If context is sufficient (or user asks to proceed), produce a structured report in markdown.
+- Be specific and evidence-oriented; avoid generic wording.
+- Distinguish clear facts vs assumptions.
+
+Always structure report output as:
+
+# Change Understanding Report
+## 1) Process Changes Identified
+- Capture all observed changes such as:
+  - process steps added/removed/reordered
+  - role/doer ownership changes
+  - approval and control changes
+  - handoff or SLA changes
+  - new/removed technology or tooling
+  - decision points, exceptions, or governance changes
+- Include a concise table whenever possible.
+
+## 2) Affected Stakeholders
+- List impacted stakeholders (teams, roles, managers, support functions).
+- Explain what changes for each and risk level (low/medium/high).
+
+## 3) Improvements and Benefits
+- Summarize operational improvements.
+- Map each improvement to expected benefits (speed, quality, cost, risk, experience, compliance).
+- Include measurable KPI suggestions where possible.
+`;
+}
+
+function buildContentBlocks(userMessage, files) {
+  const contentBlocks = [{ type: "text", text: userMessage + attachmentsSummary(files) }];
+  for (const file of files) {
+    if (file.mimetype.startsWith("text/") || file.mimetype === "application/json") {
+      contentBlocks.push(toTextDocument(file));
+    }
+  }
+  return contentBlocks;
 }
 
 function buildMemoSystemPrompt() {
@@ -236,7 +290,7 @@ app.get("/api/case-assistant/history/:projectId", (req, res) => {
   const projectId = normalizeProjectId(req.params.projectId);
   res.json({
     projectId,
-    messages: getProjectMessages(projectId),
+    messages: getProjectMessages(projectMemory, projectId),
   });
 });
 
@@ -249,72 +303,64 @@ app.delete("/api/case-assistant/history/:projectId", (req, res) => {
   });
 });
 
-app.post(
-  "/api/case-assistant",
-  requireApiKey,
-  upload.array("files", 6),
-  async (req, res) => {
-    try {
-      const userMessage = sanitizeMessageText(req.body.message);
-      const projectId = normalizeProjectId(req.body.projectId);
-      if (!userMessage) {
-        res.status(400).json({ error: "Message is required." });
-        return;
-      }
-
-      const existingMessages = getProjectMessages(projectId);
-      if (existingMessages.length === 0) {
-        const seedHistory = parseIncomingHistory(req.body.history);
-        if (seedHistory.length > 0) {
-          setProjectMessages(projectId, seedHistory);
-        }
-      }
-
-      const files = req.files || [];
-      const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
-      const contentBlocks = [{ type: "text", text: userMessage + attachmentsSummary(files) }];
-      for (const file of files) {
-        if (file.mimetype.startsWith("text/") || file.mimetype === "application/json") {
-          contentBlocks.push(toTextDocument(file));
-        }
-      }
-
-      const response = await anthropic.messages.create({
-        model: MODEL,
-        max_tokens: MAX_TOKENS,
-        system: buildSystemPrompt(),
-        messages: [...toAnthropicMessages(getProjectMessages(projectId)), { role: "user", content: contentBlocks }],
-      });
-
-      const answer = extractTextResponse(response);
-      const attachmentNames = files.map((file) => file.originalname).filter(Boolean);
-      const memoryUserMessage = attachmentNames.length
-        ? `${userMessage}\n\n[Attachments: ${attachmentNames.join(", ")}]`
-        : userMessage;
-
-      appendProjectMessage(projectId, "user", memoryUserMessage);
-      appendProjectMessage(projectId, "assistant", answer);
-
-      res.json({
-        reply: answer || "I could not generate a response. Please try again.",
-        projectId,
-        memoryCount: getProjectMessages(projectId).length,
-      });
-    } catch (error) {
-      res.status(500).json({
-        error: "Failed to generate response from Claude.",
-        details: error?.message || String(error),
-      });
+app.post("/api/case-assistant", requireApiKey, upload.array("files", 6), async (req, res) => {
+  try {
+    const userMessage = sanitizeMessageText(req.body.message);
+    const projectId = normalizeProjectId(req.body.projectId);
+    if (!userMessage) {
+      res.status(400).json({ error: "Message is required." });
+      return;
     }
+
+    const existingMessages = getProjectMessages(projectMemory, projectId);
+    if (existingMessages.length === 0) {
+      const seedHistory = parseIncomingHistory(req.body.history);
+      if (seedHistory.length > 0) {
+        setProjectMessages(projectMemory, projectId, seedHistory);
+      }
+    }
+
+    const files = req.files || [];
+    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const contentBlocks = buildContentBlocks(userMessage, files);
+
+    const response = await anthropic.messages.create({
+      model: MODEL,
+      max_tokens: MAX_TOKENS,
+      system: buildSystemPrompt(),
+      messages: [
+        ...toAnthropicMessages(getProjectMessages(projectMemory, projectId)),
+        { role: "user", content: contentBlocks },
+      ],
+    });
+
+    const answer = extractTextResponse(response);
+    const attachmentNames = files.map((file) => file.originalname).filter(Boolean);
+    const memoryUserMessage = attachmentNames.length
+      ? `${userMessage}\n\n[Attachments: ${attachmentNames.join(", ")}]`
+      : userMessage;
+
+    appendProjectMessage(projectMemory, projectId, "user", memoryUserMessage);
+    appendProjectMessage(projectMemory, projectId, "assistant", answer);
+
+    res.json({
+      reply: answer || "I could not generate a response. Please try again.",
+      projectId,
+      memoryCount: getProjectMessages(projectMemory, projectId).length,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: "Failed to generate response from Claude.",
+      details: error?.message || String(error),
+    });
   }
-);
+});
 
 app.post("/api/case-assistant/memo", requireApiKey, async (req, res) => {
   try {
     const projectId = normalizeProjectId(req.body?.projectId);
     const objective = sanitizeMessageText(req.body?.objective);
-    const conversation = getProjectMessages(projectId);
+    const conversation = getProjectMessages(projectMemory, projectId);
 
     if (conversation.length === 0) {
       res.status(400).json({
@@ -369,6 +415,125 @@ app.post("/api/case-assistant/memo", requireApiKey, async (req, res) => {
   } catch (error) {
     res.status(500).json({
       error: "Failed to generate executive memo output.",
+      details: error?.message || String(error),
+    });
+  }
+});
+
+app.get("/api/understand-change/history/:projectId", (req, res) => {
+  const projectId = normalizeProjectId(req.params.projectId);
+  res.json({
+    projectId,
+    messages: getProjectMessages(understandChangeMemory, projectId),
+  });
+});
+
+app.delete("/api/understand-change/history/:projectId", (req, res) => {
+  const projectId = normalizeProjectId(req.params.projectId);
+  understandChangeMemory.delete(projectId);
+  res.json({
+    projectId,
+    cleared: true,
+  });
+});
+
+app.post("/api/understand-change", requireApiKey, upload.array("files", 6), async (req, res) => {
+  try {
+    const userMessage = sanitizeMessageText(req.body.message);
+    const projectId = normalizeProjectId(req.body.projectId);
+    if (!userMessage) {
+      res.status(400).json({ error: "Message is required." });
+      return;
+    }
+
+    const existingMessages = getProjectMessages(understandChangeMemory, projectId);
+    if (existingMessages.length === 0) {
+      const seedHistory = parseIncomingHistory(req.body.history);
+      if (seedHistory.length > 0) {
+        setProjectMessages(understandChangeMemory, projectId, seedHistory);
+      }
+    }
+
+    const files = req.files || [];
+    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const contentBlocks = buildContentBlocks(userMessage, files);
+
+    const response = await anthropic.messages.create({
+      model: MODEL,
+      max_tokens: Math.max(MAX_TOKENS, 1500),
+      system: buildUnderstandChangeSystemPrompt(),
+      messages: [
+        ...toAnthropicMessages(getProjectMessages(understandChangeMemory, projectId)),
+        { role: "user", content: contentBlocks },
+      ],
+    });
+
+    const answer = extractTextResponse(response);
+    const attachmentNames = files.map((file) => file.originalname).filter(Boolean);
+    const memoryUserMessage = attachmentNames.length
+      ? `${userMessage}\n\n[Attachments: ${attachmentNames.join(", ")}]`
+      : userMessage;
+
+    appendProjectMessage(understandChangeMemory, projectId, "user", memoryUserMessage);
+    appendProjectMessage(understandChangeMemory, projectId, "assistant", answer);
+
+    res.json({
+      reply: answer || "I could not generate a response. Please try again.",
+      projectId,
+      memoryCount: getProjectMessages(understandChangeMemory, projectId).length,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: "Failed to generate response from Understand-the-Change assistant.",
+      details: error?.message || String(error),
+    });
+  }
+});
+
+app.post("/api/understand-change/report", requireApiKey, async (req, res) => {
+  try {
+    const projectId = normalizeProjectId(req.body?.projectId);
+    const objective = sanitizeMessageText(req.body?.objective);
+    const conversation = getProjectMessages(understandChangeMemory, projectId);
+
+    if (conversation.length === 0) {
+      res.status(400).json({
+        error: "No conversation found for this project. Send at least one message first.",
+      });
+      return;
+    }
+
+    const prompt = [
+      "Using the transcript below, produce the final report exactly in the required structure.",
+      "Do not add extra top-level sections outside the required format.",
+      "Use clear, practical, consulting-quality language.",
+      "",
+      objective ? `Objective override: ${objective}` : "",
+      `Project: ${projectId}`,
+      "",
+      "Transcript:",
+      buildTranscript(conversation.slice(-MAX_MEMORY_MESSAGES)),
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const response = await anthropic.messages.create({
+      model: MODEL,
+      max_tokens: Math.max(MAX_TOKENS, 1800),
+      system: buildUnderstandChangeSystemPrompt(),
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    const report = extractTextResponse(response);
+    res.json({
+      projectId,
+      report: report || "I could not generate a report. Please try again.",
+      generatedAt: new Date().toISOString(),
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: "Failed to generate understand-the-change report.",
       details: error?.message || String(error),
     });
   }
