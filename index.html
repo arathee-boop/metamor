@@ -124,29 +124,51 @@
     .card-arrow { font-size: 1.4rem; color: var(--text-muted); transition: transform 0.18s; }
     .action-card:hover .card-arrow { transform: translateX(4px); }
 
-    /* RECENT PROJECTS — subtle footer strip */
-    .section-header {
-      display: flex; align-items: center; gap: 8px;
-      margin-top: 3rem; margin-bottom: 0.6rem;
-      padding-top: 1.25rem; border-top: 1px solid var(--border);
+    /* RECENT PROJECTS — fixed bottom bar */
+    body { padding-bottom: 52px; }
+    .projects-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 90;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center;
+      padding: 0 24px;
+      height: 52px;
+      gap: 0;
     }
-    .section-header h2 {
-      font-family: 'Sora', sans-serif; font-weight: 600; font-size: 0.7rem;
-      text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-muted);
+    .projects-bar-label {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.09em; color: var(--text-muted);
+      white-space: nowrap; flex-shrink: 0;
+      padding-right: 14px; margin-right: 6px;
+      border-right: 1px solid var(--border);
     }
-    .section-header .pill-alien { display: none; }
-    .project-list { display: flex; flex-wrap: wrap; flex-direction: row; gap: 0 0.1rem; }
+    .projects-bar-list {
+      display: flex; align-items: center;
+      flex: 1; overflow: hidden; gap: 0;
+    }
     .project-pill {
       display: inline-flex; align-items: center; gap: 6px;
-      padding: 0.25rem 0.65rem;
-      background: none; border: none; border-radius: 999px;
+      padding: 0.2rem 0.7rem;
       text-decoration: none; color: var(--text-muted);
-      font-size: 0.775rem; font-weight: 500;
+      font-size: 0.775rem; font-weight: 500; white-space: nowrap;
+      border-radius: 999px;
       transition: color 0.12s, background 0.12s;
+      flex-shrink: 0;
     }
-    .project-pill:hover { color: var(--accent); background: var(--accent-soft); transform: none; border-color: transparent; }
-    .project-pill .pill-icon { width: 18px; height: 18px; flex-shrink: 0; }
+    .project-pill:hover { color: var(--accent); background: var(--accent-soft); }
+    .project-pill .pill-icon { width: 16px; height: 16px; flex-shrink: 0; }
     .project-pill .pill-meta { display: none; }
+    .projects-bar-more {
+      flex-shrink: 0; margin-left: auto; padding-left: 12px;
+      border-left: 1px solid var(--border);
+      font-size: 0.75rem; font-weight: 600; color: var(--text-muted);
+      text-decoration: none; white-space: nowrap;
+      padding: 0.2rem 0.65rem 0.2rem 0.75rem;
+      transition: color 0.12s;
+    }
+    .projects-bar-more:hover { color: var(--accent); }
+    /* hide old section-header / project-list inside main */
+    .section-header, .project-list { display: none; }
   </style>
 </head>
 <body>
@@ -419,11 +441,9 @@
     if (e.key === "Escape") closeMenu();
   });
 
-  // Prepend user-created projects from localStorage
+  // Build fixed bottom projects bar
   (() => {
-    const projects = JSON.parse(localStorage.getItem("metamor.projects") || "[]");
-    if (!projects.length) return;
-    const list = document.querySelector(".project-list");
+    const MAX_VISIBLE = 6;
     const pillSVG = `<svg class="pill-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="16" cy="16" r="16" fill="#fff0eb"/>
       <ellipse cx="16" cy="19" rx="8" ry="7" fill="#ff6b35"/>
@@ -432,25 +452,62 @@
       <circle cx="17" cy="12.2" r="0.7" fill="white"/>
       <path d="M13 21 Q16 24 19 21" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/>
     </svg>`;
-    projects.forEach(p => {
-      const msAgo = Date.now() - new Date(p.createdAt).getTime();
-      const days  = Math.floor(msAgo / 86400000);
-      const ago   = days === 0 ? "Today" : days === 1 ? "Yesterday" : `${days} days ago`;
-      const pill  = document.createElement("a");
-      pill.className = "project-pill";
-      pill.href      = p.destination || "./process-change.html";
-      pill.innerHTML = `${pillSVG}${p.name}<span class="pill-meta">${ago}</span>`;
-      pill.addEventListener("click", () => {
-        localStorage.setItem("metamor.project.name",          p.name);
-        localStorage.setItem("metamor.project.id",            p.id);
-        localStorage.setItem("metamor.project.template",      p.template || "");
-        localStorage.setItem("metamor.project.collaborators", JSON.stringify(p.collaborators || []));
-        localStorage.setItem("metamor.case.projectId",       p.id);
-        localStorage.setItem("metamor.understand.projectId", p.id);
-      });
-      list.prepend(pill);
+
+    // Combine user projects + hardcoded demo projects
+    const userProjects = JSON.parse(localStorage.getItem("metamor.projects") || "[]");
+    const demoProjects = [
+      { name:"Phoenix ERP Rollout",       href:"./projects.html#phoenix-erp-rollout",      svg:'<svg class="pill-icon" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="16" fill="#eaf8f1"/><ellipse cx="16" cy="19" rx="8" ry="7" fill="#3cb97a"/><circle cx="16" cy="14" r="5.5" fill="#4fd48c"/><circle cx="16" cy="13" r="3" fill="white"/><circle cx="16" cy="13" r="1.7" fill="#1c1a17"/><circle cx="17" cy="12.2" r="0.7" fill="white"/><path d="M13 21 Q16 24 19 21" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>' },
+      { name:"Atlas Org Redesign",         href:"./projects.html#atlas-org-redesign",        svg:'<svg class="pill-icon" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="16" fill="#eef4fc"/><ellipse cx="16" cy="19" rx="8" ry="7" fill="#4a90d9"/><circle cx="16" cy="14" r="5.5" fill="#6aaee8"/><circle cx="13.5" cy="13" r="2.5" fill="white"/><circle cx="13.5" cy="13" r="1.4" fill="#1c1a17"/><circle cx="18.5" cy="13" r="2.5" fill="white"/><circle cx="18.5" cy="13" r="1.4" fill="#1c1a17"/><path d="M13 21 Q16 24 19 21" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>' },
+      { name:"Nimbus Policy Migration",    href:"./projects.html#nimbus-policy-migration",   svg:'<svg class="pill-icon" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="16" fill="#f3effe"/><ellipse cx="16" cy="19" rx="8" ry="7" fill="#8b5cf6"/><circle cx="16" cy="14" r="5.5" fill="#a78bfa"/><circle cx="16" cy="13" r="3" fill="white"/><circle cx="16" cy="13" r="1.7" fill="#1c1a17"/><circle cx="17" cy="12.2" r="0.7" fill="white"/><path d="M13 21 Q16 24 19 21" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>' },
+      { name:"Summit CRM Consolidation",   href:"./projects.html#summit-crm-consolidation",  svg:'<svg class="pill-icon" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="16" fill="#fff8eb"/><ellipse cx="16" cy="19" rx="8" ry="7" fill="#f5a623"/><circle cx="16" cy="14" r="5.5" fill="#ffc04d"/><circle cx="13.5" cy="13" r="2.5" fill="white"/><circle cx="13.5" cy="13" r="1.4" fill="#1c1a17"/><circle cx="18.5" cy="13" r="2.5" fill="white"/><circle cx="18.5" cy="13" r="1.4" fill="#1c1a17"/><path d="M13 21 Q16 24 19 21" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>' },
+      { name:"Orion Training Launch",      href:"./projects.html#orion-training-launch",     svg:'<svg class="pill-icon" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="16" fill="#fff0eb"/><ellipse cx="16" cy="19" rx="8" ry="7" fill="#ff6b35"/><circle cx="16" cy="14" r="5.5" fill="#ff8c5a"/><circle cx="16" cy="13" r="3" fill="white"/><circle cx="16" cy="13" r="1.7" fill="#1c1a17"/><circle cx="17" cy="12.2" r="0.7" fill="white"/><path d="M13 21 Q16 24 19 21" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>' },
+    ];
+
+    const userPillItems = userProjects.map(p => ({
+      name: p.name, href: p.destination || "./process-change.html",
+      svg: pillSVG, isUser: true, project: p
+    }));
+    const allItems = [...userPillItems, ...demoProjects];
+    const visible  = allItems.slice(0, MAX_VISIBLE);
+    const hasMore  = allItems.length > MAX_VISIBLE;
+
+    const bar  = document.getElementById("projectsBar");
+    const list = document.getElementById("projectsBarList");
+
+    if (!allItems.length) { bar.hidden = true; return; }
+
+    visible.forEach(item => {
+      const a = document.createElement("a");
+      a.className = "project-pill";
+      a.href = item.href;
+      a.innerHTML = `${item.svg}${item.name}`;
+      if (item.isUser && item.project) {
+        a.addEventListener("click", () => {
+          const p = item.project;
+          localStorage.setItem("metamor.project.name",          p.name);
+          localStorage.setItem("metamor.project.id",            p.id);
+          localStorage.setItem("metamor.project.template",      p.template || "");
+          localStorage.setItem("metamor.project.collaborators", JSON.stringify(p.collaborators || []));
+          localStorage.setItem("metamor.case.projectId",       p.id);
+          localStorage.setItem("metamor.understand.projectId", p.id);
+        });
+      }
+      list.appendChild(a);
     });
+
+    if (hasMore) {
+      const more = document.createElement("a");
+      more.className = "projects-bar-more";
+      more.href = "./projects.html";
+      more.textContent = `+${allItems.length - MAX_VISIBLE} more →`;
+      bar.appendChild(more);
+    }
   })();
 </script>
+
+<nav class="projects-bar" id="projectsBar" aria-label="Recent projects">
+  <span class="projects-bar-label">Recent</span>
+  <div class="projects-bar-list" id="projectsBarList"></div>
+</nav>
 </body>
 </html>
