@@ -31,7 +31,7 @@
       </a>
       <div class="user-menu">
         <button class="user-menu-trigger" id="userMenuTrigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="accountDropdown">
-          <svg class="avatar-mini" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg class="avatar-mini" viewBox="0 0 26 26" fill="none">
             <circle cx="13" cy="13" r="13" fill="#fff0eb"/>
             <ellipse cx="13" cy="15" rx="7" ry="6" fill="#ff6b35"/>
             <circle cx="13" cy="12" r="4.5" fill="#ff8c5a"/>
@@ -64,13 +64,13 @@
         </div>
       </div>
 
-      <!-- Step 1: Data source -->
-      <section id="dataSourceSection">
-        <h2 style="font-size:1rem;font-weight:700;margin-bottom:0.25rem">Step 1 — Connect your employee data</h2>
-        <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0">Choose how to bring in your organisation structure and employee database.</p>
+      <!-- ── Phase 1: Data source ─────────────────────────── -->
+      <section id="phase1">
+        <h2 style="font-size:1rem;font-weight:700;margin-bottom:0.25rem">1 — Connect your employee data</h2>
+        <p style="font-size:0.85rem;color:var(--text-muted);margin:0 0 0">Choose how to bring in your organisation structure and employee database.</p>
 
         <div class="data-source-grid">
-          <div class="data-source-card" id="erpCard" role="button" tabindex="0" aria-pressed="false">
+          <div class="data-source-card" id="erpCard" role="button" tabindex="0">
             <div class="ds-icon">🔌</div>
             <div>
               <div class="ds-title">Connect ERP / HRMS</div>
@@ -83,66 +83,88 @@
               <span class="ds-tag">BambooHR</span>
               <span class="ds-tag">ADP</span>
             </div>
-            <div class="ds-status" id="erpStatus" hidden>
+            <div class="ds-status connected" id="erpStatus" hidden>
               <span style="width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block"></span>
               Connected
             </div>
           </div>
 
-          <div class="data-source-card" id="uploadCard" role="button" tabindex="0" aria-pressed="false">
+          <div class="data-source-card" id="uploadCard" role="button" tabindex="0">
             <div class="ds-icon">📂</div>
             <div>
               <div class="ds-title">Upload Documents</div>
               <div class="ds-desc">Upload org charts, headcount reports, or employee lists in any readable format.</div>
             </div>
             <div class="ds-systems">
-              <span class="ds-tag">.xlsx</span>
-              <span class="ds-tag">.csv</span>
-              <span class="ds-tag">.pdf</span>
-              <span class="ds-tag">.txt</span>
-              <span class="ds-tag">.docx</span>
+              <span class="ds-tag">.xlsx</span><span class="ds-tag">.csv</span>
+              <span class="ds-tag">.pdf</span><span class="ds-tag">.txt</span>
             </div>
-            <label class="start-project-btn" for="orgFiles" id="uploadLabel" style="font-size:0.8rem;padding:0.45rem 1rem;margin-top:0.25rem;cursor:pointer;display:inline-flex;align-items:center;gap:0.4rem">
+            <label class="start-project-btn" for="orgFiles" style="font-size:0.8rem;padding:0.45rem 1rem;margin-top:0.25rem;cursor:pointer;display:inline-flex;align-items:center;gap:0.4rem;text-align:center">
               Choose files
             </label>
             <input id="orgFiles" type="file" multiple accept=".txt,.md,.csv,.json,.xlsx,.xls,.pdf,.doc,.docx" style="display:none" />
             <div id="uploadStatus" class="ds-status uploaded" hidden></div>
           </div>
         </div>
+      </section>
 
-        <div class="radius-analyse-bar" id="analyseBar" hidden>
+      <!-- ── Phase 2: Column selection ───────────────────── -->
+      <section id="phase2" hidden>
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-bottom:0.5rem">
           <div>
-            <p style="font-weight:600;color:var(--text);font-size:0.875rem">Ready to analyse</p>
-            <p id="analyseBarDesc">Data source connected. Click Analyse to identify stakeholder attributes.</p>
+            <h2 style="font-size:1rem;font-weight:700;margin:0">2 — Select grouping attributes</h2>
+            <p style="font-size:0.85rem;color:var(--text-muted);margin:0.2rem 0 0">Choose which columns from your data should define stakeholder groups. Selected columns will each get their own impact-level assignment screen.</p>
           </div>
-          <button type="button" class="generate-plan-btn" id="analyseBtn">🔍 Analyse Stakeholders</button>
+          <span id="dataCountBadge" class="plan-stat"></span>
+        </div>
+        <div class="column-selector-grid" id="columnSelectorGrid"></div>
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+          <button type="button" class="generate-plan-btn" id="continueToAttrsBtn">Continue with selected →</button>
+          <button type="button" class="ghost-btn" id="backToPhase1Btn">← Change data source</button>
         </div>
       </section>
 
-      <!-- Stakeholder register (shown after selection) -->
-      <section class="register-section" id="registerSection" hidden>
-        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-bottom:0.75rem">
+      <!-- ── Phase 3 is handled via modals ───────────────── -->
+
+      <!-- ── Phase 4: Snapshot + Register ───────────────── -->
+      <section id="phase4" hidden>
+        <!-- Snapshot -->
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-bottom:1rem">
           <div>
-            <h2 style="margin:0">Stakeholder Register</h2>
-            <p class="register-subtitle" style="margin:0">All impacted groups identified across your organisation.</p>
+            <h2 style="font-size:1rem;font-weight:700;margin:0">Stakeholder Snapshot</h2>
+            <p style="font-size:0.85rem;color:var(--text-muted);margin:0">Visual overview of your impacted population.</p>
           </div>
-          <button type="button" class="ghost-btn" id="rerunAttrBtn">Re-select attributes</button>
+          <button type="button" class="ghost-btn" id="rerunBtn">↩ Re-select attributes</button>
         </div>
-        <div id="registerContainer">
-          <p class="register-empty">Complete the attribute selection to generate the register.</p>
+        <div class="snapshot-grid" id="snapshotCards"></div>
+        <div class="snap-charts" id="snapshotCharts"></div>
+
+        <!-- Register -->
+        <div class="register-toolbar">
+          <div>
+            <h2 style="font-size:1rem;font-weight:700;margin:0">Stakeholder Register</h2>
+            <p style="font-size:0.85rem;color:var(--text-muted);margin:0">Full employee-level register with impact assignments.</p>
+          </div>
+          <button type="button" class="generate-plan-btn" id="addStakeholderBtn" style="font-size:0.82rem;padding:0.5rem 1rem">+ Add Stakeholder</button>
+        </div>
+        <div class="register-scroll">
+          <table class="register-table" id="registerTable">
+            <thead id="registerHead"></thead>
+            <tbody id="registerBody"></tbody>
+          </table>
         </div>
       </section>
     </main>
 
-    <!-- ERP Connect modal -->
+    <!-- ERP connect modal -->
     <dialog class="task-modal" id="erpModal" aria-labelledby="erpModalTitle">
       <div class="task-modal-inner">
         <div class="task-modal-header">
           <h2 id="erpModalTitle">Connect ERP / HRMS</h2>
-          <button type="button" class="task-modal-close" id="erpModalClose">✕</button>
+          <button type="button" class="task-modal-close" id="erpClose">✕</button>
         </div>
-        <p style="font-size:0.85rem;color:var(--text-muted)">Select your HR system and enter your credentials to pull org structure and headcount data.</p>
-        <div class="task-form-grid" style="margin-top:0.5rem">
+        <p style="font-size:0.85rem;color:var(--text-muted)">Select your HR system to pull employee data in demo mode.</p>
+        <div class="task-form-grid" style="margin-top:0.75rem">
           <div class="task-form-field full">
             <label for="erpSystem">HR System</label>
             <select id="erpSystem">
@@ -165,344 +187,557 @@
         <div class="task-modal-footer">
           <div></div>
           <div class="task-modal-actions">
-            <button type="button" class="modal-cancel" id="erpModalCancel">Cancel</button>
-            <button type="button" class="modal-save" id="erpConnectBtn">Connect (Demo)</button>
+            <button type="button" class="modal-cancel" id="erpCancel">Cancel</button>
+            <button type="button" class="modal-save" id="erpConnect">Connect (Demo)</button>
           </div>
         </div>
       </div>
     </dialog>
 
-    <!-- Attribute selection modal (reused for each attribute) -->
+    <!-- Attribute wizard modal -->
     <dialog class="attr-modal" id="attrModal" aria-labelledby="attrModalTitle">
       <div class="attr-modal-inner">
         <div class="attr-modal-header">
           <div class="attr-modal-title">
-            <span id="attrIcon" style="font-size:1.25rem"></span>
+            <span id="attrIcon" style="font-size:1.2rem"></span>
             <h2 id="attrModalTitle"></h2>
           </div>
           <span class="attr-progress" id="attrProgress"></span>
         </div>
-
         <div class="attr-instruction">
-          <p>Select which <strong id="attrLabelInstr"></strong> groups are impacted, then assign an impact level to each:</p>
+          <p>Select the <strong id="attrLabelInstr"></strong> values that are impacted, then assign an impact level to each:</p>
           <div class="impact-legend" style="margin-top:0.5rem">
-            <span class="impact-pip"><span class="impact-dot" style="background:var(--accent)"></span> Direct — daily work changes significantly</span>
-            <span class="impact-pip"><span class="impact-dot" style="background:var(--accent2)"></span> Indirect — affected by ripple effects</span>
-            <span class="impact-pip"><span class="impact-dot" style="background:#8b5cf6"></span> External — customers, suppliers, regulators</span>
+            <span class="impact-pip"><span class="impact-dot" style="background:var(--accent)"></span>Direct — daily work changes significantly</span>
+            <span class="impact-pip"><span class="impact-dot" style="background:var(--accent2)"></span>Indirect — affected by ripple effects</span>
+            <span class="impact-pip"><span class="impact-dot" style="background:#8b5cf6"></span>External — customers, suppliers, regulators</span>
           </div>
         </div>
-
         <label class="attr-select-all">
-          <input type="checkbox" id="selectAllCheck" />
-          Select all
+          <input type="checkbox" id="selectAllCheck" /> Select all
         </label>
-
         <div class="attr-item-list" id="attrItemList"></div>
-
         <div class="attr-modal-footer">
-          <button type="button" class="modal-cancel" id="attrSkipBtn">Skip</button>
+          <button type="button" class="modal-cancel" id="attrSkip">Skip</button>
           <div class="task-modal-actions">
-            <button type="button" class="modal-save" id="attrSaveBtn">Save &amp; Continue →</button>
+            <button type="button" class="modal-save" id="attrSave">Save &amp; Continue →</button>
           </div>
         </div>
+      </div>
+    </dialog>
+
+    <!-- Add / Edit stakeholder modal -->
+    <dialog class="task-modal" id="empModal" aria-labelledby="empModalTitle">
+      <div class="task-modal-inner">
+        <div class="task-modal-header">
+          <h2 id="empModalTitle">Add Stakeholder</h2>
+          <button type="button" class="task-modal-close" id="empClose">✕</button>
+        </div>
+        <form id="empForm">
+          <div class="task-form-grid" id="empFormFields"></div>
+          <div class="task-modal-footer">
+            <button type="button" class="task-modal-delete" id="empDelete" hidden>Remove</button>
+            <div class="task-modal-actions">
+              <button type="button" class="modal-cancel" id="empCancel">Cancel</button>
+              <button type="submit" class="modal-save">Save</button>
+            </div>
+          </div>
+        </form>
       </div>
     </dialog>
 
     <script>
     (() => {
       // ── User menu ────────────────────────────────────────────
-      const menuTrigger  = document.getElementById('userMenuTrigger');
-      const menuDropdown = document.getElementById('accountDropdown');
-      function closeMenu(){ menuTrigger.setAttribute('aria-expanded','false'); menuDropdown.hidden=true; }
-      menuTrigger.addEventListener('click',()=>{ const o=menuTrigger.getAttribute('aria-expanded')==='true'; menuTrigger.setAttribute('aria-expanded',String(!o)); menuDropdown.hidden=o; });
-      document.addEventListener('click', e=>{ if(!e.target.closest('.user-menu')) closeMenu(); });
-      document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeMenu(); });
+      const menuTrig = document.getElementById('userMenuTrigger');
+      const menuDrop = document.getElementById('accountDropdown');
+      menuTrig.addEventListener('click', () => {
+        const o = menuTrig.getAttribute('aria-expanded') === 'true';
+        menuTrig.setAttribute('aria-expanded', String(!o));
+        menuDrop.hidden = o;
+      });
+      document.addEventListener('click', e => { if (!e.target.closest('.user-menu')) { menuTrig.setAttribute('aria-expanded','false'); menuDrop.hidden=true; } });
+      document.addEventListener('keydown', e => { if (e.key==='Escape') { menuTrig.setAttribute('aria-expanded','false'); menuDrop.hidden=true; } });
 
-      // ── Project state ────────────────────────────────────────
+      // ── Project context ──────────────────────────────────────
       const projectName    = localStorage.getItem('metamor.project.name') || 'My Project';
       const projectId      = localStorage.getItem('metamor.project.id')   || '';
       const changeAnalysis = projectId ? (localStorage.getItem(`metamor.${projectId}.outputs.changeAnalysis`) || '') : '';
       document.getElementById('pageTitle').textContent = `Assess Change Radius — ${projectName}`;
-      document.title = `Morp | Assess Change Radius — ${projectName}`;
+      document.title = `Morp | Assess Change Radius`;
 
       // ── Storage ──────────────────────────────────────────────
-      const RADIUS_KEY = `metamor.${projectId}.radius`;
-      function loadRadius(){ try{ return JSON.parse(localStorage.getItem(RADIUS_KEY)||'null'); }catch{ return null; } }
-      function saveRadius(d){ localStorage.setItem(RADIUS_KEY, JSON.stringify(d)); }
+      const KEY = `metamor.${projectId}.radius2`;
+      function load() { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch { return null; } }
+      function save(d) { localStorage.setItem(KEY, JSON.stringify(d)); }
 
-      // ── Attribute definitions ────────────────────────────────
-      const ATTR_DEFS = [
-        { key:'geography',  label:'Geography',  icon:'🌍' },
-        { key:'function',   label:'Function',   icon:'⚙️'  },
-        { key:'department', label:'Department', icon:'🏢' },
-        { key:'level',      label:'Job Level',  icon:'👤' },
-      ];
+      // ── State ────────────────────────────────────────────────
+      let allColumns  = [];   // all columns detected from data
+      let allRows     = [];   // all employee rows from data
+      let selCols     = [];   // columns user selected for grouping
+      let attrVals    = {};   // { colName: [{value, impactLevel}] }
+      let attrQueue   = [];   // ordered list of selected columns for wizard
+      let attrIdx     = 0;
+      let register    = [];   // final employee rows with impactLevel
+      let uploadedFiles = [];
+
+      // ── Helpers ──────────────────────────────────────────────
+      function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+      function uid()  { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 
       const IMPACT_LEVELS = [
         { value:'direct',   label:'Direct',   cls:'il-direct'   },
         { value:'indirect', label:'Indirect', cls:'il-indirect' },
         { value:'external', label:'External', cls:'il-external' },
       ];
+      const IMPACT_RANK = { direct:3, indirect:2, external:1 };
 
-      // ── State ────────────────────────────────────────────────
-      let dataSource   = null; // 'erp' | 'upload'
-      let uploadedFiles= [];
-      let attributes   = null; // { geography:[], function:[], department:[], level:[] }
-      let selections   = {};   // { geography:[{value,impactLevel},...], ... }
-      let attrIndex    = 0;
-
-      // ── Data source cards ────────────────────────────────────
-      const erpCard    = document.getElementById('erpCard');
-      const uploadCard = document.getElementById('uploadCard');
-      const analyseBar = document.getElementById('analyseBar');
-      const orgFiles   = document.getElementById('orgFiles');
-
-      function showAnalyseBar(desc) {
-        document.getElementById('analyseBarDesc').textContent = desc;
-        analyseBar.hidden = false;
+      function impactBadge(level) {
+        if (!level) return '<span style="color:var(--text-muted);font-size:0.75rem">—</span>';
+        const m = { direct:'Direct', indirect:'Indirect', external:'External' };
+        return `<span class="impact-badge il-${level}">${m[level]||level}</span>`;
       }
 
-      erpCard.addEventListener('click', () => {
-        document.getElementById('erpModal').showModal();
-      });
-      erpCard.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' ') { e.preventDefault(); document.getElementById('erpModal').showModal(); } });
+      function computeImpact(row) {
+        let best = null;
+        for (const col of selCols) {
+          const val    = (row[col] || '').trim().toLowerCase();
+          const groups = (attrVals[col] || []);
+          const match  = groups.find(g => g.value.toLowerCase() === val);
+          if (match && (!best || (IMPACT_RANK[match.impactLevel]||0) > (IMPACT_RANK[best]||0))) {
+            best = match.impactLevel;
+          }
+        }
+        return best || null;
+      }
 
-      uploadCard.addEventListener('click', e => {
-        if (!e.target.closest('label') && !e.target.closest('input')) orgFiles.click();
-      });
+      // ── Phase 1: Data source ─────────────────────────────────
+      const erpCard    = document.getElementById('erpCard');
+      const uploadCard = document.getElementById('uploadCard');
+      const orgFiles   = document.getElementById('orgFiles');
 
-      orgFiles.addEventListener('change', () => {
+      erpCard.addEventListener('click', () => document.getElementById('erpModal').showModal());
+      erpCard.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); document.getElementById('erpModal').showModal(); }});
+      uploadCard.addEventListener('click', e => { if (!e.target.closest('label') && !e.target.closest('input')) orgFiles.click(); });
+
+      orgFiles.addEventListener('change', async () => {
         const files = Array.from(orgFiles.files);
         if (!files.length) return;
         uploadedFiles = files;
-        dataSource = 'upload';
         uploadCard.classList.add('selected');
         erpCard.classList.remove('selected');
-        const status = document.getElementById('uploadStatus');
-        status.innerHTML = `<span style="width:8px;height:8px;border-radius:50%;background:var(--accent2);display:inline-block"></span> ${files.length} file${files.length>1?'s':''} ready`;
-        status.hidden = false;
-        showAnalyseBar(`${files.length} file${files.length>1?'s':''} uploaded. Click Analyse to identify stakeholder attributes.`);
+        const s = document.getElementById('uploadStatus');
+        s.innerHTML = `<span style="width:8px;height:8px;border-radius:50%;background:var(--accent2);display:inline-block"></span> ${files.length} file${files.length>1?'s':''} ready`;
+        s.hidden = false;
+        await parseData(files);
       });
 
-      // ── ERP modal ────────────────────────────────────────────
+      // ERP modal
       const erpModal = document.getElementById('erpModal');
-      document.getElementById('erpModalClose').addEventListener('click',  ()=>erpModal.close());
-      document.getElementById('erpModalCancel').addEventListener('click', ()=>erpModal.close());
-      erpModal.addEventListener('click', e=>{ if(e.target===erpModal) erpModal.close(); });
-
-      document.getElementById('erpConnectBtn').addEventListener('click', () => {
-        dataSource = 'erp';
+      document.getElementById('erpClose').addEventListener('click',   () => erpModal.close());
+      document.getElementById('erpCancel').addEventListener('click',  () => erpModal.close());
+      erpModal.addEventListener('click', e => { if (e.target===erpModal) erpModal.close(); });
+      document.getElementById('erpConnect').addEventListener('click', async () => {
+        const sys = document.getElementById('erpSystem');
         erpCard.classList.add('selected');
         uploadCard.classList.remove('selected');
-        const status = document.getElementById('erpStatus');
-        const system = document.getElementById('erpSystem');
-        status.innerHTML = `<span style="width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block"></span> Connected to ${system.options[system.selectedIndex].text}`;
-        status.hidden = false;
+        const s = document.getElementById('erpStatus');
+        s.innerHTML = `<span style="width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block"></span> Connected to ${sys.options[sys.selectedIndex].text}`;
+        s.hidden = false;
         erpModal.close();
-        showAnalyseBar(`Connected to ${system.options[system.selectedIndex].text}. Click Analyse to pull org structure and identify stakeholder attributes.`);
+        await parseData([]); // demo data
       });
 
-      // ── Analyse ──────────────────────────────────────────────
-      document.getElementById('analyseBtn').addEventListener('click', async () => {
-        const btn = document.getElementById('analyseBtn');
-        btn.disabled = true;
-        btn.textContent = '⏳ Analysing…';
-
+      // ── Parse data ───────────────────────────────────────────
+      async function parseData(files) {
+        const btn = document.querySelector('.start-project-btn, .ds-status');
         try {
-          const formData = new FormData();
-          formData.append('projectName', projectName);
-          formData.append('changeAnalysis', changeAnalysis);
-          if (dataSource === 'upload') {
-            uploadedFiles.forEach(f => formData.append('files', f));
-          }
-          // ERP: uses demo/sample data — no real files needed
-
-          const res  = await fetch('/api/assess-radius/analyze', { method:'POST', body:formData });
+          const fd = new FormData();
+          fd.append('projectName', projectName);
+          files.forEach(f => fd.append('files', f));
+          const res  = await fetch('/api/assess-radius/parse', { method:'POST', body:fd });
           const data = await res.json();
-          if (!res.ok) throw new Error(data.error || 'Request failed');
-          attributes = data.attributes;
+          if (!res.ok) throw new Error(data.error);
+          allColumns = data.columns || [];
+          allRows    = data.rows    || [];
         } catch(err) {
-          console.warn('AI analyse failed, using fallback:', err.message);
-          attributes = {
-            geography:  ['APAC', 'EMEA', 'Americas', 'Global HQ'],
-            function:   ['Finance', 'HR', 'Operations', 'IT', 'Sales', 'Legal'],
-            department: ['Accounts Payable', 'Payroll', 'Procurement', 'IT Support', 'Supply Chain', 'Risk & Compliance'],
-            level:      ['Executive', 'Senior Manager', 'Manager', 'Individual Contributor'],
-          };
+          console.warn('Parse failed, using fallback:', err.message);
+          const fb   = demoData();
+          allColumns = fb.columns;
+          allRows    = fb.rows;
         }
+        showPhase2();
+      }
 
-        btn.disabled = false;
-        btn.textContent = '🔍 Analyse Stakeholders';
-        attrIndex  = 0;
-        selections = {};
+      // ── Phase 2: Column selection ────────────────────────────
+      function showPhase2() {
+        document.getElementById('phase1').hidden = true;
+        document.getElementById('phase2').hidden = false;
+        document.getElementById('dataCountBadge').innerHTML =
+          `<span class="plan-stat-dot" style="background:var(--green)"></span>${allRows.length} employee${allRows.length!==1?'s':''} loaded`;
+
+        const RECOMMENDED = ['function','department','team','seniority','level','region','location','geography','grade','band'];
+        const grid = document.getElementById('columnSelectorGrid');
+        grid.innerHTML = '';
+        selCols = [];
+
+        allColumns.forEach(col => {
+          const chip = document.createElement('span');
+          chip.className = 'col-chip';
+          chip.textContent = col;
+          chip.dataset.col = col;
+          const isRec = RECOMMENDED.some(r => col.toLowerCase().includes(r));
+          if (isRec) { chip.classList.add('selected'); selCols.push(col); }
+          chip.addEventListener('click', () => {
+            chip.classList.toggle('selected');
+            selCols = [...grid.querySelectorAll('.col-chip.selected')].map(c => c.dataset.col);
+          });
+          grid.appendChild(chip);
+        });
+      }
+
+      document.getElementById('backToPhase1Btn').addEventListener('click', () => {
+        document.getElementById('phase2').hidden = true;
+        document.getElementById('phase1').hidden = false;
+      });
+
+      document.getElementById('continueToAttrsBtn').addEventListener('click', () => {
+        selCols = [...document.querySelectorAll('.col-chip.selected')].map(c => c.dataset.col);
+        if (!selCols.length) { alert('Please select at least one attribute column.'); return; }
+        attrQueue = [...selCols];
+        attrIdx   = 0;
+        attrVals  = {};
         openAttrModal();
       });
 
-      // ── Attribute modal wizard ───────────────────────────────
+      // ── Phase 3: Attribute wizard modals ────────────────────
       const attrModal      = document.getElementById('attrModal');
       const attrItemList   = document.getElementById('attrItemList');
       const selectAllCheck = document.getElementById('selectAllCheck');
 
-      function impactSelectHTML(val, disabled) {
-        const opts = IMPACT_LEVELS.map(il => `<option value="${il.value}"${val===il.value?' selected':''}>${il.label}</option>`).join('');
-        const cls  = val ? `il-${val}` : 'il-none';
-        return `<select class="impact-select ${cls}"${disabled?' disabled':''}><option value="">— level —</option>${opts}</select>`;
+      function uniqueVals(col) {
+        const vals = new Set(allRows.map(r => (r[col]||'').trim()).filter(Boolean));
+        return [...vals].sort();
       }
 
       function openAttrModal() {
-        if (attrIndex >= ATTR_DEFS.length) { finishSelection(); return; }
-        const def    = ATTR_DEFS[attrIndex];
-        const values = (attributes[def.key] || []);
+        if (attrIdx >= attrQueue.length) { buildRegister(); return; }
+        const col  = attrQueue[attrIdx];
+        const vals = uniqueVals(col);
+        const icons = { function:'⚙️', department:'🏢', team:'👥', region:'🌍', geography:'🌍', location:'📍', seniority:'👤', level:'👤', grade:'🎖️', band:'🎖️' };
+        const icon = Object.entries(icons).find(([k]) => col.toLowerCase().includes(k))?.[1] || '📋';
 
-        document.getElementById('attrIcon').textContent        = def.icon;
-        document.getElementById('attrModalTitle').textContent  = def.label;
-        document.getElementById('attrLabelInstr').textContent  = def.label.toLowerCase();
-        document.getElementById('attrProgress').textContent    = `${attrIndex + 1} of ${ATTR_DEFS.length}`;
+        document.getElementById('attrIcon').textContent       = icon;
+        document.getElementById('attrModalTitle').textContent = col;
+        document.getElementById('attrLabelInstr').textContent = col.toLowerCase();
+        document.getElementById('attrProgress').textContent   = `${attrIdx+1} of ${attrQueue.length}`;
         selectAllCheck.checked = false;
 
         attrItemList.innerHTML = '';
-        values.forEach(val => {
+        vals.forEach(val => {
           const div = document.createElement('div');
           div.className = 'attr-item';
-          div.dataset.value = val;
+          div.dataset.val = val;
+          const id = 'ac-' + uid();
           div.innerHTML = `
-            <input type="checkbox" class="attr-check" id="ac-${val.replace(/\s/g,'-')}" />
-            <label class="attr-item-name" for="ac-${val.replace(/\s/g,'-')}">${val}</label>
-            ${impactSelectHTML('', true)}`;
+            <input type="checkbox" class="attr-check" id="${id}" />
+            <label class="attr-item-name" for="${id}">${esc(val)}</label>
+            <select class="impact-select il-none" disabled>
+              <option value="">— level —</option>
+              ${IMPACT_LEVELS.map(il=>`<option value="${il.value}">${il.label}</option>`).join('')}
+            </select>`;
           attrItemList.appendChild(div);
 
           const cb  = div.querySelector('.attr-check');
-          const sel = div.querySelector('.impact-select');
+          const sel = div.querySelector('select');
           cb.addEventListener('change', () => {
             div.classList.toggle('checked', cb.checked);
             sel.disabled = !cb.checked;
-            if (!cb.checked) { sel.value = ''; sel.className = 'impact-select il-none'; }
-            else if (!sel.value) sel.value = 'direct';
-            updateSelectClass(sel);
-            syncSelectAll();
-          });
-          sel.addEventListener('change', () => updateSelectClass(sel));
-        });
-
-        selectAllCheck.addEventListener('change', () => {
-          attrItemList.querySelectorAll('.attr-item').forEach(item => {
-            const cb  = item.querySelector('.attr-check');
-            const sel = item.querySelector('.impact-select');
-            cb.checked = selectAllCheck.checked;
-            item.classList.toggle('checked', cb.checked);
-            sel.disabled = !cb.checked;
             if (cb.checked && !sel.value) sel.value = 'direct';
             if (!cb.checked) sel.value = '';
-            updateSelectClass(sel);
+            updateSelClass(sel);
+            syncSelAll();
           });
+          sel.addEventListener('change', () => updateSelClass(sel));
         });
+
+        const saHandler = () => {
+          [...attrItemList.querySelectorAll('.attr-item')].forEach(item => {
+            const cb = item.querySelector('.attr-check');
+            const sl = item.querySelector('select');
+            cb.checked = selectAllCheck.checked;
+            item.classList.toggle('checked', cb.checked);
+            sl.disabled = !cb.checked;
+            if (cb.checked && !sl.value) sl.value = 'direct';
+            if (!cb.checked) sl.value = '';
+            updateSelClass(sl);
+          });
+        };
+        selectAllCheck.replaceWith(selectAllCheck.cloneNode(true)); // remove old listener
+        const freshCheck = document.getElementById('selectAllCheck');
+        freshCheck.addEventListener('change', saHandler);
 
         attrModal.showModal();
       }
 
-      function updateSelectClass(sel) {
+      function updateSelClass(sel) {
         sel.className = `impact-select il-${sel.value || 'none'}`;
       }
-
-      function syncSelectAll() {
+      function syncSelAll() {
         const all = [...attrItemList.querySelectorAll('.attr-check')];
-        selectAllCheck.checked = all.length > 0 && all.every(c => c.checked);
+        document.getElementById('selectAllCheck').checked = all.length > 0 && all.every(c => c.checked);
       }
 
-      document.getElementById('attrSaveBtn').addEventListener('click', () => {
-        const def   = ATTR_DEFS[attrIndex];
+      document.getElementById('attrSave').addEventListener('click', () => {
+        const col   = attrQueue[attrIdx];
         const items = [];
         attrItemList.querySelectorAll('.attr-item').forEach(item => {
           const cb  = item.querySelector('.attr-check');
-          const sel = item.querySelector('.impact-select');
-          if (cb.checked) items.push({ value: item.dataset.value, impactLevel: sel.value || 'direct' });
+          const sel = item.querySelector('select');
+          if (cb.checked) items.push({ value: item.dataset.val, impactLevel: sel.value || 'direct' });
         });
-        selections[def.key] = items;
+        attrVals[col] = items;
         attrModal.close();
-        attrIndex++;
-        setTimeout(openAttrModal, 180);
+        attrIdx++;
+        setTimeout(openAttrModal, 200);
       });
 
-      document.getElementById('attrSkipBtn').addEventListener('click', () => {
+      document.getElementById('attrSkip').addEventListener('click', () => {
         attrModal.close();
-        attrIndex++;
-        setTimeout(openAttrModal, 180);
+        attrIdx++;
+        setTimeout(openAttrModal, 200);
       });
 
-      attrModal.addEventListener('click', e => { if(e.target===attrModal) {} }); // block backdrop close
+      attrModal.addEventListener('click', e => { if (e.target === attrModal) e.preventDefault(); });
 
-      // ── Build register ───────────────────────────────────────
-      function finishSelection() {
-        const rows = [];
-        ATTR_DEFS.forEach(def => {
-          (selections[def.key] || []).forEach(s => {
-            rows.push({ group: s.value, attrType: def.label, attrIcon: def.icon, impactLevel: s.impactLevel });
-          });
-        });
-
-        saveRadius({ attributes, selections, register: rows, updatedAt: new Date().toISOString() });
-        renderRegister(rows);
-        document.getElementById('registerSection').hidden = false;
-        document.getElementById('registerSection').scrollIntoView({ behavior:'smooth', block:'start' });
+      // ── Phase 4: Build register ──────────────────────────────
+      function buildRegister() {
+        register = allRows.map((row, i) => ({
+          ...row,
+          _id:          uid(),
+          _impactLevel: computeImpact(row),
+          _notes:       '',
+        }));
+        save({ allColumns, allRows, selCols, attrVals, register, updatedAt: new Date().toISOString() });
+        renderPhase4();
       }
 
-      function renderRegister(rows) {
-        const container = document.getElementById('registerContainer');
-        if (!rows.length) {
-          container.innerHTML = '<p class="register-empty">No stakeholders selected. Use "Re-select attributes" to start again.</p>';
-          return;
+      function renderPhase4() {
+        document.getElementById('phase2').hidden = true;
+        document.getElementById('phase4').hidden = false;
+        renderSnapshot();
+        renderRegisterTable();
+        document.getElementById('phase4').scrollIntoView({ behavior:'smooth', block:'start' });
+      }
+
+      // ── Snapshot ─────────────────────────────────────────────
+      function renderSnapshot() {
+        const counts = { total:register.length, direct:0, indirect:0, external:0, none:0 };
+        register.forEach(r => { const k=r._impactLevel||'none'; if(counts[k]!==undefined) counts[k]++; });
+
+        const cards = document.getElementById('snapshotCards');
+        cards.innerHTML = [
+          { val: counts.total,    label:'Total Stakeholders', color:'var(--text)'     },
+          { val: counts.direct,   label:'Direct Impact',      color:'var(--accent)'   },
+          { val: counts.indirect, label:'Indirect Impact',    color:'var(--accent2)'  },
+          { val: counts.external, label:'External',           color:'#8b5cf6'         },
+        ].map(c => `<div class="snap-card">
+          <div class="snap-card-value" style="color:${c.color}">${c.val}</div>
+          <div class="snap-card-label">${c.label}</div>
+        </div>`).join('');
+
+        // Bar charts per selected column
+        const charts = document.getElementById('snapshotCharts');
+        charts.innerHTML = '';
+        selCols.slice(0, 4).forEach(col => {
+          const freq = {};
+          register.forEach(r => { const v=(r[col]||'—').trim(); freq[v]=(freq[v]||0)+1; });
+          const sorted = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,8);
+          const max    = sorted[0]?.[1] || 1;
+          const chartEl = document.createElement('div');
+          chartEl.className = 'snap-chart';
+          chartEl.innerHTML = `<div class="snap-chart-title">${esc(col)}</div>` +
+            sorted.map(([label, n]) => `
+              <div class="snap-bar-row">
+                <span class="snap-bar-label" title="${esc(label)}">${esc(label)}</span>
+                <div class="snap-bar-track"><div class="snap-bar-fill" style="width:${Math.round(n/max*100)}%"></div></div>
+                <span class="snap-bar-value">${n}</span>
+              </div>`).join('');
+          charts.appendChild(chartEl);
+        });
+      }
+
+      // ── Register table ───────────────────────────────────────
+      const NAME_COLS = ['Name','Full Name','Employee Name','First Name'];
+      const MGR_COLS  = ['Line Manager','Manager','Direct Manager','Reporting Manager'];
+      const FH_COLS   = ['Function Head','Dept Head','Department Head','Head of Function','VP','Director'];
+
+      function findCol(row, candidates) {
+        return candidates.find(c => allColumns.includes(c) && row[c]) || null;
+      }
+
+      function renderRegisterTable() {
+        const head  = document.getElementById('registerHead');
+        const body  = document.getElementById('registerBody');
+
+        // Fixed columns first, then selected attribute columns
+        const fixedCols = [];
+        ['Name','Full Name','Employee Name'].forEach(c => { if (allColumns.includes(c) && !fixedCols.includes(c)) fixedCols.push(c); });
+        ['Line Manager','Manager'].forEach(c => { if (allColumns.includes(c) && !fixedCols.includes(c)) fixedCols.push(c); });
+        ['Function Head','Dept Head','Department Head'].forEach(c => { if (allColumns.includes(c) && !fixedCols.includes(c)) fixedCols.push(c); });
+        const displayCols = [...new Set([...fixedCols, ...selCols])];
+
+        head.innerHTML = `<tr>
+          ${displayCols.map(c=>`<th>${esc(c)}</th>`).join('')}
+          <th>Impact Level</th>
+          <th>Notes</th>
+          <th style="width:36px"></th>
+        </tr>`;
+
+        body.innerHTML = '';
+        register.forEach(row => renderRow(row, displayCols));
+      }
+
+      function renderRow(row, displayCols) {
+        const body = document.getElementById('registerBody');
+        const tr = document.createElement('tr');
+        tr.dataset.id = row._id;
+        const dc = displayCols || getDisplayCols();
+        tr.innerHTML = `
+          ${dc.map(c=>`<td style="white-space:nowrap;font-size:0.82rem">${esc(row[c]||'—')}</td>`).join('')}
+          <td>${impactBadge(row._impactLevel)}</td>
+          <td style="min-width:140px;font-size:0.8rem;color:var(--text-muted)">${esc(row._notes||'')}</td>
+          <td><button type="button" class="row-edit-btn" data-id="${row._id}" title="Edit">✎</button></td>`;
+        body.appendChild(tr);
+        tr.querySelector('.row-edit-btn').addEventListener('click', () => openEmpModal(row._id));
+      }
+
+      function getDisplayCols() {
+        const fixedCols = [];
+        ['Name','Full Name','Employee Name'].forEach(c => { if (allColumns.includes(c) && !fixedCols.includes(c)) fixedCols.push(c); });
+        ['Line Manager','Manager'].forEach(c => { if (allColumns.includes(c) && !fixedCols.includes(c)) fixedCols.push(c); });
+        ['Function Head','Dept Head','Department Head'].forEach(c => { if (allColumns.includes(c) && !fixedCols.includes(c)) fixedCols.push(c); });
+        return [...new Set([...fixedCols, ...selCols])];
+      }
+
+      // ── Add / Edit stakeholder modal ─────────────────────────
+      const empModal = document.getElementById('empModal');
+      let editingEmpId = null;
+
+      function openEmpModal(empId) {
+        editingEmpId = empId || null;
+        document.getElementById('empModalTitle').textContent = empId ? 'Edit Stakeholder' : 'Add Stakeholder';
+        document.getElementById('empDelete').hidden = !empId;
+        const row   = empId ? register.find(r => r._id === empId) : {};
+        const fields = document.getElementById('empFormFields');
+        fields.innerHTML = '';
+
+        // All data columns + impact level + notes
+        const formCols = [...allColumns, '_impactLevel', '_notes'];
+        formCols.forEach((col, i) => {
+          const isHalf = i < formCols.length - 2;
+          const div = document.createElement('div');
+          div.className = `task-form-field${isHalf ? '' : ' full'}`;
+          const val = row ? (row[col] || '') : '';
+
+          if (col === '_impactLevel') {
+            div.innerHTML = `<label for="ef-impact">Impact Level</label>
+              <select id="ef-impact" name="ef-impact">
+                <option value="">— none —</option>
+                ${IMPACT_LEVELS.map(il=>`<option value="${il.value}"${val===il.value?' selected':''}>${il.label}</option>`).join('')}
+              </select>`;
+          } else if (col === '_notes') {
+            div.innerHTML = `<label for="ef-notes">Notes</label>
+              <textarea id="ef-notes" name="ef-notes" rows="2" placeholder="Any context…">${esc(val)}</textarea>`;
+          } else {
+            div.innerHTML = `<label for="ef-${esc(col)}">${esc(col)}</label>
+              <input id="ef-${esc(col)}" type="text" name="${esc(col)}" value="${esc(val)}" placeholder="${esc(col)}" />`;
+          }
+          fields.appendChild(div);
+        });
+
+        empModal.showModal();
+        setTimeout(() => fields.querySelector('input,select,textarea')?.focus(), 50);
+      }
+
+      document.getElementById('empClose').addEventListener('click',  () => empModal.close());
+      document.getElementById('empCancel').addEventListener('click', () => empModal.close());
+      empModal.addEventListener('click', e => { if (e.target===empModal) empModal.close(); });
+
+      document.getElementById('empDelete').addEventListener('click', () => {
+        if (!editingEmpId || !confirm('Remove this stakeholder?')) return;
+        register = register.filter(r => r._id !== editingEmpId);
+        save({ allColumns, allRows, selCols, attrVals, register, updatedAt: new Date().toISOString() });
+        empModal.close();
+        renderSnapshot();
+        renderRegisterTable();
+      });
+
+      document.getElementById('empForm').addEventListener('submit', e => {
+        e.preventDefault();
+        const fields = document.getElementById('empFormFields');
+        const data   = { _id: editingEmpId || uid(), _impactLevel:'', _notes:'' };
+
+        allColumns.forEach(col => {
+          const inp = fields.querySelector(`[name="${CSS.escape(col)}"]`);
+          if (inp) data[col] = inp.value.trim();
+        });
+        data._impactLevel = (fields.querySelector('#ef-impact')?.value) || '';
+        data._notes       = (fields.querySelector('#ef-notes')?.value || '').trim();
+
+        if (editingEmpId) {
+          const idx = register.findIndex(r => r._id === editingEmpId);
+          if (idx >= 0) register[idx] = data;
+        } else {
+          register.push(data);
         }
-        const tbody = rows.map((r,i) => `
-          <tr>
-            <td style="font-weight:600">${r.attrIcon} ${r.group}</td>
-            <td><span class="attr-type-pill">${r.attrType}</span></td>
-            <td><span class="impact-badge il-${r.impactLevel}">${r.impactLevel.charAt(0).toUpperCase()+r.impactLevel.slice(1)}</span></td>
-            <td>
-              <input type="text" class="inline-edit-input" data-row="${i}" placeholder="Add notes…"
-                style="max-width:240px;font-size:0.8rem"
-                value="${escHtml(rows[i].notes||'')}"
-                onblur="updateNote(${i}, this.value)" />
-            </td>
-          </tr>`).join('');
+        save({ allColumns, allRows, selCols, attrVals, register, updatedAt: new Date().toISOString() });
+        empModal.close();
+        renderSnapshot();
+        renderRegisterTable();
+      });
 
-        container.innerHTML = `
-          <table class="register-table">
-            <thead><tr>
-              <th>Stakeholder Group</th>
-              <th>Attribute</th>
-              <th>Impact Level</th>
-              <th>Notes</th>
-            </tr></thead>
-            <tbody>${tbody}</tbody>
-          </table>`;
-
-        // expose note update globally for inline handler
-        window.updateNote = (idx, val) => {
-          rows[idx].notes = val;
-          const saved = loadRadius();
-          if (saved) { saved.register[idx].notes = val; saveRadius(saved); }
-        };
-      }
-
-      // ── Re-run ───────────────────────────────────────────────
-      document.getElementById('rerunAttrBtn').addEventListener('click', () => {
-        attrIndex  = 0;
-        selections = {};
-        openAttrModal();
+      document.getElementById('addStakeholderBtn').addEventListener('click', () => openEmpModal(null));
+      document.getElementById('rerunBtn').addEventListener('click', () => {
+        document.getElementById('phase4').hidden = true;
+        document.getElementById('phase2').hidden = false;
+        attrIdx = 0; attrVals = {}; register = [];
       });
 
       // ── Restore saved state ──────────────────────────────────
-      const saved = loadRadius();
+      const saved = load();
       if (saved && saved.register && saved.register.length) {
-        attributes = saved.attributes;
-        selections = saved.selections || {};
-        document.getElementById('registerSection').hidden = false;
-        renderRegister(saved.register);
-        showAnalyseBar('Previous analysis loaded. You can re-select attributes or analyse again.');
-        analyseBar.hidden = false;
+        allColumns = saved.allColumns || [];
+        allRows    = saved.allRows    || [];
+        selCols    = saved.selCols    || [];
+        attrVals   = saved.attrVals   || {};
+        register   = saved.register   || [];
+        document.getElementById('phase1').hidden = true;
+        renderPhase4();
       }
 
-      function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+      // ── Demo fallback data ───────────────────────────────────
+      function demoData() {
+        return {
+          columns:['Name','Title','Function','Department','Team','Seniority','Line Manager','Function Head','Region'],
+          rows:[
+            {Name:'Sarah Chen',     Title:'Finance Manager',         Function:'Finance',    Department:'AP & AR',        Team:'Accounts Payable', Seniority:'Manager',              'Line Manager':'David Kim',    'Function Head':'Emma Wilson', Region:'APAC'},
+            {Name:'James Okafor',   Title:'HR Business Partner',     Function:'HR',         Department:'People & Culture',Team:'HRBP',            Seniority:'Senior Specialist',    'Line Manager':'Linda Park',   'Function Head':'Linda Park',  Region:'EMEA'},
+            {Name:'Maria Torres',   Title:'Operations Analyst',      Function:'Operations', Department:'Supply Chain',   Team:'Procurement',      Seniority:'Analyst',              'Line Manager':'Sam Reid',     'Function Head':'Tom Nguyen',  Region:'Americas'},
+            {Name:'Raj Patel',      Title:'IT Systems Engineer',     Function:'IT',         Department:'Infrastructure', Team:'ERP Support',      Seniority:'Engineer',             'Line Manager':'Claire Fox',   'Function Head':'Claire Fox',  Region:'APAC'},
+            {Name:'Emma Wilson',    Title:'VP Finance',              Function:'Finance',    Department:'Group Finance',  Team:'Leadership',       Seniority:'VP',                   'Line Manager':'CEO',          'Function Head':'Emma Wilson', Region:'Global HQ'},
+            {Name:'Tom Nguyen',     Title:'VP Operations',           Function:'Operations', Department:'Group Operations',Team:'Leadership',      Seniority:'VP',                   'Line Manager':'CEO',          'Function Head':'Tom Nguyen',  Region:'Global HQ'},
+            {Name:'Linda Park',     Title:'Chief People Officer',    Function:'HR',         Department:'Group HR',       Team:'Leadership',       Seniority:'C-Suite',              'Line Manager':'CEO',          'Function Head':'Linda Park',  Region:'Global HQ'},
+            {Name:'David Kim',      Title:'Finance Director',        Function:'Finance',    Department:'Regional Finance',Team:'APAC Finance',    Seniority:'Director',             'Line Manager':'Emma Wilson',  'Function Head':'Emma Wilson', Region:'APAC'},
+            {Name:'Claire Fox',     Title:'IT Director',             Function:'IT',         Department:'Technology',     Team:'Platform',         Seniority:'Director',             'Line Manager':'CTO',          'Function Head':'Claire Fox',  Region:'EMEA'},
+            {Name:'Sam Reid',       Title:'Procurement Manager',     Function:'Operations', Department:'Supply Chain',   Team:'Procurement',      Seniority:'Manager',              'Line Manager':'Tom Nguyen',   'Function Head':'Tom Nguyen',  Region:'Americas'},
+            {Name:'Aisha Mensah',   Title:'Payroll Specialist',      Function:'HR',         Department:'Compensation',  Team:'Payroll',          Seniority:'Specialist',           'Line Manager':'Linda Park',   'Function Head':'Linda Park',  Region:'EMEA'},
+            {Name:'Carlos Diaz',    Title:'Sales Operations Lead',   Function:'Sales',      Department:'Commercial',    Team:'Sales Ops',        Seniority:'Lead',                 'Line Manager':'VP Sales',     'Function Head':'VP Sales',    Region:'Americas'},
+            {Name:'Priya Sharma',   Title:'Risk & Compliance Analyst',Function:'Legal',     Department:'GRC',           Team:'Compliance',       Seniority:'Analyst',              'Line Manager':'GC',           'Function Head':'GC',          Region:'APAC'},
+            {Name:'Ben Müller',     Title:'Change Manager',          Function:'HR',         Department:'Org Effectiveness',Team:'Change Office', Seniority:'Manager',              'Line Manager':'Linda Park',   'Function Head':'Linda Park',  Region:'EMEA'},
+            {Name:'Yuki Tanaka',    Title:'FP&A Analyst',            Function:'Finance',    Department:'FP&A',          Team:'Planning',         Seniority:'Analyst',              'Line Manager':'David Kim',    'Function Head':'Emma Wilson', Region:'APAC'},
+          ]
+        };
+      }
     })();
     </script>
   </body>
