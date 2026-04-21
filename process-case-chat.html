@@ -343,6 +343,8 @@
           downloadMemoBtn.disabled = false;
           downloadSlidesBtn.disabled = false;
           chatStatus.textContent = `Memo and slide outline ready for "${projectId}".`;
+          if (data.memo)   localStorage.setItem(`metamor.${projectId}.outputs.executiveMemo`, data.memo);
+          if (data.slides) localStorage.setItem(`metamor.${projectId}.outputs.slideOutline`,  data.slides);
         } catch (error) {
           chatStatus.textContent =
             error.message ||
@@ -355,6 +357,14 @@
 
       chatFiles.addEventListener("change", () => {
         renderAttachments(chatFiles.files);
+        const pid = getCurrentProjectId();
+        const existing = JSON.parse(localStorage.getItem(`metamor.${pid}.inputs`) || "[]");
+        Array.from(chatFiles.files).forEach(f => {
+          if (!existing.find(e => e.name === f.name)) {
+            existing.push({ name: f.name, size: f.size, uploadedAt: new Date().toISOString() });
+          }
+        });
+        localStorage.setItem(`metamor.${pid}.inputs`, JSON.stringify(existing));
       });
 
       switchProjectBtn.addEventListener("click", loadProjectHistory);
