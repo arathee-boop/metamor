@@ -1482,3 +1482,150 @@ p {
   flex-shrink: 0;
   background: currentColor;
 }
+
+/* ── Change Plan CTA (on PG) ────────────────────────────────── */
+.change-plan-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 2rem 0;
+  padding: 1.5rem;
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius);
+  text-align: center;
+}
+.change-plan-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg-card);
+  border: 1.5px solid var(--accent);
+  border-radius: 999px;
+  padding: 0.65rem 1.5rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.change-plan-btn:hover { background: var(--accent-soft); }
+.change-plan-note { font-size: 0.8rem; color: var(--text-muted); margin: 0; }
+
+/* ── Project Planner ────────────────────────────────────────── */
+.planner-header { margin-bottom: 1.75rem; }
+.planner-stats  { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+.plan-stat {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.28rem 0.7rem;
+  background: var(--bg-subtle); border: 1.5px solid var(--border);
+  border-radius: 999px; font-size: 0.75rem; font-weight: 600; color: var(--text);
+}
+.plan-stat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.planner-toolbar { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.75rem; align-items: center; }
+.generate-plan-btn {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: var(--accent); color: #fff; border: none; border-radius: 999px;
+  padding: 0.6rem 1.25rem; font-family: inherit; font-size: 0.875rem; font-weight: 700;
+  cursor: pointer; transition: background 0.15s;
+}
+.generate-plan-btn:hover { background: #ea5b28; }
+.generate-plan-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.plan-group { margin-bottom: 1rem; border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.plan-group-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.75rem 1rem; background: var(--bg-subtle);
+  border-bottom: 1.5px solid var(--border); cursor: pointer; user-select: none;
+}
+.plan-group-meta { display: flex; align-items: center; gap: 0.6rem; }
+.plan-group-meta h2 { font-size: 0.92rem; font-weight: 700; margin: 0; }
+.plan-group-count { font-size: 0.73rem; color: var(--text-muted); font-weight: 500; }
+.plan-group-chevron { font-size: 0.7rem; color: var(--text-muted); transition: transform 0.18s; }
+.plan-group.collapsed .plan-group-chevron { transform: rotate(-90deg); }
+.plan-group.collapsed .plan-group-body { display: none; }
+.plan-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+.plan-table th {
+  text-align: left; padding: 0.5rem 0.85rem;
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--text-muted); border-bottom: 1.5px solid var(--border); white-space: nowrap; background: var(--bg-card);
+}
+.plan-table td { padding: 0.6rem 0.85rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.plan-table tbody tr:last-child td { border-bottom: none; }
+.plan-table tbody tr:hover td { background: var(--bg-subtle); }
+.task-title-cell { font-weight: 600; color: var(--text); }
+.task-muted { color: var(--text-muted); font-size: 0.8rem; white-space: nowrap; }
+.task-actions { display: flex; gap: 0.35rem; }
+.task-action-btn {
+  background: none; border: 1.5px solid var(--border); border-radius: 6px;
+  padding: 0.18rem 0.5rem; font-size: 0.72rem; cursor: pointer; color: var(--text-muted);
+  transition: background 0.1s, border-color 0.1s; font-family: inherit;
+}
+.task-action-btn:hover { background: var(--bg-subtle); border-color: var(--accent); color: var(--accent); }
+.task-action-btn.danger:hover { border-color: #d05c5c; color: #d05c5c; background: #fff6f6; }
+.add-group-task-btn {
+  display: block; width: calc(100% - 1.5rem); margin: 0.5rem 0.75rem 0.6rem;
+  padding: 0.48rem; background: none; border: 1.5px dashed var(--border);
+  border-radius: var(--radius-sm); font-size: 0.8rem; font-weight: 600;
+  color: var(--text-muted); cursor: pointer; transition: border-color 0.15s, color 0.15s;
+  font-family: inherit; text-align: center;
+}
+.add-group-task-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.status-badge {
+  display: inline-flex; align-items: center; gap: 0.28rem;
+  padding: 0.18rem 0.55rem; border-radius: 999px;
+  font-size: 0.7rem; font-weight: 700; white-space: nowrap;
+}
+.status-not-started { background: var(--bg-subtle); color: var(--text-muted); border: 1.5px solid var(--border); }
+.status-in-progress  { background: var(--accent2-soft); color: var(--accent2); border: 1.5px solid rgba(74,144,217,0.3); }
+.status-complete     { background: #eafaf3; color: var(--green); border: 1.5px solid rgba(60,185,122,0.3); }
+.status-blocked      { background: #fff0eb; color: var(--accent); border: 1.5px solid rgba(255,107,53,0.35); }
+
+.plan-empty { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
+.plan-empty h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text); }
+.plan-generating { text-align: center; padding: 3rem 1rem; color: var(--text-muted); font-size: 0.9rem; }
+
+/* Task modal */
+.task-modal {
+  border: none; padding: 0; border-radius: var(--radius);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  width: min(600px, calc(100vw - 2rem)); background: var(--bg-card);
+}
+.task-modal::backdrop { background: rgba(28,26,23,0.45); backdrop-filter: blur(3px); }
+.task-modal-inner { padding: 1.75rem; display: flex; flex-direction: column; gap: 1.1rem; }
+.task-modal-header { display: flex; align-items: center; justify-content: space-between; }
+.task-modal-header h2 { font-size: 1.1rem; font-weight: 800; margin: 0; }
+.task-modal-close { background: none; border: none; cursor: pointer; font-size: 1.3rem; color: var(--text-muted); padding: 0; line-height: 1; }
+.task-modal-close:hover { color: var(--text); }
+.task-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; }
+.task-form-field { display: flex; flex-direction: column; gap: 0.35rem; }
+.task-form-field.full { grid-column: 1 / -1; }
+.task-form-field label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
+.task-form-field input,
+.task-form-field select,
+.task-form-field textarea {
+  padding: 0.58rem 0.75rem; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  font-family: inherit; font-size: 0.875rem; color: var(--text); background: var(--bg);
+  transition: border-color 0.15s;
+}
+.task-form-field select[multiple] { min-height: 90px; }
+.task-form-field input:focus,
+.task-form-field select:focus,
+.task-form-field textarea:focus { outline: none; border-color: var(--accent); }
+.task-form-field textarea { resize: vertical; min-height: 68px; }
+.task-modal-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 0.75rem; border-top: 1.5px solid var(--border);
+  margin-top: 0.25rem;
+}
+.task-modal-delete {
+  background: none; border: 1.5px solid rgba(208,92,92,0.4); border-radius: 999px;
+  padding: 0.42rem 0.9rem; font-family: inherit; font-size: 0.8rem; font-weight: 600;
+  color: #9a3434; cursor: pointer; transition: background 0.15s;
+}
+.task-modal-delete:hover { background: #ffecec; }
+.task-modal-actions { display: flex; gap: 0.6rem; }
