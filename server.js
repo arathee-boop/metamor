@@ -539,6 +539,57 @@ app.post("/api/understand-change/report", requireApiKey, async (req, res) => {
   }
 });
 
+app.post("/api/assess-radius/parse", requireApiKey, upload.array("files", 6), async (req, res) => {
+  try {
+    const files = req.files || [];
+    const projectName = sanitizeMessageText(req.body?.projectName);
+
+    const fileContents = files
+      .filter(f => f.mimetype.startsWith("text/") || f.mimetype === "application/json")
+      .map(f => `=== ${f.originalname} ===\n${f.buffer.toString("utf8").slice(0, 3000)}`)
+      .join("\n\n");
+
+    const prompt = fileContents
+      ? `Parse the following document(s) and extract a structured employee/stakeholder list.
+
+${fileContents}
+
+Return ONLY a valid JSON object with this exact structure:
+{
+  "columns": ["exact column names from the data"],
+  "rows": [{ "column1": "value", ... }, ...]
+}
+
+Rules:
+- Extract all person/employee attribute columns present in the source
+- Always include these if present: Name, Title/Role, Department, Function, Team, Seniority/Level, Manager/Line Manager, Function Head, Region/Location
+- Return up to 50 rows
+- Use exact column names from the source
+- If no clear employee data: generate 20 representative employees for a "${projectName || 'change initiative'}" project`
+      : `Generate a realistic sample employee database of 20 people for a "${projectName || 'process change'}" initiative.
+Return ONLY a valid JSON object:
+{
+  "columns": ["Name","Title","Function","Department","Team","Seniority","Line Manager","Function Head","Region"],
+  "rows": [{ ... }, ...]
+}`;
+
+    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const response  = await anthropic.messages.create({
+      model: MODEL, max_tokens: 2400,
+      system: "You are a data extraction expert. Output only valid JSON when asked.",
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    const text = extractTextResponse(response);
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error("No valid JSON in response");
+    const parsed = JSON.parse(jsonMatch[0]);
+    res.json({ columns: parsed.columns || [], rows: parsed.rows || [] });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to parse employee data.", details: error?.message || String(error) });
+  }
+});
+
 app.post("/api/assess-radius/analyze", requireApiKey, upload.array("files", 6), async (req, res) => {
   try {
     const projectName    = sanitizeMessageText(req.body?.projectName);

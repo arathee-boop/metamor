@@ -1764,3 +1764,55 @@ p {
 @media (max-width: 600px) {
   .data-source-grid { grid-template-columns: 1fr; }
 }
+
+/* ── Column selector (assess radius phase 2) ────────────────── */
+.column-selector-grid {
+  display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0 1.5rem;
+}
+.col-chip {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.35rem 0.75rem; border-radius: 999px;
+  border: 1.5px solid var(--border); background: var(--bg-card);
+  font-size: 0.8rem; font-weight: 600; color: var(--text-muted);
+  cursor: pointer; transition: border-color 0.12s, background 0.12s, color 0.12s;
+  user-select: none;
+}
+.col-chip:hover { border-color: var(--accent); color: var(--accent); }
+.col-chip.selected { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.col-chip.selected::before { content: '✓ '; font-size: 0.7rem; }
+
+/* ── Snapshot visualization ──────────────────────────────────── */
+.snapshot-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem; margin-bottom: 1.5rem;
+}
+.snap-card {
+  background: var(--bg-card); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); padding: 1rem;
+  display: flex; flex-direction: column; gap: 0.2rem;
+}
+.snap-card-value { font-size: 2rem; font-weight: 800; font-family: 'Nunito', sans-serif; line-height: 1; }
+.snap-card-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); }
+.snap-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+.snap-chart { background: var(--bg-card); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 1rem; }
+.snap-chart-title { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0.75rem; }
+.snap-bar-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.45rem; }
+.snap-bar-label { font-size: 0.78rem; font-weight: 500; color: var(--text); width: 110px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.snap-bar-track { flex: 1; height: 8px; background: var(--bg-subtle); border-radius: 999px; overflow: hidden; }
+.snap-bar-fill  { height: 100%; border-radius: 999px; background: var(--accent); transition: width 0.4s ease; }
+.snap-bar-value { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); width: 28px; text-align: right; flex-shrink: 0; }
+@media (max-width: 640px) { .snap-charts { grid-template-columns: 1fr; } }
+
+/* ── Stakeholder register ────────────────────────────────────── */
+.register-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.75rem;
+}
+.register-scroll { overflow-x: auto; border: 1.5px solid var(--border); border-radius: var(--radius-sm); }
+.register-table th:last-child, .register-table td:last-child { text-align: center; }
+.row-edit-btn {
+  background: none; border: 1.5px solid var(--border); border-radius: 6px;
+  width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text-muted); font-size: 0.8rem; transition: background 0.1s, border-color 0.1s;
+}
+.row-edit-btn:hover { background: var(--bg-subtle); border-color: var(--accent); color: var(--accent); }
