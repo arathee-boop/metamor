@@ -1020,6 +1020,11 @@ p {
   box-shadow: none;
 }
 
+.back-link {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+}
+
 .back-link:hover,
 .secondary-link:hover,
 .button-link:hover,
