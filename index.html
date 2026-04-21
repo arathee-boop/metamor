@@ -124,21 +124,29 @@
     .card-arrow { font-size: 1.4rem; color: var(--text-muted); transition: transform 0.18s; }
     .action-card:hover .card-arrow { transform: translateX(4px); }
 
-    /* PROJECTS */
-    .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
-    .section-header h2 { font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1.15rem; }
-    .section-header .pill-alien { width: 28px; height: 28px; }
-    .project-list { display: flex; flex-direction: column; gap: 10px; }
-    .project-pill {
-      display: flex; align-items: center; gap: 14px; padding: 16px 20px;
-      background: var(--bg-card); border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm); text-decoration: none;
-      color: var(--text); font-size: 0.925rem; font-weight: 600;
-      transition: background 0.15s, border-color 0.15s, transform 0.15s;
+    /* RECENT PROJECTS — subtle footer strip */
+    .section-header {
+      display: flex; align-items: center; gap: 8px;
+      margin-top: 3rem; margin-bottom: 0.6rem;
+      padding-top: 1.25rem; border-top: 1px solid var(--border);
     }
-    .project-pill:hover { background: var(--bg-subtle); border-color: var(--accent); transform: translateX(4px); }
-    .project-pill .pill-icon { width: 32px; height: 32px; flex-shrink: 0; }
-    .project-pill .pill-meta { margin-left: auto; font-size: 0.78rem; color: var(--text-muted); font-weight: 400; }
+    .section-header h2 {
+      font-family: 'Sora', sans-serif; font-weight: 600; font-size: 0.7rem;
+      text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-muted);
+    }
+    .section-header .pill-alien { display: none; }
+    .project-list { display: flex; flex-wrap: wrap; flex-direction: row; gap: 0 0.1rem; }
+    .project-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 0.25rem 0.65rem;
+      background: none; border: none; border-radius: 999px;
+      text-decoration: none; color: var(--text-muted);
+      font-size: 0.775rem; font-weight: 500;
+      transition: color 0.12s, background 0.12s;
+    }
+    .project-pill:hover { color: var(--accent); background: var(--accent-soft); transform: none; border-color: transparent; }
+    .project-pill .pill-icon { width: 18px; height: 18px; flex-shrink: 0; }
+    .project-pill .pill-meta { display: none; }
   </style>
 </head>
 <body>
