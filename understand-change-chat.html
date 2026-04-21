@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Morp | Understand the Change Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Sora:wght@400;500;600;700&family=Space+Grotesk:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/svg+xml" href="./alien-favicon.svg" />
+    <link rel="stylesheet" href="./app-pages.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="./index.html" aria-label="Morp home">
+        <svg class="brand-mascot" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="20" cy="24" rx="13" ry="12" fill="#3cb97a" />
+          <ellipse cx="20" cy="17" rx="10" ry="9" fill="#4fd48c" />
+          <circle cx="20" cy="16" r="5.5" fill="white" />
+          <circle cx="20" cy="16" r="3.2" fill="#1c1a17" />
+          <circle cx="21.3" cy="14.8" r="1.1" fill="white" />
+          <line x1="16" y1="8" x2="13" y2="3" stroke="#3cb97a" stroke-width="1.8" stroke-linecap="round" />
+          <circle cx="13" cy="3" r="2" fill="#ff6b35" />
+          <line x1="24" y1="8" x2="27" y2="3" stroke="#3cb97a" stroke-width="1.8" stroke-linecap="round" />
+          <circle cx="27" cy="3" r="2" fill="#ff6b35" />
+          <path d="M15 26 Q20 31 25 26" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none" />
+          <ellipse cx="8" cy="24" rx="3" ry="5" fill="#3cb97a" transform="rotate(-15 8 24)" />
+          <ellipse cx="32" cy="24" rx="3" ry="5" fill="#3cb97a" transform="rotate(15 32 24)" />
+        </svg>
+        Morp
+      </a>
+      <div class="user-menu">
+        <button
+          class="user-menu-trigger"
+          id="userMenuTrigger"
+          type="button"
+          aria-haspopup="true"
+          aria-expanded="false"
+          aria-controls="accountDropdown"
+        >
+          <svg class="avatar-mini" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="13" cy="13" r="13" fill="#fff0eb" />
+            <ellipse cx="13" cy="15" rx="7" ry="6" fill="#ff6b35" />
+            <circle cx="13" cy="12" r="4.5" fill="#ff8c5a" />
+            <circle cx="13" cy="11" r="2.5" fill="#1c1a17" />
+            <circle cx="14" cy="10.2" r="0.8" fill="white" />
+          </svg>
+          <span>Hi Casey</span>
+          <span class="menu-arrow" aria-hidden="true">▾</span>
+        </button>
+        <ul class="user-dropdown" id="accountDropdown" hidden>
+          <li><a href="./account.html#my-profile">My Profile</a></li>
+          <li><a href="./account.html#account-settings">Account Settings</a></li>
+          <li><a href="./account.html#billing-plans">Billing &amp; Plans</a></li>
+          <li><a href="./account.html#notification-preferences">Notification Preferences</a></li>
+          <li><a href="./account.html#team-management">Team Management</a></li>
+          <li><a href="./account.html#help-center">Help Center</a></li>
+          <li><a href="./account.html#sign-out">Sign Out</a></li>
+        </ul>
+      </div>
+    </header>
+
+    <main class="chat-page">
+      <a class="back-link" href="./process-change.html">← Back to Process Flow</a>
+      <h1>Understand the Change Assistant</h1>
+      <p class="lead">
+        Upload current and future process documents. This assistant asks targeted questions and produces a
+        structured change-impact report.
+      </p>
+
+      <section class="project-memory-bar" aria-label="Project memory controls">
+        <div class="project-field">
+          <label for="understandProjectIdInput">Project memory</label>
+          <input
+            id="understandProjectIdInput"
+            type="text"
+            maxlength="64"
+            placeholder="e.g. order-fulfillment-redesign"
+          />
+        </div>
+        <div class="project-actions">
+          <button type="button" class="ghost-btn" id="understandSwitchProjectBtn">Load Project</button>
+          <button type="button" class="ghost-btn danger" id="understandClearProjectBtn">Clear Memory</button>
+        </div>
+        <p class="memory-meta" id="understandMemoryMeta"></p>
+      </section>
+
+      <section class="chat-shell" aria-label="Understand the change assistant">
+        <div class="chat-thread" id="understandChatThread"></div>
+
+        <form class="chat-composer" id="understandChatComposer" aria-label="Understand change chat input">
+          <div class="chat-composer-main">
+            <label class="sr-only" for="understand-chat-input">Message</label>
+            <textarea
+              id="understand-chat-input"
+              rows="3"
+              placeholder="Describe the current process and the intended new process..."
+            ></textarea>
+            <div class="chat-attachments">
+              <label class="attach-btn" for="understand-chat-files">Upload process docs</label>
+              <input
+                id="understand-chat-files"
+                name="files"
+                type="file"
+                multiple
+                accept=".txt,.md,.pdf,.csv,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.json"
+              />
+              <div class="attachment-list" id="understandAttachmentList"></div>
+            </div>
+            <p class="chat-status" id="understandChatStatus"></p>
+          </div>
+          <button type="submit" id="understandChatSend">Send</button>
+        </form>
+      </section>
+
+      <section class="memo-shell" aria-label="Change analysis report output">
+        <div class="memo-top">
+          <div>
+            <h2>Generate Change Analysis Report</h2>
+            <p class="memo-sub">
+              Produces a structured report with process changes, affected stakeholders, and improvements with benefits.
+            </p>
+          </div>
+          <button type="button" id="generateUnderstandReportBtn">Generate Report</button>
+        </div>
+
+        <label for="understandReportObjective" class="memo-label">Optional report objective</label>
+        <textarea
+          id="understandReportObjective"
+          rows="2"
+          placeholder="Example: compare as-is vs to-be process for leadership review."
+        ></textarea>
+
+        <div class="memo-grid">
+          <article class="memo-card">
+            <div class="memo-card-head">
+              <h3>Change Analysis Report</h3>
+              <button type="button" class="ghost-btn" id="downloadUnderstandReportBtn" disabled>
+                Download .md
+              </button>
+            </div>
+            <pre id="understandReportOutput" class="memo-output">No report generated yet.</pre>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const trigger = document.getElementById("userMenuTrigger");
+      const dropdown = document.getElementById("accountDropdown");
+
+      function closeMenu() {
+        trigger.setAttribute("aria-expanded", "false");
+        dropdown.hidden = true;
+      }
+
+      trigger.addEventListener("click", () => {
+        const isOpen = trigger.getAttribute("aria-expanded") === "true";
+        trigger.setAttribute("aria-expanded", String(!isOpen));
+        dropdown.hidden = isOpen;
+      });
+
+      document.addEventListener("click", (event) => {
+        if (!event.target.closest(".user-menu")) {
+          closeMenu();
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          closeMenu();
+        }
+      });
+
+      const chatThread = document.getElementById("understandChatThread");
+      const chatComposer = document.getElementById("understandChatComposer");
+      const chatInput = document.getElementById("understand-chat-input");
+      const chatFiles = document.getElementById("understand-chat-files");
+      const chatSend = document.getElementById("understandChatSend");
+      const attachmentList = document.getElementById("understandAttachmentList");
+      const chatStatus = document.getElementById("understandChatStatus");
+      const projectIdInput = document.getElementById("understandProjectIdInput");
+      const switchProjectBtn = document.getElementById("understandSwitchProjectBtn");
+      const clearProjectBtn = document.getElementById("understandClearProjectBtn");
+      const memoryMeta = document.getElementById("understandMemoryMeta");
+      const reportObjective = document.getElementById("understandReportObjective");
+      const generateReportBtn = document.getElementById("generateUnderstandReportBtn");
+      const reportOutput = document.getElementById("understandReportOutput");
+      const downloadReportBtn = document.getElementById("downloadUnderstandReportBtn");
+
+      const DEFAULT_GREETING =
+        "I’m your operations-and-consulting change analyst. Share current and future process details, and I’ll ask targeted questions before producing a full impact report.";
+      const PROJECT_KEY = "metamor.understand.projectId";
+
+      function normalizeProjectId(value) {
+        const cleaned = String(value || "")
+          .trim()
+          .toLowerCase()
+          .replace(/[^a-z0-9-_ ]/g, "")
+          .replace(/\s+/g, "-")
+          .slice(0, 64);
+        return cleaned || "understand-change";
+      }
+
+      function getCurrentProjectId() {
+        const normalized = normalizeProjectId(projectIdInput.value);
+        projectIdInput.value = normalized;
+        localStorage.setItem(PROJECT_KEY, normalized);
+        return normalized;
+      }
+
+      function appendMessage(role, text) {
+        const article = document.createElement("article");
+        article.className = `bubble ${role === "assistant" ? "agent" : "user"}`;
+        const paragraph = document.createElement("p");
+        paragraph.textContent = text;
+        article.appendChild(paragraph);
+        chatThread.appendChild(article);
+        chatThread.scrollTop = chatThread.scrollHeight;
+      }
+
+      function renderThread(messages) {
+        chatThread.innerHTML = "";
+        if (!messages.length) {
+          appendMessage("assistant", DEFAULT_GREETING);
+          memoryMeta.textContent = "New project memory. No saved conversation yet.";
+          return;
+        }
+
+        for (const item of messages) {
+          appendMessage(item.role, item.content);
+        }
+        memoryMeta.textContent = `Loaded ${messages.length} saved messages.`;
+      }
+
+      function renderAttachments(files) {
+        attachmentList.innerHTML = "";
+        for (const file of files) {
+          const chip = document.createElement("span");
+          chip.className = "attachment-chip";
+          chip.textContent = file.name;
+          attachmentList.appendChild(chip);
+        }
+      }
+
+      function setReportOutput(text) {
+        reportOutput.textContent = text || "No report generated yet.";
+      }
+
+      function downloadTextFile(filename, text) {
+        const blob = new Blob([text], { type: "text/markdown;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = filename;
+        anchor.click();
+        URL.revokeObjectURL(url);
+      }
+
+      async function loadProjectHistory() {
+        const projectId = getCurrentProjectId();
+        chatStatus.textContent = `Loading memory for "${projectId}"...`;
+        try {
+          const response = await fetch(`/api/understand-change/history/${encodeURIComponent(projectId)}`);
+          if (!response.ok) {
+            throw new Error(`Request failed (${response.status})`);
+          }
+          const data = await response.json();
+          const messages = Array.isArray(data.messages) ? data.messages : [];
+          renderThread(messages);
+          chatStatus.textContent =
+            messages.length > 0
+              ? `Project "${projectId}" memory loaded.`
+              : `Started fresh memory for "${projectId}".`;
+        } catch (error) {
+          renderThread([]);
+          chatStatus.textContent = "Could not load memory. Using fresh local session.";
+        }
+      }
+
+      async function clearProjectHistory() {
+        const projectId = getCurrentProjectId();
+        chatStatus.textContent = `Clearing memory for "${projectId}"...`;
+        try {
+          const response = await fetch(`/api/understand-change/history/${encodeURIComponent(projectId)}`, {
+            method: "DELETE",
+          });
+          if (!response.ok) {
+            throw new Error(`Request failed (${response.status})`);
+          }
+          renderThread([]);
+          chatStatus.textContent = `Memory cleared for "${projectId}".`;
+        } catch (error) {
+          chatStatus.textContent = "Could not clear memory. Please try again.";
+        }
+      }
+
+      async function generateReport() {
+        const projectId = getCurrentProjectId();
+        chatStatus.textContent = `Generating report for "${projectId}"...`;
+        generateReportBtn.disabled = true;
+        generateReportBtn.textContent = "Generating...";
+
+        try {
+          const response = await fetch("/api/understand-change/report", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              projectId,
+              objective: reportObjective.value.trim(),
+            }),
+          });
+
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data.error || `Request failed (${response.status})`);
+          }
+
+          setReportOutput(data.report);
+          downloadReportBtn.disabled = false;
+          chatStatus.textContent = `Report ready for "${projectId}".`;
+        } catch (error) {
+          chatStatus.textContent =
+            error.message ||
+            "Could not generate report. Start the conversation first and try again.";
+        } finally {
+          generateReportBtn.disabled = false;
+          generateReportBtn.textContent = "Generate Report";
+        }
+      }
+
+      chatFiles.addEventListener("change", () => {
+        renderAttachments(chatFiles.files);
+      });
+
+      switchProjectBtn.addEventListener("click", loadProjectHistory);
+      clearProjectBtn.addEventListener("click", clearProjectHistory);
+      generateReportBtn.addEventListener("click", generateReport);
+
+      downloadReportBtn.addEventListener("click", () => {
+        const projectId = getCurrentProjectId();
+        downloadTextFile(`${projectId}-change-analysis-report.md`, reportOutput.textContent);
+      });
+
+      chatComposer.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const message = chatInput.value.trim();
+        if (!message) return;
+
+        const projectId = getCurrentProjectId();
+        appendMessage("user", message);
+        chatInput.value = "";
+        chatSend.disabled = true;
+        chatSend.textContent = "Thinking...";
+        chatStatus.textContent = `Generating response for "${projectId}"...`;
+
+        try {
+          const payload = new FormData();
+          payload.append("message", message);
+          payload.append("projectId", projectId);
+
+          for (const file of chatFiles.files) {
+            payload.append("files", file);
+          }
+
+          const response = await fetch("/api/understand-change", {
+            method: "POST",
+            body: payload,
+          });
+
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data.error || `Request failed (${response.status})`);
+          }
+          const reply = data.reply || "No response returned.";
+          appendMessage("assistant", reply);
+          chatFiles.value = "";
+          renderAttachments([]);
+          memoryMeta.textContent = `Saved memory items: ${data.memoryCount || "n/a"}.`;
+          chatStatus.textContent = "Response ready.";
+        } catch (error) {
+          appendMessage(
+            "assistant",
+            "I could not reach the understand-the-change service. Please confirm the server is running and the Claude API key is configured."
+          );
+          chatStatus.textContent = error.message || "Connection issue. Check server/API key.";
+        } finally {
+          chatSend.disabled = false;
+          chatSend.textContent = "Send";
+        }
+      });
+
+      projectIdInput.value = normalizeProjectId(localStorage.getItem(PROJECT_KEY) || "understand-change-alpha");
+      setReportOutput("");
+      loadProjectHistory();
+    </script>
+  </body>
+</html>
