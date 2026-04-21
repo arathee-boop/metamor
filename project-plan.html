@@ -10,56 +10,74 @@
     <link rel="icon" type="image/svg+xml" href="./alien-favicon.svg" />
     <link rel="stylesheet" href="./app-pages.css" />
     <style>
-      /* Comment icon tooltip */
-      .comment-icon-wrap {
-        position: relative;
-        display: inline-flex;
-        align-items: center;
-        margin-left: 0.4rem;
-        color: var(--accent2);
-        cursor: default;
-        vertical-align: middle;
+      /* Inline status select — styled to look like status badges */
+      .status-inline-select {
+        appearance: none; -webkit-appearance: none;
+        padding: 0.2rem 1.55rem 0.2rem 0.6rem;
+        font-size: 0.7rem; font-weight: 700; font-family: inherit;
+        border-radius: 999px; border: 1.5px solid transparent;
+        cursor: pointer;
+        background-repeat: no-repeat;
+        background-position: right 0.42rem center;
+        background-size: 7px 5px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7 5'%3E%3Cpath d='M0 0l3.5 5L7 0z' fill='%23888'/%3E%3C/svg%3E");
+        transition: box-shadow 0.12s;
       }
+      .status-inline-select:focus { outline: 2px solid rgba(255,107,53,0.22); outline-offset: 1px; }
+      .status-inline-select.s-not-started { background-color: var(--bg-subtle); color: var(--text-muted); border-color: var(--border); }
+      .status-inline-select.s-in-progress  { background-color: var(--accent2-soft); color: var(--accent2); border-color: rgba(74,144,217,0.3); }
+      .status-inline-select.s-complete     { background-color: #eafaf3; color: var(--green); border-color: rgba(60,185,122,0.3); }
+      .status-inline-select.s-blocked      { background-color: #fff0eb; color: var(--accent); border-color: rgba(255,107,53,0.35); }
+
+      /* Inline text / date editing */
+      .editable-cell { cursor: pointer; }
+      .editable-cell:hover { background: var(--accent-soft) !important; }
+      .inline-edit-input {
+        border: 1.5px solid var(--accent); border-radius: 6px;
+        padding: 0.22rem 0.5rem; font-family: inherit; font-size: 0.84rem;
+        color: var(--text); background: var(--bg-card); width: 100%; min-width: 80px;
+        box-shadow: 0 0 0 3px rgba(255,107,53,0.1);
+      }
+      .inline-edit-input:focus { outline: none; }
+      .inline-date-input {
+        border: 1.5px solid var(--accent); border-radius: 6px;
+        padding: 0.22rem 0.4rem; font-family: inherit; font-size: 0.78rem;
+        color: var(--text); background: var(--bg-card); width: 118px;
+        box-shadow: 0 0 0 3px rgba(255,107,53,0.1);
+      }
+      .inline-date-input:focus { outline: none; }
+
+      /* Comment icon column */
+      .comment-col { width: 32px; text-align: center; }
+      .comment-icon-wrap {
+        position: relative; display: inline-flex; align-items: center;
+        justify-content: center; width: 24px; height: 24px;
+        border-radius: 6px; cursor: default;
+      }
+      .comment-icon-wrap.has-comment { color: var(--accent2); }
+      .comment-icon-wrap.no-comment  { color: var(--border); }
       .comment-icon-wrap svg { display: block; }
       .comment-tooltip {
-        display: none;
-        position: absolute;
-        bottom: calc(100% + 8px);
-        left: 50%;
-        transform: translateX(-50%);
-        background: var(--text);
-        color: #fff;
-        padding: 0.55rem 0.75rem;
-        border-radius: 8px;
-        font-size: 0.78rem;
-        line-height: 1.45;
-        white-space: pre-wrap;
-        max-width: 260px;
-        min-width: 120px;
-        z-index: 50;
+        display: none; position: absolute;
+        bottom: calc(100% + 8px); right: 0;
+        background: var(--text); color: #fff;
+        padding: 0.55rem 0.75rem; border-radius: 8px;
+        font-size: 0.78rem; line-height: 1.45; white-space: pre-wrap;
+        max-width: 260px; min-width: 120px; z-index: 50;
         box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-        pointer-events: none;
-        font-family: inherit;
+        pointer-events: none; font-family: inherit; font-weight: 400;
+        text-align: left;
       }
       .comment-tooltip::after {
-        content: '';
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        border: 5px solid transparent;
-        border-top-color: var(--text);
+        content: ''; position: absolute; top: 100%; right: 6px;
+        border: 5px solid transparent; border-top-color: var(--text);
       }
-      .comment-icon-wrap:hover .comment-tooltip { display: block; }
+      .comment-icon-wrap.has-comment:hover .comment-tooltip { display: block; }
 
-      /* Disabled generate button state */
-      .generate-plan-btn:disabled,
-      .generate-plan-btn[aria-disabled="true"] {
-        background: var(--bg-subtle);
-        color: var(--text-muted);
-        border: 1.5px solid var(--border);
-        cursor: not-allowed;
-        opacity: 1;
+      /* Disabled generate button */
+      .generate-plan-btn:disabled {
+        background: var(--bg-subtle); color: var(--text-muted);
+        border: 1.5px solid var(--border); cursor: not-allowed; opacity: 1;
       }
     </style>
   </head>
@@ -225,25 +243,23 @@
       const projectName = localStorage.getItem('metamor.project.name') || 'My Project';
       const projectId   = localStorage.getItem('metamor.project.id')   || '';
       const template    = localStorage.getItem('metamor.project.template') || 'Process Change';
-
       document.getElementById('planProjectName').textContent = projectName;
       document.getElementById('planTemplateTag').textContent = template;
       document.title = `Morp | Change Plan — ${projectName}`;
 
-      // ── Storage keys ─────────────────────────────────────────
+      // ── Storage ──────────────────────────────────────────────
       const PLAN_KEY     = `metamor.${projectId}.plan`;
       const GROUPS_KEY   = `metamor.${projectId}.customGroups`;
-      const GENRATED_KEY = `metamor.${projectId}.planGenerated`;
+      const GENERATED_KEY= `metamor.${projectId}.planGenerated`;
+      function loadTasks()  { try { return JSON.parse(localStorage.getItem(PLAN_KEY)   || '[]'); } catch { return []; } }
+      function loadCGroups(){ try { return JSON.parse(localStorage.getItem(GROUPS_KEY) || '[]'); } catch { return []; } }
+      function saveTasks(t)  { localStorage.setItem(PLAN_KEY,   JSON.stringify(t)); }
+      function saveCGroups(g){ localStorage.setItem(GROUPS_KEY, JSON.stringify(g)); }
 
-      function loadTasks()        { try { return JSON.parse(localStorage.getItem(PLAN_KEY)   || '[]'); } catch { return []; } }
-      function loadCustomGroups() { try { return JSON.parse(localStorage.getItem(GROUPS_KEY) || '[]'); } catch { return []; } }
-      function saveTasks(t)        { localStorage.setItem(PLAN_KEY,   JSON.stringify(t)); }
-      function saveCustomGroups(g) { localStorage.setItem(GROUPS_KEY, JSON.stringify(g)); }
+      let tasks   = loadTasks();
+      let cGroups = loadCGroups();
 
-      let tasks        = loadTasks();
-      let customGroups = loadCustomGroups();
-
-      // ── Built-in group definitions ───────────────────────────
+      // ── Groups ───────────────────────────────────────────────
       const BASE_GROUPS = [
         { id:'prep',    label:'General Preparation',       chip:'📋' },
         { id:'step-01', label:'Understand the Change',     chip:'01' },
@@ -254,12 +270,9 @@
         { id:'step-06', label:'Enable Workforce',          chip:'06' },
         { id:'adhoc',   label:'Ad Hoc Tasks',              chip:'✦'  },
       ];
-
       function allGroups() {
-        return [...BASE_GROUPS, ...customGroups.map(g => ({ id:g.id, label:g.label, chip:'✦', custom:true }))];
+        return [...BASE_GROUPS, ...cGroups.map(g => ({ id:g.id, label:g.label, chip:'✦', custom:true }))];
       }
-
-      // ── Group select helper (used by task modal) ─────────────
       function populateGroupSelect(selectedId) {
         const sel = document.getElementById('tf-group');
         sel.innerHTML = '';
@@ -272,41 +285,84 @@
         if (selectedId) sel.value = selectedId;
       }
 
-      // ── Status meta ──────────────────────────────────────────
-      const STATUS_META = {
-        'not-started': { label:'Not started', cls:'status-not-started', dot:'#bbb'    },
-        'in-progress' : { label:'In progress',  cls:'status-in-progress',  dot:'#4a90d9' },
-        'complete'    : { label:'Complete',      cls:'status-complete',     dot:'#3cb97a' },
-        'blocked'     : { label:'Blocked',       cls:'status-blocked',      dot:'#ff6b35' },
-      };
-
       // ── Helpers ──────────────────────────────────────────────
-      function escHtml(s) {
-        return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-      }
-      function uid() { return 'task-' + Math.random().toString(36).slice(2,9); }
-      function groupUid() { return 'group-' + Math.random().toString(36).slice(2,9); }
-      function addDays(base, n) {
-        const d = new Date(base); d.setDate(d.getDate() + n);
-        return d.toISOString().split('T')[0];
-      }
+      function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+      function uid()      { return 'task-'  + Math.random().toString(36).slice(2,9); }
+      function gid()      { return 'group-' + Math.random().toString(36).slice(2,9); }
+      function addDays(b,n){ const d=new Date(b); d.setDate(d.getDate()+n); return d.toISOString().split('T')[0]; }
       function fmtDate(d) {
         if (!d) return '—';
-        const dt = new Date(d + 'T00:00:00');
+        const dt = new Date(d+'T00:00:00');
         return dt.toLocaleDateString('en-GB', { day:'numeric', month:'short' });
       }
-      function statusBadge(status) {
-        const m = STATUS_META[status] || STATUS_META['not-started'];
-        return `<span class="status-badge ${m.cls}">${m.label}</span>`;
+
+      const STATUS_META = {
+        'not-started': { label:'Not started', cls:'s-not-started', dot:'#bbb'     },
+        'in-progress' : { label:'In progress',  cls:'s-in-progress',  dot:'#4a90d9' },
+        'complete'    : { label:'Complete',      cls:'s-complete',     dot:'#3cb97a' },
+        'blocked'     : { label:'Blocked',       cls:'s-blocked',      dot:'#ff6b35' },
+      };
+
+      function statusSelect(task) {
+        const opts = Object.entries(STATUS_META).map(([v,m]) =>
+          `<option value="${v}"${task.status===v?' selected':''}>${m.label}</option>`).join('');
+        const cls = STATUS_META[task.status]?.cls || 's-not-started';
+        return `<select class="status-inline-select ${cls}" data-task-id="${task.id}" aria-label="Status">${opts}</select>`;
       }
-      function commentIcon(comments) {
-        if (!comments || !comments.trim()) return '';
-        return `<span class="comment-icon-wrap" aria-label="Has comment">
-          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+      function commentIcon(task) {
+        const has = !!(task.comments && task.comments.trim());
+        const cls = has ? 'has-comment' : 'no-comment';
+        const tooltip = has ? `<span class="comment-tooltip">${escHtml(task.comments)}</span>` : '';
+        return `<span class="comment-icon-wrap ${cls}" aria-label="${has ? 'Has comment' : 'No comment'}">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M1 1.5h12v8H8.5l-3 3V9.5H1V1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
-          </svg>
-          <span class="comment-tooltip">${escHtml(comments)}</span>
-        </span>`;
+          </svg>${tooltip}</span>`;
+      }
+
+      // ── Inline field save ────────────────────────────────────
+      function saveField(taskId, field, value) {
+        const t = tasks.find(t => t.id === taskId);
+        if (!t) return;
+        t[field] = value;
+        saveTasks(tasks);
+      }
+
+      // Attach inline editing to a cell
+      function makeEditable(td, taskId, field, rawValue, type) {
+        td.classList.add('editable-cell');
+        td.title = 'Click to edit';
+        td.addEventListener('click', () => {
+          if (td.querySelector('input')) return; // already editing
+          const input = document.createElement('input');
+          input.type  = type || 'text';
+          input.value = rawValue || '';
+          input.className = type === 'date' ? 'inline-date-input' : 'inline-edit-input';
+          td.innerHTML = '';
+          td.appendChild(input);
+          input.focus();
+          if (type === 'date' && input.showPicker) { try { input.showPicker(); } catch(e){} }
+          function commit() {
+            const val = input.value;
+            saveField(taskId, field, val);
+            // Re-render this cell only
+            if (type === 'date') {
+              td.textContent = fmtDate(val);
+            } else {
+              td.textContent = val || '—';
+            }
+            td.classList.add('editable-cell');
+            td.title = 'Click to edit';
+            // Re-apply editable binding with new value
+            makeEditable(td, taskId, field, val, type);
+            renderStats();
+          }
+          input.addEventListener('blur', commit);
+          input.addEventListener('keydown', e => {
+            if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+            if (e.key === 'Escape') { td.textContent = rawValue || '—'; makeEditable(td, taskId, field, rawValue, type); }
+          });
+        });
       }
 
       // ── Render ───────────────────────────────────────────────
@@ -314,7 +370,7 @@
         const counts = { total:tasks.length, 'not-started':0, 'in-progress':0, complete:0, blocked:0 };
         tasks.forEach(t => { if (counts[t.status] !== undefined) counts[t.status]++; });
         document.getElementById('plannerStats').innerHTML = [
-          `<span class="plan-stat"><span class="plan-stat-dot" style="background:#bbb"></span>${counts.total} task${counts.total !== 1 ? 's' : ''}</span>`,
+          `<span class="plan-stat"><span class="plan-stat-dot" style="background:#bbb"></span>${counts.total} task${counts.total!==1?'s':''}</span>`,
           counts['in-progress'] ? `<span class="plan-stat"><span class="plan-stat-dot" style="background:#4a90d9"></span>${counts['in-progress']} in progress</span>` : '',
           counts.complete       ? `<span class="plan-stat"><span class="plan-stat-dot" style="background:#3cb97a"></span>${counts.complete} complete</span>` : '',
           counts.blocked        ? `<span class="plan-stat"><span class="plan-stat-dot" style="background:#ff6b35"></span>${counts.blocked} blocked</span>` : '',
@@ -324,87 +380,111 @@
       function renderPlan() {
         renderStats();
         const container = document.getElementById('planContainer');
-
-        if (!tasks.length && !allGroups().length) {
+        if (!tasks.length && !cGroups.length) {
           container.innerHTML = `<div class="plan-empty"><h3>No plan yet</h3><p>Click <strong>✨ Generate AI Baseline</strong> to auto-populate, or add tasks manually.</p></div>`;
           return;
         }
-
         container.innerHTML = '';
+
         allGroups().forEach(group => {
-          const groupTasks = tasks.filter(t => t.group === group.id);
-          const complete   = groupTasks.filter(t => t.status === 'complete').length;
-          const chipEl     = isNaN(Number(group.chip))
-            ? `<span style="font-size:0.88rem;line-height:1">${group.chip}</span>`
+          const gTasks  = tasks.filter(t => t.group === group.id);
+          const done    = gTasks.filter(t => t.status === 'complete').length;
+          const chipEl  = isNaN(Number(group.chip))
+            ? `<span style="font-size:.88rem;line-height:1">${group.chip}</span>`
             : `<span class="step-chip">${group.chip}</span>`;
+          const delGrpBtn = group.custom
+            ? `<button type="button" class="task-action-btn danger delete-group-btn" data-group="${group.id}" style="font-size:.7rem;padding:.14rem .42rem">Delete group</button>`
+            : '';
 
           const div = document.createElement('div');
           div.className = 'plan-group';
           div.dataset.groupId = group.id;
 
-          const rows = groupTasks.map(task => {
-            const dates = (task.startDate || task.endDate)
-              ? `${fmtDate(task.startDate)} → ${fmtDate(task.endDate)}`
-              : '—';
-            return `<tr data-task-id="${task.id}">
-              <td>${statusBadge(task.status)}</td>
-              <td class="task-title-cell">${escHtml(task.title)}${commentIcon(task.comments)}</td>
-              <td class="task-muted">${escHtml(task.owner || '—')}</td>
-              <td class="task-muted" style="white-space:nowrap">${dates}</td>
-              <td class="task-muted" style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(task.dependencies || '—')}</td>
+          // Build tbody rows (without inline listeners — we attach after insert)
+          const tbodyRows = gTasks.map(task => `
+            <tr data-task-id="${task.id}">
+              <td class="status-col">${statusSelect(task)}</td>
+              <td class="task-title-cell title-cell" data-raw="${escHtml(task.title)}">${escHtml(task.title)}</td>
+              <td class="task-muted owner-cell" data-raw="${escHtml(task.owner||'')}">${escHtml(task.owner||'—')}</td>
+              <td class="task-muted start-cell" data-raw="${escHtml(task.startDate||'')}">${fmtDate(task.startDate)}</td>
+              <td class="task-muted end-cell" data-raw="${escHtml(task.endDate||'')}">${fmtDate(task.endDate)}</td>
+              <td class="comment-col">${commentIcon(task)}</td>
               <td>
                 <div class="task-actions">
                   <button type="button" class="task-action-btn edit-task-btn" data-id="${task.id}">Edit</button>
                   <button type="button" class="task-action-btn danger delete-task-btn" data-id="${task.id}">✕</button>
                 </div>
               </td>
-            </tr>`;
-          }).join('');
-
-          const deleteGroupBtn = group.custom
-            ? `<button type="button" class="task-action-btn danger delete-group-btn" data-group="${group.id}" style="font-size:0.7rem;padding:0.15rem 0.45rem" title="Delete group">Delete group</button>`
-            : '';
+            </tr>`).join('');
 
           div.innerHTML = `
             <div class="plan-group-header">
               <div class="plan-group-meta">
                 ${chipEl}
                 <h2>${escHtml(group.label)}</h2>
-                <span class="plan-group-count">${groupTasks.length} task${groupTasks.length !== 1 ? 's' : ''}${groupTasks.length ? ` · ${complete} done` : ''}</span>
+                <span class="plan-group-count">${gTasks.length} task${gTasks.length!==1?'s':''}${gTasks.length?` · ${done} done`:''}</span>
               </div>
-              <div style="display:flex;align-items:center;gap:0.5rem">
-                ${deleteGroupBtn}
+              <div style="display:flex;align-items:center;gap:.5rem">
+                ${delGrpBtn}
                 <span class="plan-group-chevron">▾</span>
               </div>
             </div>
             <div class="plan-group-body">
-              ${groupTasks.length ? `
+              ${gTasks.length ? `
               <table class="plan-table">
                 <thead><tr>
-                  <th>Status</th><th>Task</th><th>Owner</th><th>Dates</th><th>Dependencies</th><th></th>
+                  <th style="width:130px">Status</th>
+                  <th>Task</th>
+                  <th style="width:130px">Owner</th>
+                  <th style="width:80px">Start</th>
+                  <th style="width:80px">End</th>
+                  <th class="comment-col" style="width:32px"></th>
+                  <th style="width:100px"></th>
                 </tr></thead>
-                <tbody>${rows}</tbody>
+                <tbody>${tbodyRows}</tbody>
               </table>` : ''}
               <button type="button" class="add-group-task-btn" data-group="${group.id}">+ Add task to this group</button>
             </div>`;
 
           container.appendChild(div);
+
+          // ── Attach inline edit listeners to each row ─────────
+          gTasks.forEach(task => {
+            const row = div.querySelector(`tr[data-task-id="${task.id}"]`);
+            if (!row) return;
+
+            // Status change
+            const statusSel = row.querySelector('.status-inline-select');
+            if (statusSel) {
+              statusSel.addEventListener('change', () => {
+                saveField(task.id, 'status', statusSel.value);
+                statusSel.className = `status-inline-select ${STATUS_META[statusSel.value]?.cls || 's-not-started'}`;
+                renderStats();
+              });
+            }
+
+            // Inline text editing
+            const titleCell = row.querySelector('.title-cell');
+            const ownerCell = row.querySelector('.owner-cell');
+            const startCell = row.querySelector('.start-cell');
+            const endCell   = row.querySelector('.end-cell');
+            if (titleCell) makeEditable(titleCell, task.id, 'title',     task.title     || '', 'text');
+            if (ownerCell) makeEditable(ownerCell, task.id, 'owner',     task.owner     || '', 'text');
+            if (startCell) makeEditable(startCell, task.id, 'startDate', task.startDate || '', 'date');
+            if (endCell)   makeEditable(endCell,   task.id, 'endDate',   task.endDate   || '', 'date');
+          });
         });
 
-        // Collapse toggle
+        // ── Global event delegation for buttons ──────────────
         container.querySelectorAll('.plan-group-header').forEach(h => {
           h.addEventListener('click', e => {
             if (e.target.closest('.delete-group-btn') || e.target.closest('.task-action-btn')) return;
             h.closest('.plan-group').classList.toggle('collapsed');
           });
         });
-
-        // Edit
         container.querySelectorAll('.edit-task-btn').forEach(btn => {
           btn.addEventListener('click', e => { e.stopPropagation(); openTaskModal(btn.dataset.id); });
         });
-
-        // Delete task
         container.querySelectorAll('.delete-task-btn').forEach(btn => {
           btn.addEventListener('click', e => {
             e.stopPropagation();
@@ -414,58 +494,48 @@
             renderPlan();
           });
         });
-
-        // Add to group
         container.querySelectorAll('.add-group-task-btn').forEach(btn => {
           btn.addEventListener('click', () => openTaskModal(null, btn.dataset.group));
         });
-
-        // Delete group
         container.querySelectorAll('.delete-group-btn').forEach(btn => {
           btn.addEventListener('click', e => {
             e.stopPropagation();
-            const gid = btn.dataset.group;
-            const count = tasks.filter(t => t.group === gid).length;
-            const msg = count
-              ? `Delete this group and its ${count} task${count > 1 ? 's' : ''}?`
-              : 'Delete this empty group?';
-            if (!confirm(msg)) return;
-            tasks = tasks.filter(t => t.group !== gid);
-            customGroups = customGroups.filter(g => g.id !== gid);
-            saveTasks(tasks);
-            saveCustomGroups(customGroups);
+            const gId   = btn.dataset.group;
+            const count = tasks.filter(t => t.group === gId).length;
+            if (!confirm(count ? `Delete this group and its ${count} task${count>1?'s':''}?` : 'Delete this empty group?')) return;
+            tasks   = tasks.filter(t => t.group !== gId);
+            cGroups = cGroups.filter(g => g.id !== gId);
+            saveTasks(tasks); saveCGroups(cGroups);
             renderPlan();
           });
         });
       }
 
       // ── Task modal ───────────────────────────────────────────
-      const taskModal   = document.getElementById('taskModal');
-      const taskForm    = document.getElementById('taskForm');
-      const tfTitle     = document.getElementById('tf-title');
-      const tfStatus    = document.getElementById('tf-status');
-      const tfOwner     = document.getElementById('tf-owner');
-      const tfStart     = document.getElementById('tf-start');
-      const tfEnd       = document.getElementById('tf-end');
-      const tfDeps      = document.getElementById('tf-deps');
-      const tfComments  = document.getElementById('tf-comments');
-      const modalTitle  = document.getElementById('taskModalTitle');
-      const deleteBtn   = document.getElementById('taskDeleteBtn');
-      let editingId     = null;
+      const taskModal  = document.getElementById('taskModal');
+      const taskForm   = document.getElementById('taskForm');
+      const tfTitle    = document.getElementById('tf-title');
+      const tfStatus   = document.getElementById('tf-status');
+      const tfOwner    = document.getElementById('tf-owner');
+      const tfStart    = document.getElementById('tf-start');
+      const tfEnd      = document.getElementById('tf-end');
+      const tfDeps     = document.getElementById('tf-deps');
+      const tfComments = document.getElementById('tf-comments');
+      const deleteBtn  = document.getElementById('taskDeleteBtn');
+      let editingId    = null;
 
       function openTaskModal(taskId, defaultGroup) {
         editingId = taskId || null;
-        modalTitle.textContent = taskId ? 'Edit Task' : 'Add Task';
+        document.getElementById('taskModalTitle').textContent = taskId ? 'Edit Task' : 'Add Task';
         deleteBtn.hidden = !taskId;
-        populateGroupSelect(defaultGroup || (taskId ? tasks.find(t => t.id === taskId)?.group : 'prep'));
-
+        populateGroupSelect(taskId ? tasks.find(t=>t.id===taskId)?.group : (defaultGroup || 'prep'));
         if (taskId) {
           const t = tasks.find(t => t.id === taskId);
           if (!t) return;
           tfTitle.value    = t.title;
           document.getElementById('tf-group').value = t.group;
           tfStatus.value   = t.status;
-          tfOwner.value    = t.owner || '';
+          tfOwner.value    = t.owner     || '';
           tfStart.value    = t.startDate || '';
           tfEnd.value      = t.endDate   || '';
           tfDeps.value     = t.dependencies || '';
@@ -482,15 +552,11 @@
       document.getElementById('taskModalClose').addEventListener('click',  () => taskModal.close());
       document.getElementById('taskModalCancel').addEventListener('click', () => taskModal.close());
       taskModal.addEventListener('click', e => { if (e.target === taskModal) taskModal.close(); });
-
       deleteBtn.addEventListener('click', () => {
         if (!editingId || !confirm('Delete this task?')) return;
         tasks = tasks.filter(t => t.id !== editingId);
-        saveTasks(tasks);
-        taskModal.close();
-        renderPlan();
+        saveTasks(tasks); taskModal.close(); renderPlan();
       });
-
       taskForm.addEventListener('submit', e => {
         e.preventDefault();
         const taskData = {
@@ -498,86 +564,66 @@
           group:        document.getElementById('tf-group').value,
           title:        tfTitle.value.trim(),
           owner:        tfOwner.value.trim(),
-          startDate:    tfStart.value || '',
-          endDate:      tfEnd.value   || '',
+          startDate:    tfStart.value    || '',
+          endDate:      tfEnd.value      || '',
           status:       tfStatus.value,
           dependencies: tfDeps.value.trim(),
           comments:     tfComments.value.trim(),
         };
         if (!taskData.title) { tfTitle.focus(); return; }
-        if (editingId) {
-          const idx = tasks.findIndex(t => t.id === editingId);
-          if (idx >= 0) tasks[idx] = taskData;
-        } else {
-          tasks.push(taskData);
-        }
-        saveTasks(tasks);
-        taskModal.close();
-        renderPlan();
+        if (editingId) { const i = tasks.findIndex(t=>t.id===editingId); if (i>=0) tasks[i]=taskData; }
+        else           { tasks.push(taskData); }
+        saveTasks(tasks); taskModal.close(); renderPlan();
       });
-
       document.getElementById('addTaskBtn').addEventListener('click', () => openTaskModal(null));
 
       // ── New group modal ──────────────────────────────────────
-      const groupModal  = document.getElementById('groupModal');
-      const groupForm   = document.getElementById('groupForm');
-      const gfName      = document.getElementById('gf-name');
-
-      document.getElementById('newGroupBtn').addEventListener('click',    () => { groupForm.reset(); groupModal.showModal(); setTimeout(() => gfName.focus(), 50); });
-      document.getElementById('groupModalClose').addEventListener('click', () => groupModal.close());
-      document.getElementById('groupModalCancel').addEventListener('click',() => groupModal.close());
-      groupModal.addEventListener('click', e => { if (e.target === groupModal) groupModal.close(); });
-
+      const groupModal = document.getElementById('groupModal');
+      const groupForm  = document.getElementById('groupForm');
+      const gfName     = document.getElementById('gf-name');
+      document.getElementById('newGroupBtn').addEventListener('click', () => { groupForm.reset(); groupModal.showModal(); setTimeout(()=>gfName.focus(),50); });
+      document.getElementById('groupModalClose').addEventListener('click',  () => groupModal.close());
+      document.getElementById('groupModalCancel').addEventListener('click', () => groupModal.close());
+      groupModal.addEventListener('click', e => { if (e.target===groupModal) groupModal.close(); });
       groupForm.addEventListener('submit', e => {
         e.preventDefault();
-        const label = gfName.value.trim();
-        if (!label) { gfName.focus(); return; }
-        const newGroup = { id: groupUid(), label };
-        customGroups.push(newGroup);
-        saveCustomGroups(customGroups);
-        groupModal.close();
-        renderPlan();
+        const label = gfName.value.trim(); if (!label) { gfName.focus(); return; }
+        cGroups.push({ id:gid(), label });
+        saveCGroups(cGroups); groupModal.close(); renderPlan();
       });
 
       // ── Generate AI Baseline ─────────────────────────────────
       const generateBtn = document.getElementById('generatePlanBtn');
-
-      function markGenerated() {
-        localStorage.setItem(GENRATED_KEY, 'true');
+      function lockGenerate() {
         generateBtn.disabled = true;
         generateBtn.textContent = '✓ Baseline generated';
-        generateBtn.setAttribute('aria-disabled', 'true');
-        generateBtn.title = 'Baseline already generated. Add tasks manually to extend the plan.';
+        generateBtn.title = 'Baseline already generated. Add or edit tasks manually.';
       }
-
-      if (localStorage.getItem(GENRATED_KEY)) markGenerated();
+      if (localStorage.getItem(GENERATED_KEY)) lockGenerate();
 
       generateBtn.addEventListener('click', async () => {
         if (generateBtn.disabled) return;
         generateBtn.disabled = true;
         generateBtn.textContent = '⏳ Generating…';
         document.getElementById('planContainer').innerHTML = '<div class="plan-generating">Generating your baseline plan — this takes a few seconds…</div>';
-
         try {
           const changeAnalysis = projectId ? localStorage.getItem(`metamor.${projectId}.outputs.changeAnalysis`) || '' : '';
           const executiveMemo  = projectId ? localStorage.getItem(`metamor.${projectId}.outputs.executiveMemo`)  || '' : '';
-
           const res  = await fetch('/api/project-plan/generate', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ projectName, template, changeAnalysis, executiveMemo }),
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({ projectName, template, changeAnalysis, executiveMemo }),
           });
           const data = await res.json();
           if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
-          tasks = data.tasks.map(t => ({ ...t, id: t.id || uid(), dependencies: t.dependencies || '', comments: t.comments || '' }));
+          tasks = data.tasks.map(t => ({ ...t, id:t.id||uid(), dependencies:t.dependencies||'', comments:t.comments||'' }));
           saveTasks(tasks);
-          markGenerated();
-        } catch (err) {
-          console.warn('AI baseline failed, using static fallback:', err.message);
+        } catch(err) {
+          console.warn('AI baseline failed, using fallback:', err.message);
           tasks = buildFallbackPlan();
           saveTasks(tasks);
-          markGenerated();
         }
+        localStorage.setItem(GENERATED_KEY, 'true');
+        lockGenerate();
         renderPlan();
       });
 
@@ -585,31 +631,31 @@
       function buildFallbackPlan() {
         const t = new Date().toISOString().split('T')[0];
         return [
-          { id:uid(), group:'prep',    title:'Project kickoff and sponsor alignment',           owner:'Project Lead',   startDate:t,            endDate:addDays(t,2),  status:'not-started', dependencies:'', comments:'' },
-          { id:uid(), group:'prep',    title:'Stakeholder identification and RACI mapping',      owner:'Change Manager', startDate:addDays(t,2), endDate:addDays(t,5),  status:'not-started', dependencies:'', comments:'' },
-          { id:uid(), group:'prep',    title:'Define project scope, goals, and success metrics', owner:'Project Lead',   startDate:addDays(t,3), endDate:addDays(t,6),  status:'not-started', dependencies:'', comments:'' },
-          { id:uid(), group:'step-01', title:'Document current (as-is) process',                 owner:'Process Owner',  startDate:addDays(t,7), endDate:addDays(t,11), status:'not-started', dependencies:'', comments:'' },
-          { id:uid(), group:'step-01', title:'Map future (to-be) process',                       owner:'Process Owner',  startDate:addDays(t,10),endDate:addDays(t,14), status:'not-started', dependencies:'', comments:'' },
-          { id:uid(), group:'step-01', title:'Run Understand the Change assistant and review',   owner:'Change Manager', startDate:addDays(t,13),endDate:addDays(t,15), status:'not-started', dependencies:'', comments:'' },
-          { id:uid(), group:'step-01', title:'Validate change analysis with process owner',      owner:'Project Sponsor',startDate:addDays(t,15),endDate:addDays(t,17), status:'not-started', dependencies:'', comments:'' },
-          { id:uid(), group:'step-02', title:'Identify urgency drivers and cost of inaction',    owner:'Project Lead',   startDate:addDays(t,17),endDate:addDays(t,21), status:'not-started', dependencies:'', comments:'' },
-          { id:uid(), group:'step-02', title:'Generate executive memo using AI assistant',       owner:'Change Manager', startDate:addDays(t,21),endDate:addDays(t,22), status:'not-started', dependencies:'', comments:'' },
-          { id:uid(), group:'step-02', title:'Review and finalise executive memo',               owner:'Project Sponsor',startDate:addDays(t,22),endDate:addDays(t,24), status:'not-started', dependencies:'', comments:'' },
-          { id:uid(), group:'step-02', title:'Present case for change to leadership',            owner:'Project Sponsor',startDate:addDays(t,25),endDate:addDays(t,25), status:'not-started', dependencies:'', comments:'' },
-          { id:uid(), group:'step-03', title:'Map impacted roles, teams, and systems',           owner:'Change Manager', startDate:addDays(t,26),endDate:addDays(t,30), status:'not-started', dependencies:'', comments:'' },
-          { id:uid(), group:'step-03', title:'Define handoff, SLA, and governance changes',      owner:'Operations Lead',startDate:addDays(t,28),endDate:addDays(t,32), status:'not-started', dependencies:'', comments:'' },
-          { id:uid(), group:'step-03', title:'Document ownership changes and decision rights',   owner:'Project Lead',   startDate:addDays(t,31),endDate:addDays(t,34), status:'not-started', dependencies:'', comments:'' },
-          { id:uid(), group:'step-04', title:'Leadership alignment and sponsorship check',        owner:'Project Sponsor',startDate:addDays(t,34),endDate:addDays(t,37), status:'not-started', dependencies:'', comments:'' },
-          { id:uid(), group:'step-04', title:'Manager readiness survey and debrief',             owner:'HR Lead',        startDate:addDays(t,36),endDate:addDays(t,40), status:'not-started', dependencies:'', comments:'' },
-          { id:uid(), group:'step-04', title:'Team capability gap analysis',                     owner:'HR Lead',        startDate:addDays(t,39),endDate:addDays(t,43), status:'not-started', dependencies:'', comments:'' },
-          { id:uid(), group:'step-05', title:'Draft stakeholder communication plan',             owner:'Comms Lead',     startDate:addDays(t,43),endDate:addDays(t,47), status:'not-started', dependencies:'', comments:'' },
-          { id:uid(), group:'step-05', title:'Schedule and run leader briefing forums',          owner:'Project Lead',   startDate:addDays(t,46),endDate:addDays(t,50), status:'not-started', dependencies:'', comments:'' },
-          { id:uid(), group:'step-05', title:'Deliver manager cascade sessions',                 owner:'Change Manager', startDate:addDays(t,49),endDate:addDays(t,55), status:'not-started', dependencies:'', comments:'' },
-          { id:uid(), group:'step-05', title:'Send milestone updates to all impacted teams',     owner:'Comms Lead',     startDate:addDays(t,53),endDate:addDays(t,57), status:'not-started', dependencies:'', comments:'' },
-          { id:uid(), group:'step-06', title:'Develop training materials and job aids',          owner:'L&D Lead',       startDate:addDays(t,52),endDate:addDays(t,60), status:'not-started', dependencies:'', comments:'' },
-          { id:uid(), group:'step-06', title:'Deliver training sessions to impacted staff',      owner:'L&D Lead',       startDate:addDays(t,60),endDate:addDays(t,67), status:'not-started', dependencies:'', comments:'' },
-          { id:uid(), group:'step-06', title:'Deploy reinforcement loops and manager coaching',  owner:'Change Manager', startDate:addDays(t,65),endDate:addDays(t,72), status:'not-started', dependencies:'', comments:'' },
-          { id:uid(), group:'step-06', title:'Monitor adoption metrics and resolve blockers',    owner:'Project Lead',   startDate:addDays(t,68),endDate:addDays(t,80), status:'not-started', dependencies:'', comments:'' },
+          { id:uid(), group:'prep',    title:'Project kickoff and sponsor alignment',            owner:'Project Lead',    startDate:t,             endDate:addDays(t,2),  status:'not-started', dependencies:'', comments:'' },
+          { id:uid(), group:'prep',    title:'Stakeholder identification and RACI mapping',       owner:'Change Manager',  startDate:addDays(t,2),  endDate:addDays(t,5),  status:'not-started', dependencies:'', comments:'' },
+          { id:uid(), group:'prep',    title:'Define project scope, goals, and success metrics',  owner:'Project Lead',    startDate:addDays(t,3),  endDate:addDays(t,6),  status:'not-started', dependencies:'', comments:'' },
+          { id:uid(), group:'step-01', title:'Document current (as-is) process',                  owner:'Process Owner',   startDate:addDays(t,7),  endDate:addDays(t,11), status:'not-started', dependencies:'', comments:'' },
+          { id:uid(), group:'step-01', title:'Map future (to-be) process',                        owner:'Process Owner',   startDate:addDays(t,10), endDate:addDays(t,14), status:'not-started', dependencies:'', comments:'' },
+          { id:uid(), group:'step-01', title:'Run Understand the Change assistant and review',    owner:'Change Manager',  startDate:addDays(t,13), endDate:addDays(t,15), status:'not-started', dependencies:'', comments:'' },
+          { id:uid(), group:'step-01', title:'Validate change analysis with process owner',       owner:'Project Sponsor', startDate:addDays(t,15), endDate:addDays(t,17), status:'not-started', dependencies:'', comments:'' },
+          { id:uid(), group:'step-02', title:'Identify urgency drivers and cost of inaction',     owner:'Project Lead',    startDate:addDays(t,17), endDate:addDays(t,21), status:'not-started', dependencies:'', comments:'' },
+          { id:uid(), group:'step-02', title:'Generate executive memo using AI assistant',        owner:'Change Manager',  startDate:addDays(t,21), endDate:addDays(t,22), status:'not-started', dependencies:'', comments:'' },
+          { id:uid(), group:'step-02', title:'Review and finalise executive memo',                owner:'Project Sponsor', startDate:addDays(t,22), endDate:addDays(t,24), status:'not-started', dependencies:'', comments:'' },
+          { id:uid(), group:'step-02', title:'Present case for change to leadership',             owner:'Project Sponsor', startDate:addDays(t,25), endDate:addDays(t,25), status:'not-started', dependencies:'', comments:'' },
+          { id:uid(), group:'step-03', title:'Map impacted roles, teams, and systems',            owner:'Change Manager',  startDate:addDays(t,26), endDate:addDays(t,30), status:'not-started', dependencies:'', comments:'' },
+          { id:uid(), group:'step-03', title:'Define handoff, SLA, and governance changes',       owner:'Operations Lead', startDate:addDays(t,28), endDate:addDays(t,32), status:'not-started', dependencies:'', comments:'' },
+          { id:uid(), group:'step-03', title:'Document ownership changes and decision rights',    owner:'Project Lead',    startDate:addDays(t,31), endDate:addDays(t,34), status:'not-started', dependencies:'', comments:'' },
+          { id:uid(), group:'step-04', title:'Leadership alignment and sponsorship check',         owner:'Project Sponsor', startDate:addDays(t,34), endDate:addDays(t,37), status:'not-started', dependencies:'', comments:'' },
+          { id:uid(), group:'step-04', title:'Manager readiness survey and debrief',              owner:'HR Lead',         startDate:addDays(t,36), endDate:addDays(t,40), status:'not-started', dependencies:'', comments:'' },
+          { id:uid(), group:'step-04', title:'Team capability gap analysis',                      owner:'HR Lead',         startDate:addDays(t,39), endDate:addDays(t,43), status:'not-started', dependencies:'', comments:'' },
+          { id:uid(), group:'step-05', title:'Draft stakeholder communication plan',              owner:'Comms Lead',      startDate:addDays(t,43), endDate:addDays(t,47), status:'not-started', dependencies:'', comments:'' },
+          { id:uid(), group:'step-05', title:'Schedule and run leader briefing forums',           owner:'Project Lead',    startDate:addDays(t,46), endDate:addDays(t,50), status:'not-started', dependencies:'', comments:'' },
+          { id:uid(), group:'step-05', title:'Deliver manager cascade sessions',                  owner:'Change Manager',  startDate:addDays(t,49), endDate:addDays(t,55), status:'not-started', dependencies:'', comments:'' },
+          { id:uid(), group:'step-05', title:'Send milestone updates to all impacted teams',      owner:'Comms Lead',      startDate:addDays(t,53), endDate:addDays(t,57), status:'not-started', dependencies:'', comments:'' },
+          { id:uid(), group:'step-06', title:'Develop training materials and job aids',           owner:'L&D Lead',        startDate:addDays(t,52), endDate:addDays(t,60), status:'not-started', dependencies:'', comments:'' },
+          { id:uid(), group:'step-06', title:'Deliver training sessions to impacted staff',       owner:'L&D Lead',        startDate:addDays(t,60), endDate:addDays(t,67), status:'not-started', dependencies:'', comments:'' },
+          { id:uid(), group:'step-06', title:'Deploy reinforcement loops and manager coaching',   owner:'Change Manager',  startDate:addDays(t,65), endDate:addDays(t,72), status:'not-started', dependencies:'', comments:'' },
+          { id:uid(), group:'step-06', title:'Monitor adoption metrics and resolve blockers',     owner:'Project Lead',    startDate:addDays(t,68), endDate:addDays(t,80), status:'not-started', dependencies:'', comments:'' },
         ];
       }
 
