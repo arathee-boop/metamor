@@ -3,13 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Morp | Process Change Approach</title>
+    <title>Morp | Process Change Project</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Sora:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="icon" type="image/svg+xml" href="./alien-favicon.svg" />
     <link rel="stylesheet" href="./app-pages.css" />
   </head>
@@ -55,13 +52,19 @@
         </ul>
       </div>
     </header>
-    <main class="simple-page">
-      <a class="back-link" href="./new-project.html">← Back to Templates</a>
-      <h1>Process Change Project Approach</h1>
-      <p class="lead">
-        A left-to-right six-step flow from diagnosis to durable adoption.
-      </p>
 
+    <main class="simple-page">
+
+      <!-- Project header -->
+      <div class="project-header-bar">
+        <div>
+          <span class="project-template-tag">Process Change</span>
+          <h1 id="projectNameDisplay">My Project</h1>
+          <div class="project-collab-chips" id="projectCollabChips"></div>
+        </div>
+      </div>
+
+      <!-- Approach flow -->
       <section class="flow-track" aria-label="Process change approach flow">
         <a class="flow-step flow-step-link" href="./understand-change-chat.html">
           <div class="flow-node">
@@ -70,26 +73,17 @@
               <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <ellipse cx="16" cy="24" rx="11" ry="8" fill="rgba(255,255,255,0.25)"/>
                 <ellipse cx="16" cy="15" rx="9" ry="8" fill="rgba(255,255,255,0.35)"/>
-                <circle cx="12" cy="14" r="3.2" fill="white"/>
-                <circle cx="12" cy="14" r="2" fill="#1c1a17"/>
-                <circle cx="12.8" cy="12.8" r="0.75" fill="white"/>
-                <circle cx="20" cy="14" r="3.2" fill="white"/>
-                <circle cx="20" cy="14" r="2" fill="#1c1a17"/>
-                <circle cx="20.8" cy="12.8" r="0.75" fill="white"/>
-                <line x1="12.5" y1="8" x2="10" y2="3.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-                <circle cx="10" cy="3.5" r="1.6" fill="rgba(255,255,255,0.9)"/>
-                <line x1="19.5" y1="8" x2="22" y2="3.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-                <circle cx="22" cy="3.5" r="1.6" fill="rgba(255,255,255,0.9)"/>
+                <circle cx="12" cy="14" r="3.2" fill="white"/><circle cx="12" cy="14" r="2" fill="#1c1a17"/><circle cx="12.8" cy="12.8" r="0.75" fill="white"/>
+                <circle cx="20" cy="14" r="3.2" fill="white"/><circle cx="20" cy="14" r="2" fill="#1c1a17"/><circle cx="20.8" cy="12.8" r="0.75" fill="white"/>
+                <line x1="12.5" y1="8" x2="10" y2="3.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/><circle cx="10" cy="3.5" r="1.6" fill="rgba(255,255,255,0.9)"/>
+                <line x1="19.5" y1="8" x2="22" y2="3.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/><circle cx="22" cy="3.5" r="1.6" fill="rgba(255,255,255,0.9)"/>
                 <path d="M12.5 19.5 Q16 22.5 19.5 19.5" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/>
               </svg>
             </span>
           </div>
           <div class="flow-card">
             <h2>Understand the change</h2>
-            <p>
-              Compare current vs future process, identify all differences, and
-              map impacts before shaping the formal case for change.
-            </p>
+            <p>Compare current vs future process, identify all differences, and map impacts before shaping the formal case for change.</p>
             <span class="flow-action">Open analysis assistant →</span>
           </div>
         </a>
@@ -101,23 +95,16 @@
               <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <ellipse cx="16" cy="24" rx="11" ry="8" fill="rgba(255,255,255,0.25)"/>
                 <ellipse cx="16" cy="15" rx="9" ry="8" fill="rgba(255,255,255,0.35)"/>
-                <circle cx="16" cy="14" r="4.5" fill="white"/>
-                <circle cx="16" cy="14" r="2.8" fill="#1c1a17"/>
-                <circle cx="17.3" cy="12.8" r="1" fill="white"/>
-                <line x1="12.5" y1="8" x2="10" y2="3.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-                <circle cx="10" cy="3.5" r="1.6" fill="rgba(255,255,255,0.9)"/>
-                <line x1="19.5" y1="8" x2="22" y2="3.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-                <circle cx="22" cy="3.5" r="1.6" fill="rgba(255,255,255,0.9)"/>
+                <circle cx="16" cy="14" r="4.5" fill="white"/><circle cx="16" cy="14" r="2.8" fill="#1c1a17"/><circle cx="17.3" cy="12.8" r="1" fill="white"/>
+                <line x1="12.5" y1="8" x2="10" y2="3.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/><circle cx="10" cy="3.5" r="1.6" fill="rgba(255,255,255,0.9)"/>
+                <line x1="19.5" y1="8" x2="22" y2="3.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/><circle cx="22" cy="3.5" r="1.6" fill="rgba(255,255,255,0.9)"/>
                 <path d="M12 20 Q16 23.5 20 20" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/>
               </svg>
             </span>
           </div>
           <div class="flow-card">
             <h2>Make case for change</h2>
-            <p>
-              Clarify urgency, risk of inaction, and the business outcomes the
-              new process enables.
-            </p>
+            <p>Clarify urgency, risk of inaction, and the business outcomes the new process enables.</p>
             <span class="flow-action">Open AI case assistant →</span>
           </div>
         </a>
@@ -129,26 +116,17 @@
               <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <ellipse cx="16" cy="24" rx="11" ry="8" fill="rgba(255,255,255,0.25)"/>
                 <ellipse cx="16" cy="15" rx="9" ry="8" fill="rgba(255,255,255,0.35)"/>
-                <circle cx="12" cy="14" r="3.2" fill="white"/>
-                <circle cx="12" cy="14" r="2" fill="#1c1a17"/>
-                <circle cx="12.8" cy="12.8" r="0.75" fill="white"/>
-                <circle cx="20" cy="14" r="3.2" fill="white"/>
-                <circle cx="20" cy="14" r="2" fill="#1c1a17"/>
-                <circle cx="20.8" cy="12.8" r="0.75" fill="white"/>
-                <line x1="12.5" y1="8" x2="10" y2="3.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-                <circle cx="10" cy="3.5" r="1.6" fill="rgba(255,255,255,0.9)"/>
-                <line x1="19.5" y1="8" x2="22" y2="3.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-                <circle cx="22" cy="3.5" r="1.6" fill="rgba(255,255,255,0.9)"/>
+                <circle cx="12" cy="14" r="3.2" fill="white"/><circle cx="12" cy="14" r="2" fill="#1c1a17"/><circle cx="12.8" cy="12.8" r="0.75" fill="white"/>
+                <circle cx="20" cy="14" r="3.2" fill="white"/><circle cx="20" cy="14" r="2" fill="#1c1a17"/><circle cx="20.8" cy="12.8" r="0.75" fill="white"/>
+                <line x1="12.5" y1="8" x2="10" y2="3.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/><circle cx="10" cy="3.5" r="1.6" fill="rgba(255,255,255,0.9)"/>
+                <line x1="19.5" y1="8" x2="22" y2="3.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/><circle cx="22" cy="3.5" r="1.6" fill="rgba(255,255,255,0.9)"/>
                 <path d="M12.5 19.5 Q16 22.5 19.5 19.5" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/>
               </svg>
             </span>
           </div>
           <div class="flow-card">
             <h2>Assess change radius</h2>
-            <p>
-              Map impacted roles, teams, systems, and handoffs to scope where
-              support and ownership must be defined.
-            </p>
+            <p>Map impacted roles, teams, systems, and handoffs to scope where support and ownership must be defined.</p>
           </div>
         </article>
 
@@ -159,26 +137,17 @@
               <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <ellipse cx="16" cy="24" rx="11" ry="8" fill="rgba(255,255,255,0.25)"/>
                 <ellipse cx="16" cy="15" rx="9" ry="8" fill="rgba(255,255,255,0.35)"/>
-                <circle cx="12" cy="14" r="3.2" fill="white"/>
-                <circle cx="12" cy="14" r="2" fill="#1c1a17"/>
-                <circle cx="12.8" cy="12.8" r="0.75" fill="white"/>
-                <circle cx="20" cy="14" r="3.2" fill="white"/>
-                <circle cx="20" cy="14" r="2" fill="#1c1a17"/>
-                <circle cx="20.8" cy="12.8" r="0.75" fill="white"/>
-                <line x1="12.5" y1="8" x2="10" y2="3.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-                <circle cx="10" cy="3.5" r="1.6" fill="rgba(255,255,255,0.9)"/>
-                <line x1="19.5" y1="8" x2="22" y2="3.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-                <circle cx="22" cy="3.5" r="1.6" fill="rgba(255,255,255,0.9)"/>
+                <circle cx="12" cy="14" r="3.2" fill="white"/><circle cx="12" cy="14" r="2" fill="#1c1a17"/><circle cx="12.8" cy="12.8" r="0.75" fill="white"/>
+                <circle cx="20" cy="14" r="3.2" fill="white"/><circle cx="20" cy="14" r="2" fill="#1c1a17"/><circle cx="20.8" cy="12.8" r="0.75" fill="white"/>
+                <line x1="12.5" y1="8" x2="10" y2="3.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/><circle cx="10" cy="3.5" r="1.6" fill="rgba(255,255,255,0.9)"/>
+                <line x1="19.5" y1="8" x2="22" y2="3.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/><circle cx="22" cy="3.5" r="1.6" fill="rgba(255,255,255,0.9)"/>
                 <path d="M12.5 19.5 Q16 22.5 19.5 19.5" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/>
               </svg>
             </span>
           </div>
           <div class="flow-card">
             <h2>Assess change readiness</h2>
-            <p>
-              Measure sponsor alignment, manager confidence, and team capability
-              to prioritize readiness interventions.
-            </p>
+            <p>Measure sponsor alignment, manager confidence, and team capability to prioritize readiness interventions.</p>
           </div>
         </article>
 
@@ -189,23 +158,16 @@
               <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <ellipse cx="16" cy="24" rx="11" ry="8" fill="rgba(255,255,255,0.25)"/>
                 <ellipse cx="16" cy="15" rx="9" ry="8" fill="rgba(255,255,255,0.35)"/>
-                <circle cx="16" cy="14" r="4.5" fill="white"/>
-                <circle cx="16" cy="14" r="2.8" fill="#1c1a17"/>
-                <circle cx="17.3" cy="12.8" r="1" fill="white"/>
-                <line x1="12.5" y1="8" x2="10" y2="3.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-                <circle cx="10" cy="3.5" r="1.6" fill="rgba(255,255,255,0.9)"/>
-                <line x1="19.5" y1="8" x2="22" y2="3.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-                <circle cx="22" cy="3.5" r="1.6" fill="rgba(255,255,255,0.9)"/>
+                <circle cx="16" cy="14" r="4.5" fill="white"/><circle cx="16" cy="14" r="2.8" fill="#1c1a17"/><circle cx="17.3" cy="12.8" r="1" fill="white"/>
+                <line x1="12.5" y1="8" x2="10" y2="3.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/><circle cx="10" cy="3.5" r="1.6" fill="rgba(255,255,255,0.9)"/>
+                <line x1="19.5" y1="8" x2="22" y2="3.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/><circle cx="22" cy="3.5" r="1.6" fill="rgba(255,255,255,0.9)"/>
                 <path d="M12 20 Q16 23.5 20 20" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/>
               </svg>
             </span>
           </div>
           <div class="flow-card">
             <h2>Communication and alignment</h2>
-            <p>
-              Deliver concise role-based messaging through leader forums,
-              manager cascades, and milestone updates.
-            </p>
+            <p>Deliver concise role-based messaging through leader forums, manager cascades, and milestone updates.</p>
           </div>
         </article>
 
@@ -216,51 +178,108 @@
               <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <ellipse cx="16" cy="24" rx="11" ry="8" fill="rgba(255,255,255,0.25)"/>
                 <ellipse cx="16" cy="15" rx="9" ry="8" fill="rgba(255,255,255,0.35)"/>
-                <circle cx="12" cy="14" r="3.2" fill="white"/>
-                <circle cx="12" cy="14" r="2" fill="#1c1a17"/>
-                <circle cx="12.8" cy="12.8" r="0.75" fill="white"/>
-                <circle cx="20" cy="14" r="3.2" fill="white"/>
-                <circle cx="20" cy="14" r="2" fill="#1c1a17"/>
-                <circle cx="20.8" cy="12.8" r="0.75" fill="white"/>
-                <line x1="12.5" y1="8" x2="10" y2="3.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-                <circle cx="10" cy="3.5" r="1.6" fill="rgba(255,255,255,0.9)"/>
-                <line x1="19.5" y1="8" x2="22" y2="3.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
-                <circle cx="22" cy="3.5" r="1.6" fill="rgba(255,255,255,0.9)"/>
+                <circle cx="12" cy="14" r="3.2" fill="white"/><circle cx="12" cy="14" r="2" fill="#1c1a17"/><circle cx="12.8" cy="12.8" r="0.75" fill="white"/>
+                <circle cx="20" cy="14" r="3.2" fill="white"/><circle cx="20" cy="14" r="2" fill="#1c1a17"/><circle cx="20.8" cy="12.8" r="0.75" fill="white"/>
+                <line x1="12.5" y1="8" x2="10" y2="3.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/><circle cx="10" cy="3.5" r="1.6" fill="rgba(255,255,255,0.9)"/>
+                <line x1="19.5" y1="8" x2="22" y2="3.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/><circle cx="22" cy="3.5" r="1.6" fill="rgba(255,255,255,0.9)"/>
                 <path d="M12.5 19.5 Q16 22.5 19.5 19.5" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/>
               </svg>
             </span>
           </div>
           <div class="flow-card">
             <h2>Enable workforce</h2>
-            <p>
-              Roll out role-based training, job aids, and reinforcement loops so
-              new process behaviors stick.
-            </p>
+            <p>Roll out role-based training, job aids, and reinforcement loops so new process behaviors stick.</p>
           </div>
         </article>
       </section>
+
+      <!-- Artefacts panel -->
+      <section class="artifacts-section" aria-label="Project artefacts">
+        <div class="artifacts-header">
+          <h2>Project Artefacts</h2>
+          <p class="artifacts-subtitle">Inputs uploaded and outputs generated throughout this project.</p>
+        </div>
+        <div class="artifacts-track" id="artifactsTrack"></div>
+      </section>
+
     </main>
+
     <script>
-      const trigger = document.getElementById("userMenuTrigger");
-      const dropdown = document.getElementById("accountDropdown");
+      // ── User menu ──────────────────────────────────────────────
+      const trigger  = document.getElementById('userMenuTrigger');
+      const dropdown = document.getElementById('accountDropdown');
+      function closeMenu() { trigger.setAttribute('aria-expanded','false'); dropdown.hidden = true; }
+      trigger.addEventListener('click', () => {
+        const open = trigger.getAttribute('aria-expanded') === 'true';
+        trigger.setAttribute('aria-expanded', String(!open));
+        dropdown.hidden = open;
+      });
+      document.addEventListener('click', e => { if (!e.target.closest('.user-menu')) closeMenu(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
 
-      function closeMenu() {
-        trigger.setAttribute("aria-expanded", "false");
-        dropdown.hidden = true;
-      }
+      // ── Project header ─────────────────────────────────────────
+      const projectName  = localStorage.getItem('metamor.project.name') || 'Process Change Project';
+      const projectId    = localStorage.getItem('metamor.project.id')   || '';
+      const collabs      = JSON.parse(localStorage.getItem('metamor.project.collaborators') || '[]');
 
-      trigger.addEventListener("click", () => {
-        const isOpen = trigger.getAttribute("aria-expanded") === "true";
-        trigger.setAttribute("aria-expanded", String(!isOpen));
-        dropdown.hidden = isOpen;
+      document.getElementById('projectNameDisplay').textContent = projectName;
+      document.title = `Morp | ${projectName}`;
+
+      const collabRow = document.getElementById('projectCollabChips');
+      collabs.forEach(email => {
+        const chip = document.createElement('span');
+        chip.className = 'project-collab-chip';
+        chip.textContent = '👤 ' + email;
+        collabRow.appendChild(chip);
       });
 
-      document.addEventListener("click", (event) => {
-        if (!event.target.closest(".user-menu")) closeMenu();
-      });
+      // ── Artefacts ──────────────────────────────────────────────
+      const ARTIFACTS = [
+        { id:'inputs',         icon:'📁', label:'Inputs',                step:'All uploaded files',          folder:true },
+        { id:'changeAnalysis', icon:'📄', label:'Change Analysis Report',step:'Step 1 · Understand',         storageKey:`metamor.${projectId}.outputs.changeAnalysis`, link:'./understand-change-chat.html' },
+        { id:'executiveMemo',  icon:'📄', label:'Executive Memo',         step:'Step 2 · Case for Change',    storageKey:`metamor.${projectId}.outputs.executiveMemo`,  link:'./process-case-chat.html' },
+        { id:'slideOutline',   icon:'📑', label:'Slide Outline',          step:'Step 2 · Case for Change',    storageKey:`metamor.${projectId}.outputs.slideOutline`,   link:'./process-case-chat.html' },
+        { id:'radiusMap',      icon:'📄', label:'Change Radius Map',      step:'Step 3 · Assess Radius',      comingSoon:true },
+        { id:'readinessRpt',   icon:'📄', label:'Readiness Report',       step:'Step 4 · Assess Readiness',   comingSoon:true },
+        { id:'commsPlan',      icon:'📄', label:'Comms Plan',             step:'Step 5 · Communication',      comingSoon:true },
+        { id:'trainingPlan',   icon:'📄', label:'Training Plan',          step:'Step 6 · Enable Workforce',   comingSoon:true },
+      ];
 
-      document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") closeMenu();
+      const track = document.getElementById('artifactsTrack');
+
+      ARTIFACTS.forEach(art => {
+        const card = document.createElement('div');
+        card.className = 'artifact-card';
+
+        let statusHtml, hasContent = false;
+
+        if (art.folder) {
+          card.classList.add('is-folder');
+          const inputs = JSON.parse(localStorage.getItem(`metamor.${projectId}.inputs`) || '[]');
+          const count  = inputs.length;
+          statusHtml = `<span class="artifact-status ${count ? 'ready' : 'empty'}"><span class="artifact-dot"></span>${count ? count + ' file' + (count > 1 ? 's' : '') : 'No files yet'}</span>`;
+        } else if (art.comingSoon) {
+          card.classList.add('coming-soon');
+          statusHtml = `<span class="artifact-status soon">Coming soon</span>`;
+        } else {
+          const content = art.storageKey ? localStorage.getItem(art.storageKey) : null;
+          hasContent = !!content;
+          if (hasContent) card.classList.add('has-content');
+          statusHtml = `<span class="artifact-status ${hasContent ? 'ready' : 'empty'}"><span class="artifact-dot"></span>${hasContent ? 'Ready' : 'Not generated yet'}</span>`;
+        }
+
+        card.innerHTML = `
+          <div class="artifact-icon">${art.icon}</div>
+          <div class="artifact-label">${art.label}</div>
+          <div class="artifact-step">${art.step}</div>
+          ${statusHtml}`;
+
+        if (hasContent && art.link) {
+          card.addEventListener('click', () => { window.location.href = art.link; });
+          card.title = 'Click to open';
+        }
+
+        track.appendChild(card);
       });
     </script>
   </body>

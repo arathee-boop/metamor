@@ -324,6 +324,7 @@
           setReportOutput(data.report);
           downloadReportBtn.disabled = false;
           chatStatus.textContent = `Report ready for "${projectId}".`;
+          localStorage.setItem(`metamor.${projectId}.outputs.changeAnalysis`, data.report);
         } catch (error) {
           chatStatus.textContent =
             error.message ||
@@ -336,6 +337,14 @@
 
       chatFiles.addEventListener("change", () => {
         renderAttachments(chatFiles.files);
+        const pid = getCurrentProjectId();
+        const existing = JSON.parse(localStorage.getItem(`metamor.${pid}.inputs`) || "[]");
+        Array.from(chatFiles.files).forEach(f => {
+          if (!existing.find(e => e.name === f.name)) {
+            existing.push({ name: f.name, size: f.size, uploadedAt: new Date().toISOString() });
+          }
+        });
+        localStorage.setItem(`metamor.${pid}.inputs`, JSON.stringify(existing));
       });
 
       switchProjectBtn.addEventListener("click", loadProjectHistory);

@@ -410,6 +410,39 @@
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closeMenu();
   });
+
+  // Prepend user-created projects from localStorage
+  (() => {
+    const projects = JSON.parse(localStorage.getItem("metamor.projects") || "[]");
+    if (!projects.length) return;
+    const list = document.querySelector(".project-list");
+    const pillSVG = `<svg class="pill-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="16" cy="16" r="16" fill="#fff0eb"/>
+      <ellipse cx="16" cy="19" rx="8" ry="7" fill="#ff6b35"/>
+      <circle cx="16" cy="14" r="5.5" fill="#ff8c5a"/>
+      <circle cx="16" cy="13" r="3" fill="white"/><circle cx="16" cy="13" r="1.7" fill="#1c1a17"/>
+      <circle cx="17" cy="12.2" r="0.7" fill="white"/>
+      <path d="M13 21 Q16 24 19 21" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    </svg>`;
+    projects.forEach(p => {
+      const msAgo = Date.now() - new Date(p.createdAt).getTime();
+      const days  = Math.floor(msAgo / 86400000);
+      const ago   = days === 0 ? "Today" : days === 1 ? "Yesterday" : `${days} days ago`;
+      const pill  = document.createElement("a");
+      pill.className = "project-pill";
+      pill.href      = p.destination || "./process-change.html";
+      pill.innerHTML = `${pillSVG}${p.name}<span class="pill-meta">${ago}</span>`;
+      pill.addEventListener("click", () => {
+        localStorage.setItem("metamor.project.name",          p.name);
+        localStorage.setItem("metamor.project.id",            p.id);
+        localStorage.setItem("metamor.project.template",      p.template || "");
+        localStorage.setItem("metamor.project.collaborators", JSON.stringify(p.collaborators || []));
+        localStorage.setItem("metamor.case.projectId",       p.id);
+        localStorage.setItem("metamor.understand.projectId", p.id);
+      });
+      list.prepend(pill);
+    });
+  })();
 </script>
 </body>
 </html>
