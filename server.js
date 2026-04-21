@@ -539,6 +539,54 @@ app.post("/api/understand-change/report", requireApiKey, async (req, res) => {
   }
 });
 
+app.post("/api/assess-radius/analyze", requireApiKey, upload.array("files", 6), async (req, res) => {
+  try {
+    const projectName    = sanitizeMessageText(req.body?.projectName);
+    const changeAnalysis = sanitizeMessageText(req.body?.changeAnalysis);
+    const files          = req.files || [];
+
+    const fileContents = files
+      .filter(f => f.mimetype.startsWith("text/") || f.mimetype === "application/json")
+      .map(f => `File: ${f.originalname}\n${f.buffer.toString("utf8").slice(0, 2000)}`)
+      .join("\n\n");
+
+    const context = [
+      projectName    ? `Project: ${projectName}` : "",
+      changeAnalysis ? `Change Analysis:\n${changeAnalysis.slice(0, 1500)}` : "",
+      fileContents   ? `Uploaded Documents:\n${fileContents}` : "",
+    ].filter(Boolean).join("\n\n");
+
+    const prompt = `You are a change management expert performing a stakeholder radius analysis.
+
+${context || "No specific context provided. Generate representative values for a typical enterprise process change."}
+
+Identify all relevant stakeholder attribute groups for this change. Return ONLY a valid JSON object:
+{
+  "geography":  ["array of geographic regions or office locations (3-6 values)"],
+  "function":   ["array of business functions e.g. Finance, HR, Operations, IT (3-7 values)"],
+  "department": ["array of specific departments or teams (4-8 values)"],
+  "level":      ["array of job levels e.g. Executive, Senior Manager, Manager, Individual Contributor (3-5 values)"]
+}
+
+Base values on the provided context where possible; otherwise use realistic enterprise defaults. Return ONLY the JSON object.`;
+
+    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const response  = await anthropic.messages.create({
+      model: MODEL, max_tokens: 800,
+      system: "You are a change management expert. Output only valid JSON when asked.",
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    const text      = extractTextResponse(response);
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error("No valid JSON in response");
+    const attributes = JSON.parse(jsonMatch[0]);
+    res.json({ attributes });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to analyse stakeholder attributes.", details: error?.message || String(error) });
+  }
+});
+
 app.post("/api/project-plan/generate", requireApiKey, async (req, res) => {
   try {
     const { projectName, template, changeAnalysis, executiveMemo } = req.body;
