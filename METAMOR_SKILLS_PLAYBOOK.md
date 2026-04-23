@@ -70,6 +70,16 @@ Use this as the default standard for:
   - loading state
   - success/error feedback
 
+### 2.6 Grid and row balance
+- Items in a grid must be distributed evenly across rows — never leave a final row with significantly fewer items than the rows above it.
+- Determine the best column count so that rows are as equal as possible:
+  - 6 items → 3 columns (2 rows of 3) or 2 columns (3 rows of 2)
+  - 7 items → 3 columns (rows of 3 / 3 / 1 with the last item centered), or all 7 in a single scrollable row
+  - 8 items → 4 columns (2 rows of 4) or 2 columns (4 rows of 2)
+  - Never do 5 + 2, 4 + 1, 6 + 1, etc. — orphaned items in a short final row are a layout defect.
+- If the last row would be a single orphan, either: (a) center it spanning the full row width, or (b) adjust the column count so rows divide evenly.
+- Apply this rule to all card grids, flow-step tracks, support-option grids, and any repeating tile layout.
+
 ---
 
 ## 3) Consulting Presentation Standards
