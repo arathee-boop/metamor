@@ -450,16 +450,18 @@
       }
 
       // ── State ────────────────────────────────────────────────
-      let allColumns    = [];
-      let allRows       = [];
-      let selCols       = [];
-      let attrVals      = {};
-      let attrQueue     = [];
-      let attrIdx       = 0;
-      let register      = [];
-      let uploadedFiles = [];
-      let filterState   = {};          // { impact: '', colName: '', ... }
-      let sortState     = { col: null, dir: 'asc' };
+      let allColumns      = [];
+      let allRows         = [];
+      let selCols         = [];
+      let attrVals        = {};
+      let attrQueue       = [];
+      let attrIdx         = 0;
+      let register        = [];
+      let uploadedFiles   = [];
+      let filterState     = {};
+      let sortState       = { col: null, dir: 'asc' };
+      let attrSuggestions = {};        // { colName: { value: 'direct'|'indirect'|'external' } }
+      let suggestionsPromise = null;   // resolves to attrSuggestions when AI analysis is ready
 
       // ── Helpers ──────────────────────────────────────────────
       function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -546,15 +548,22 @@
 
       // ── Parse data ───────────────────────────────────────────
       async function parseData(files) {
+        attrSuggestions  = {};
+        suggestionsPromise = null;
         try {
           const fd = new FormData();
           fd.append('projectName', projectName);
+          fd.append('projectId', projectId);
+          fd.append('changeAnalysis', changeAnalysis);
           files.forEach(f => fd.append('files', f));
           const res  = await fetch('/api/assess-radius/parse', { method:'POST', body:fd });
           const data = await res.json();
           if (!res.ok) throw new Error(data.error);
           allColumns = data.columns || [];
           allRows    = data.rows    || [];
+
+          // Silently poll for AI impact suggestions while user is on Phase 2
+          if (projectId) suggestionsPromise = pollForSuggestions(projectId);
         } catch(err) {
           console.warn('Parse failed, using fallback:', err.message);
           const fb   = demoData();
@@ -562,6 +571,18 @@
           allRows    = fb.rows;
         }
         showPhase2();
+      }
+
+      async function pollForSuggestions(pid) {
+        for (let i = 0; i < 12; i++) {
+          await new Promise(r => setTimeout(r, 2500));
+          try {
+            const res  = await fetch(`/api/assess-radius/suggestions/${encodeURIComponent(pid)}`);
+            const data = await res.json();
+            if (data.ready) return data.suggestions || {};
+          } catch {}
+        }
+        return {};
       }
 
       // ── Phase 2: Column selection ────────────────────────────
@@ -604,9 +625,20 @@
         document.getElementById('phase1').hidden = false;
       });
 
-      document.getElementById('continueToAttrsBtn').addEventListener('click', () => {
+      document.getElementById('continueToAttrsBtn').addEventListener('click', async () => {
         selCols = [...document.querySelectorAll('.col-chip.selected')].map(c => c.dataset.col);
         if (!selCols.length) { alert('Please select at least one attribute column.'); return; }
+
+        // Silently collect AI suggestions — wait up to 1.5 s, then proceed regardless
+        if (suggestionsPromise) {
+          try {
+            attrSuggestions = await Promise.race([
+              suggestionsPromise,
+              new Promise(r => setTimeout(() => r({}), 1500)),
+            ]);
+          } catch { attrSuggestions = {}; }
+        }
+
         attrQueue = [...selCols];
         attrIdx   = 0;
         attrVals  = {};
@@ -637,21 +669,25 @@
         selectAllCheck.checked = false;
 
         attrItemList.innerHTML = '';
-        const existing = attrVals[col] || [];
+        const existing     = attrVals[col] || [];
+        const colSuggested = attrSuggestions[col] || {};  // AI-suggested impact levels for this column
         vals.forEach(val => {
           const div = document.createElement('div');
           div.className = 'attr-item';
           div.dataset.val = val;
           const id = 'ac-' + uid();
-          const prev = existing.find(e => e.value === val);
+          const prev      = existing.find(e => e.value === val);
+          const suggested = colSuggested[val];              // e.g. 'direct'
+          const useLevel  = prev ? prev.impactLevel : (suggested || '');
+          const isChecked = !!(prev || suggested);
           div.innerHTML = `
-            <input type="checkbox" class="attr-check" id="${id}" ${prev ? 'checked' : ''} />
+            <input type="checkbox" class="attr-check" id="${id}" ${isChecked ? 'checked' : ''} />
             <label class="attr-item-name" for="${id}">${esc(val)}</label>
-            <select class="impact-select il-${prev ? prev.impactLevel : 'none'}" ${prev ? '' : 'disabled'}>
+            <select class="impact-select il-${useLevel || 'none'}" ${isChecked ? '' : 'disabled'}>
               <option value="">— level —</option>
-              ${IMPACT_LEVELS.map(il=>`<option value="${il.value}"${prev && prev.impactLevel===il.value?' selected':''}>${il.label}</option>`).join('')}
+              ${IMPACT_LEVELS.map(il=>`<option value="${il.value}"${useLevel===il.value?' selected':''}>${il.label}</option>`).join('')}
             </select>`;
-          if (prev) div.classList.add('checked');
+          if (isChecked) div.classList.add('checked');
           attrItemList.appendChild(div);
 
           const cb  = div.querySelector('.attr-check');
@@ -836,11 +872,22 @@
       document.getElementById('addGroupCancel').addEventListener('click', () => addGroupModal.close());
       addGroupModal.addEventListener('click', e => { if (e.target === addGroupModal) addGroupModal.close(); });
 
-      document.getElementById('addGroupConfirm').addEventListener('click', () => {
+      document.getElementById('addGroupConfirm').addEventListener('click', async () => {
         const col = document.getElementById('groupColSelect').value;
         if (!col) return;
         addGroupModal.close();
         if (!selCols.includes(col)) selCols.push(col);
+
+        // Ensure suggestions are resolved before opening the modal for this column
+        if (suggestionsPromise && !attrSuggestions[col]) {
+          try {
+            attrSuggestions = await Promise.race([
+              suggestionsPromise,
+              new Promise(r => setTimeout(() => r(attrSuggestions), 1500)),
+            ]);
+          } catch {}
+        }
+
         attrQueue = [col];
         attrIdx   = 0;
         setTimeout(openAttrModal, 150);
