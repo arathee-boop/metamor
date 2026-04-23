@@ -6,7 +6,7 @@
     <title>Morp | Assess Change Radius</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="icon" type="image/svg+xml" href="./alien-favicon.svg" />
     <link rel="stylesheet" href="./app-pages.css" />
     <style>
@@ -15,7 +15,7 @@
         padding: 0.52rem 1.1rem; font-family: inherit; font-size: 0.875rem; font-weight: 700;
         cursor: pointer; transition: background 0.15s;
       }
-      .modal-save:hover { background: #ea5b28; }
+      .modal-save:hover { background: #485878; }
       .modal-cancel {
         background: none; border: 1.5px solid var(--border); border-radius: 999px;
         padding: 0.48rem 1rem; font-family: inherit; font-size: 0.875rem; font-weight: 600;
@@ -28,7 +28,7 @@
         display: flex; align-items: flex-start; gap: 0.45rem;
         font-size: 0.78rem; color: var(--accent2); line-height: 1.4;
         margin: 0 0 1.25rem; padding: 0.55rem 0.75rem;
-        background: var(--accent2-soft); border: 1.5px solid rgba(74,144,217,0.25);
+        background: var(--accent2-soft); border: 1.5px solid rgba(200,169,110,0.3);
         border-radius: var(--radius-sm);
       }
       .personal-cols-note svg { flex-shrink: 0; margin-top: 1px; }
@@ -108,28 +108,28 @@
     <header class="topbar">
       <a class="brand" href="./index.html" aria-label="Morp home">
         <svg class="brand-mascot" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <ellipse cx="20" cy="24" rx="13" ry="12" fill="#3cb97a"/>
-          <ellipse cx="20" cy="17" rx="10" ry="9" fill="#4fd48c"/>
+          <ellipse cx="20" cy="24" rx="13" ry="12" fill="#6878A0"/>
+          <ellipse cx="20" cy="17" rx="10" ry="9" fill="#8090B8"/>
           <circle cx="20" cy="16" r="5.5" fill="white"/>
-          <circle cx="20" cy="16" r="3.2" fill="#1c1a17"/>
+          <circle cx="20" cy="16" r="3.2" fill="#1A2038"/>
           <circle cx="21.3" cy="14.8" r="1.1" fill="white"/>
-          <line x1="16" y1="8" x2="13" y2="3" stroke="#3cb97a" stroke-width="1.8" stroke-linecap="round"/>
-          <circle cx="13" cy="3" r="2" fill="#ff6b35"/>
-          <line x1="24" y1="8" x2="27" y2="3" stroke="#3cb97a" stroke-width="1.8" stroke-linecap="round"/>
-          <circle cx="27" cy="3" r="2" fill="#ff6b35"/>
+          <line x1="16" y1="8" x2="13" y2="3" stroke="#485878" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="13" cy="3" r="2" fill="#C8A96E"/>
+          <line x1="24" y1="8" x2="27" y2="3" stroke="#485878" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="27" cy="3" r="2" fill="#C8A96E"/>
           <path d="M15 26 Q20 31 25 26" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-          <ellipse cx="8" cy="24" rx="3" ry="5" fill="#3cb97a" transform="rotate(-15 8 24)"/>
-          <ellipse cx="32" cy="24" rx="3" ry="5" fill="#3cb97a" transform="rotate(15 32 24)"/>
+          <ellipse cx="8" cy="24" rx="3" ry="5" fill="#485878" transform="rotate(-15 8 24)"/>
+          <ellipse cx="32" cy="24" rx="3" ry="5" fill="#485878" transform="rotate(15 32 24)"/>
         </svg>
         Morp
       </a>
       <div class="user-menu">
         <button class="user-menu-trigger" id="userMenuTrigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="accountDropdown">
           <svg class="avatar-mini" viewBox="0 0 26 26" fill="none">
-            <circle cx="13" cy="13" r="13" fill="#fff0eb"/>
-            <ellipse cx="13" cy="15" rx="7" ry="6" fill="#ff6b35"/>
-            <circle cx="13" cy="12" r="4.5" fill="#ff8c5a"/>
-            <circle cx="13" cy="11" r="2.5" fill="#1c1a17"/>
+            <circle cx="13" cy="13" r="13" fill="#EEF0F8"/>
+            <ellipse cx="13" cy="15" rx="7" ry="6" fill="#6878A0"/>
+            <circle cx="13" cy="12" r="4.5" fill="#8090B8"/>
+            <circle cx="13" cy="11" r="2.5" fill="#1A2038"/>
             <circle cx="14" cy="10.2" r="0.8" fill="white"/>
           </svg>
           <span>Hi Casey</span>
@@ -336,9 +336,9 @@
         <div class="attr-instruction">
           <p>Select the <strong id="attrLabelInstr"></strong> values that are impacted, then assign an impact level to each:</p>
           <div class="impact-legend" style="margin-top:0.5rem">
-            <span class="impact-pip"><span class="impact-dot" style="background:var(--accent)"></span>Direct — daily work changes significantly</span>
-            <span class="impact-pip"><span class="impact-dot" style="background:var(--accent2)"></span>Indirect — affected by ripple effects</span>
-            <span class="impact-pip"><span class="impact-dot" style="background:#8b5cf6"></span>External — customers, suppliers, regulators</span>
+            <span class="impact-pip"><span class="impact-dot" style="background:#283050"></span>Direct — daily work changes significantly</span>
+            <span class="impact-pip"><span class="impact-dot" style="background:#6878A0"></span>Indirect — affected by ripple effects</span>
+            <span class="impact-pip"><span class="impact-dot" style="background:#C8A96E"></span>External — customers, suppliers, regulators</span>
           </div>
         </div>
         <label class="attr-select-all">
@@ -782,9 +782,9 @@
         const cards = document.getElementById('snapshotCards');
         cards.innerHTML = [
           { val: counts.total,    label:'Total Stakeholders', color:'var(--text)'     },
-          { val: counts.direct,   label:'Direct Impact',      color:'var(--accent)'   },
-          { val: counts.indirect, label:'Indirect Impact',    color:'var(--accent2)'  },
-          { val: counts.external, label:'External',           color:'#8b5cf6'         },
+          { val: counts.direct,   label:'Direct Impact',      color:'#283050'  },
+          { val: counts.indirect, label:'Indirect Impact',    color:'#6878A0'  },
+          { val: counts.external, label:'External',           color:'#C8A96E'  },
         ].map(c => `<div class="snap-card">
           <div class="snap-card-value" style="color:${c.color}">${c.val}</div>
           <div class="snap-card-label">${c.label}</div>

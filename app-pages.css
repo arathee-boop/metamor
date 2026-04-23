@@ -853,27 +853,27 @@ p {
   }
 }
 
-/* Morp light-theme replication layer */
+/* ── Morp brand identity — light theme ──────────────────────── */
 :root {
-  --bg: #f9f8f5;
-  --bg-card: #ffffff;
-  --bg-subtle: #f1efe9;
-  --border: #e5e2d9;
-  --text: #1c1a17;
-  --text-muted: #7a7568;
-  --accent: #ff6b35;
-  --accent-soft: #fff0eb;
-  --accent2: #4a90d9;
-  --accent2-soft: #eef4fc;
-  --green: #3cb97a;
-  --radius: 16px;
-  --radius-sm: 10px;
-  --shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
-  --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.1);
+  --bg:          #F4F6FC;
+  --bg-card:     #ffffff;
+  --bg-subtle:   #EEF0F8;
+  --border:      #DDE0EE;
+  --text:        #1A2038;
+  --text-muted:  #6878A0;
+  --accent:      #6878A0;
+  --accent-soft: #EEF0F8;
+  --accent2:     #C8A96E;
+  --accent2-soft:#FAF6EE;
+  --green:       #5a9e6e;
+  --radius:      16px;
+  --radius-sm:   10px;
+  --shadow:      0 2px 12px rgba(26, 32, 56, 0.07);
+  --shadow-md:   0 4px 24px rgba(26, 32, 56, 0.12);
 }
 
 body {
-  font-family: "Sora", sans-serif;
+  font-family: "Inter", sans-serif;
   background: var(--bg);
   color: var(--text);
 }
@@ -881,14 +881,14 @@ body {
 h1,
 h2,
 h3 {
-  font-family: "Nunito", sans-serif;
+  font-family: "Inter", sans-serif;
   color: var(--text);
 }
 
 h1 {
   font-size: clamp(1.9rem, 4vw, 2.5rem);
   line-height: 1.08;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 
 p {
@@ -913,11 +913,11 @@ p {
   align-items: center;
   gap: 10px;
   text-decoration: none;
-  font-family: "Nunito", sans-serif;
-  font-weight: 900;
+  font-family: "Inter", sans-serif;
+  font-weight: 800;
   font-size: 1.5rem;
   color: var(--text);
-  letter-spacing: -0.5px;
+  letter-spacing: -2px;
 }
 
 .brand-mascot {
@@ -939,7 +939,7 @@ p {
   border-radius: 999px;
   background: var(--bg);
   cursor: pointer;
-  font-family: "Sora", sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--text);
@@ -1106,49 +1106,17 @@ p {
   height: 36px;
 }
 
-.icon-process {
-  background: #3cb97a;
-}
-
-.icon-policy {
-  background: #8b5cf6;
-}
-
-.icon-restructure {
-  background: #f5a623;
-}
-
-.icon-tech {
-  background: #4a90d9;
-}
-
-.icon-merger {
-  background: #ff6b35;
-}
-
-.icon-custom {
-  background: #6a67ce;
-}
-
-.icon-radius {
-  background: #4a90d9;
-}
-
-.icon-readiness {
-  background: #8b5cf6;
-}
-
-.icon-communication {
-  background: #ff6b35;
-}
-
-.icon-enable {
-  background: #3cb97a;
-}
-
-.icon-understand {
-  background: #6a67ce;
-}
+.icon-process      { background: #6878A0; }
+.icon-policy       { background: #485878; }
+.icon-restructure  { background: #C8A96E; }
+.icon-tech         { background: #283050; }
+.icon-merger       { background: #8090B8; }
+.icon-custom       { background: #9AA8C8; }
+.icon-radius       { background: #485878; }
+.icon-readiness    { background: #8090B8; }
+.icon-communication { background: #C8A96E; }
+.icon-enable       { background: #6878A0; }
+.icon-understand   { background: #283050; }
 
 .flow-track {
   gap: 1rem;
@@ -1194,7 +1162,7 @@ p {
 .project-field input:focus,
 .chat-composer textarea:focus,
 .memo-shell textarea:focus {
-  outline: 2px solid rgba(255, 107, 53, 0.2);
+  outline: 2px solid rgba(104, 120, 160, 0.2);
   border-color: var(--accent);
 }
 
@@ -1262,7 +1230,7 @@ p {
 .memo-top button:hover,
 .chat-composer button:focus-visible,
 .memo-top button:focus-visible {
-  background: #ea5b28;
+  background: #485878;
 }
 
 .memo-card {
@@ -1278,9 +1246,9 @@ p {
 
 .brand-link {
   color: var(--text);
-  font-family: "Nunito", sans-serif;
-  font-weight: 900;
-  letter-spacing: -0.01em;
+  font-family: "Inter", sans-serif;
+  font-weight: 800;
+  letter-spacing: -2px;
 }
 
 @media (max-width: 760px) {
@@ -1581,9 +1549,9 @@ p {
   font-size: 0.7rem; font-weight: 700; white-space: nowrap;
 }
 .status-not-started { background: var(--bg-subtle); color: var(--text-muted); border: 1.5px solid var(--border); }
-.status-in-progress  { background: var(--accent2-soft); color: var(--accent2); border: 1.5px solid rgba(74,144,217,0.3); }
-.status-complete     { background: #eafaf3; color: var(--green); border: 1.5px solid rgba(60,185,122,0.3); }
-.status-blocked      { background: #fff0eb; color: var(--accent); border: 1.5px solid rgba(255,107,53,0.35); }
+.status-in-progress  { background: #EEF0F8; color: #6878A0; border: 1.5px solid rgba(104,120,160,0.35); }
+.status-complete     { background: #eafaf3; color: var(--green); border: 1.5px solid rgba(90,158,110,0.3); }
+.status-blocked      { background: #fef2f2; color: #9a3434; border: 1.5px solid rgba(210,92,92,0.35); }
 
 .plan-empty { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
 .plan-empty h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text); }
@@ -1649,7 +1617,7 @@ p {
   background: var(--bg-subtle); display: grid; place-items: center;
   font-size: 1.3rem; flex-shrink: 0; transition: background 0.15s;
 }
-.ds-title { font-size: 1rem; font-weight: 700; font-family: 'Nunito', sans-serif; }
+.ds-title { font-size: 1rem; font-weight: 700; font-family: "Inter", sans-serif; }
 .ds-desc  { font-size: 0.82rem; color: var(--text-muted); line-height: 1.45; }
 .ds-systems { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.25rem; }
 .ds-tag {
@@ -1722,10 +1690,10 @@ p {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7 5'%3E%3Cpath d='M0 0l3.5 5L7 0z' fill='%23888'/%3E%3C/svg%3E");
 }
 .impact-select:disabled { opacity: 0.3; cursor: not-allowed; }
-.impact-select:focus { outline: 2px solid rgba(255,107,53,0.2); }
-.impact-select.il-direct   { background-color: #fff0eb; color: var(--accent);  border-color: rgba(255,107,53,0.35); }
-.impact-select.il-indirect { background-color: var(--accent2-soft); color: var(--accent2); border-color: rgba(74,144,217,0.3); }
-.impact-select.il-external { background-color: #f3effe; color: #8b5cf6; border-color: rgba(139,92,246,0.3); }
+.impact-select:focus { outline: 2px solid rgba(104,120,160,0.2); }
+.impact-select.il-direct   { background-color: #E8EBF2; color: #283050; border-color: rgba(72,88,120,0.4); }
+.impact-select.il-indirect { background-color: var(--accent-soft); color: var(--accent); border-color: rgba(104,120,160,0.3); }
+.impact-select.il-external { background-color: #FAF6EE; color: #8B6E3A; border-color: rgba(200,169,110,0.4); }
 .impact-select.il-none     { background-color: var(--bg-subtle); color: var(--text-muted); border-color: var(--border); }
 .attr-modal-footer {
   display: flex; align-items: center; justify-content: space-between;
@@ -1752,9 +1720,9 @@ p {
   padding: 0.18rem 0.6rem; border-radius: 999px;
   font-size: 0.7rem; font-weight: 700; white-space: nowrap;
 }
-.impact-badge.il-direct   { background: #fff0eb; color: var(--accent);  border: 1.5px solid rgba(255,107,53,0.35); }
-.impact-badge.il-indirect { background: var(--accent2-soft); color: var(--accent2); border: 1.5px solid rgba(74,144,217,0.3); }
-.impact-badge.il-external { background: #f3effe; color: #8b5cf6; border: 1.5px solid rgba(139,92,246,0.3); }
+.impact-badge.il-direct   { background: #E8EBF2; color: #283050; border: 1.5px solid rgba(72,88,120,0.4); }
+.impact-badge.il-indirect { background: var(--accent-soft); color: var(--accent); border: 1.5px solid rgba(104,120,160,0.3); }
+.impact-badge.il-external { background: #FAF6EE; color: #8B6E3A; border: 1.5px solid rgba(200,169,110,0.4); }
 .attr-type-pill {
   display: inline-block; padding: 0.15rem 0.5rem;
   background: var(--bg-subtle); border: 1.5px solid var(--border);
@@ -1791,7 +1759,7 @@ p {
   border-radius: var(--radius-sm); padding: 1rem;
   display: flex; flex-direction: column; gap: 0.2rem;
 }
-.snap-card-value { font-size: 2rem; font-weight: 800; font-family: 'Nunito', sans-serif; line-height: 1; }
+.snap-card-value { font-size: 2rem; font-weight: 800; font-family: "Inter", sans-serif; line-height: 1; }
 .snap-card-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); }
 .snap-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
 .snap-chart { background: var(--bg-card); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 1rem; }
