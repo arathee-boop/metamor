@@ -3,6 +3,7 @@ const express = require("express");
 const multer = require("multer");
 const dotenv = require("dotenv");
 const Anthropic = require("@anthropic-ai/sdk");
+const XLSX = require("xlsx");
 
 dotenv.config();
 
@@ -24,6 +25,79 @@ const MAX_CONTEXT_MESSAGES = Number(process.env.CASE_CONTEXT_MESSAGES || 16);
 
 const projectMemory = new Map();
 const understandChangeMemory = new Map();
+const suggestionsStore = new Map();  // projectId -> { status: 'pending'|'ready', suggestions: {} }
+
+// ── Personal column detection (mirrors frontend logic) ───────────────────────
+const PERSONAL_COL_EXACT = new Set([
+  "name", "full name", "employee name", "first name", "last name",
+  "emp id", "employee id", "staff id", "employee number", "emp no",
+  "personnel no", "personnel number", "id", "contractor id",
+  "national id", "ssn", "date of birth", "dob",
+]);
+const PERSONAL_COL_KEYWORDS = ["email", "phone", "mobile", "address", "passport"];
+
+function isPersonalColumn(col) {
+  const l = col.toLowerCase();
+  if (PERSONAL_COL_EXACT.has(l)) return true;
+  if (PERSONAL_COL_KEYWORDS.some(k => l.includes(k))) return true;
+  return false;
+}
+
+// ── Background stakeholder analysis ─────────────────────────────────────────
+async function analyzeStakeholderData(projectId, projectName, changeAnalysis, columns, rows) {
+  suggestionsStore.set(projectId, { status: "pending", suggestions: {} });
+  try {
+    const groupingCols = columns.filter(c => !isPersonalColumn(c));
+
+    // Collect unique values per grouping column (cap at 30 each)
+    const colValues = {};
+    groupingCols.forEach(col => {
+      colValues[col] = [...new Set(rows.map(r => (r[col] || "").trim()).filter(Boolean))].slice(0, 30);
+    });
+
+    const prompt = `You are a change management expert analysing stakeholder impact.
+
+Project: "${projectName || "Change Initiative"}"
+${changeAnalysis ? `\nChange context:\n${changeAnalysis.slice(0, 1500)}` : ""}
+
+Employee data: ${rows.length} people across these organisational attributes:
+${JSON.stringify(colValues, null, 2)}
+
+Based on the change context, suggest which values in each attribute are most likely to be impacted by this change.
+
+Impact levels:
+- "direct"   = daily work significantly changes for this group
+- "indirect" = affected by ripple effects or dependencies
+- "external" = customers, suppliers, regulators, or partners
+
+Rules:
+- Only include values that have a plausible connection to this change
+- If no change context is given, apply reasonable defaults for an enterprise process change
+- Omit values with no obvious impact
+
+Return ONLY valid JSON:
+{
+  "suggestions": {
+    "AttributeName": { "Value1": "direct", "Value2": "indirect" }
+  }
+}`;
+
+    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const response  = await anthropic.messages.create({
+      model: MODEL,
+      max_tokens: 1200,
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    const text  = extractTextResponse(response);
+    const match = text.match(/\{[\s\S]*\}/);
+    const parsed = match ? JSON.parse(match[0]) : {};
+    suggestionsStore.set(projectId, { status: "ready", suggestions: parsed.suggestions || {} });
+  } catch (err) {
+    console.warn(`Background analysis failed for ${projectId}:`, err.message);
+    suggestionsStore.set(projectId, { status: "ready", suggestions: {} });
+  }
+}
 
 app.use(express.static(path.resolve(__dirname)));
 app.use(express.json({ limit: "1mb" }));
@@ -541,53 +615,109 @@ app.post("/api/understand-change/report", requireApiKey, async (req, res) => {
 
 app.post("/api/assess-radius/parse", requireApiKey, upload.array("files", 6), async (req, res) => {
   try {
-    const files = req.files || [];
-    const projectName = sanitizeMessageText(req.body?.projectName);
+    const files          = req.files || [];
+    const projectName    = sanitizeMessageText(req.body?.projectName);
+    const projectId      = normalizeProjectId(req.body?.projectId);
+    const changeAnalysis = sanitizeMessageText(req.body?.changeAnalysis);
 
-    const fileContents = files
-      .filter(f => f.mimetype.startsWith("text/") || f.mimetype === "application/json")
-      .map(f => `=== ${f.originalname} ===\n${f.buffer.toString("utf8").slice(0, 3000)}`)
-      .join("\n\n");
+    let columns = [];
+    let rows    = [];
+    let parsed  = false;
 
-    const prompt = fileContents
-      ? `Parse the following document(s) and extract a structured employee/stakeholder list.
+    // ── 1. Excel / CSV: deterministic parse, no AI ───────────────────────────
+    const structuredFile = files.find(f =>
+      /\.(xlsx|xls|csv)$/i.test(f.originalname) ||
+      f.mimetype.includes("spreadsheetml") ||
+      f.mimetype.includes("excel") ||
+      f.mimetype === "text/csv"
+    );
+
+    if (structuredFile) {
+      try {
+        const workbook  = XLSX.read(structuredFile.buffer, { type: "buffer" });
+        const sheetName = workbook.SheetNames[0];
+        const sheet     = workbook.Sheets[sheetName];
+        const raw       = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+
+        if (raw.length > 1) {
+          columns = raw[0].map(c => String(c || "").trim()).filter(Boolean);
+          rows = raw
+            .slice(1)
+            .filter(r => r.some(cell => cell !== "" && cell != null))
+            .map(r => {
+              const obj = {};
+              columns.forEach((col, i) => { obj[col] = r[i] != null ? String(r[i]).trim() : ""; });
+              return obj;
+            })
+            .slice(0, 500);
+          parsed = columns.length > 0 && rows.length > 0;
+        }
+      } catch (e) {
+        console.warn("Structured file parse failed:", e.message);
+      }
+    }
+
+    // ── 2. Unstructured text/PDF: use Claude to extract structure ────────────
+    if (!parsed) {
+      const textFiles    = files.filter(f => f.mimetype.startsWith("text/") || f.mimetype === "application/json");
+      const fileContents = textFiles
+        .map(f => `=== ${f.originalname} ===\n${f.buffer.toString("utf8").slice(0, 3000)}`)
+        .join("\n\n");
+
+      const prompt = fileContents
+        ? `Parse the following document(s) and extract a structured employee/stakeholder list.
 
 ${fileContents}
 
-Return ONLY a valid JSON object with this exact structure:
-{
-  "columns": ["exact column names from the data"],
-  "rows": [{ "column1": "value", ... }, ...]
-}
+Return ONLY valid JSON:
+{ "columns": ["exact column names"], "rows": [{ "column1": "value" }] }
 
-Rules:
-- Extract all person/employee attribute columns present in the source
-- Always include these if present: Name, Title/Role, Department, Function, Team, Seniority/Level, Manager/Line Manager, Function Head, Region/Location
-- Return up to 50 rows
-- Use exact column names from the source
-- If no clear employee data: generate 20 representative employees for a "${projectName || 'change initiative'}" project`
-      : `Generate a realistic sample employee database of 20 people for a "${projectName || 'process change'}" initiative.
-Return ONLY a valid JSON object:
-{
-  "columns": ["Name","Title","Function","Department","Team","Seniority","Line Manager","Function Head","Region"],
-  "rows": [{ ... }, ...]
-}`;
+Extract all columns present. Return up to 50 rows. Use exact column names from the source.`
+        : `Generate a realistic sample employee database of 20 people for a "${projectName || "process change"}" initiative.
+Return ONLY:
+{ "columns": ["Name","Title","Function","Department","Team","Seniority","Line Manager","Function Head","Region"], "rows": [{}] }`;
 
-    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-    const response  = await anthropic.messages.create({
-      model: MODEL, max_tokens: 2400,
-      system: "You are a data extraction expert. Output only valid JSON when asked.",
-      messages: [{ role: "user", content: prompt }],
-    });
+      const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+      const response  = await anthropic.messages.create({
+        model: MODEL, max_tokens: 2400,
+        system: "You are a data extraction expert. Output only valid JSON when asked.",
+        messages: [{ role: "user", content: prompt }],
+      });
 
-    const text = extractTextResponse(response);
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error("No valid JSON in response");
-    const parsed = JSON.parse(jsonMatch[0]);
-    res.json({ columns: parsed.columns || [], rows: parsed.rows || [] });
+      const text      = extractTextResponse(response);
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        const result = JSON.parse(jsonMatch[0]);
+        columns = result.columns || [];
+        rows    = result.rows    || [];
+        parsed  = true;
+      }
+    }
+
+    if (!columns.length) throw new Error("Could not extract column data from the uploaded file.");
+
+    // ── Return immediately ───────────────────────────────────────────────────
+    res.json({ columns, rows });
+
+    // ── Background AI analysis (fire-and-forget, after response sent) ────────
+    if (projectId && rows.length > 0) {
+      analyzeStakeholderData(projectId, projectName, changeAnalysis, columns, rows)
+        .catch(err => console.warn("Background analysis error:", err.message));
+    }
+
   } catch (error) {
     res.status(500).json({ error: "Failed to parse employee data.", details: error?.message || String(error) });
   }
+});
+
+// ── Suggestions poll endpoint ────────────────────────────────────────────────
+app.get("/api/assess-radius/suggestions/:projectId", (req, res) => {
+  const id    = normalizeProjectId(req.params.projectId);
+  const entry = suggestionsStore.get(id);
+  if (!entry || entry.status === "pending") {
+    return res.json({ ready: false, suggestions: {} });
+  }
+  res.json({ ready: true, suggestions: entry.suggestions });
 });
 
 app.post("/api/assess-radius/analyze", requireApiKey, upload.array("files", 6), async (req, res) => {
