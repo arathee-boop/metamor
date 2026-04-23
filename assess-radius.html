@@ -9,6 +9,100 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="icon" type="image/svg+xml" href="./alien-favicon.svg" />
     <link rel="stylesheet" href="./app-pages.css" />
+    <style>
+      .modal-save {
+        background: var(--accent); color: #fff; border: none; border-radius: 999px;
+        padding: 0.52rem 1.1rem; font-family: inherit; font-size: 0.875rem; font-weight: 700;
+        cursor: pointer; transition: background 0.15s;
+      }
+      .modal-save:hover { background: #ea5b28; }
+      .modal-cancel {
+        background: none; border: 1.5px solid var(--border); border-radius: 999px;
+        padding: 0.48rem 1rem; font-family: inherit; font-size: 0.875rem; font-weight: 600;
+        color: var(--text-muted); cursor: pointer; transition: background 0.15s;
+      }
+      .modal-cancel:hover { background: var(--bg-subtle); }
+
+      /* Personal cols note */
+      .personal-cols-note {
+        display: flex; align-items: flex-start; gap: 0.45rem;
+        font-size: 0.78rem; color: var(--accent2); line-height: 1.4;
+        margin: 0 0 1.25rem; padding: 0.55rem 0.75rem;
+        background: var(--accent2-soft); border: 1.5px solid rgba(74,144,217,0.25);
+        border-radius: var(--radius-sm);
+      }
+      .personal-cols-note svg { flex-shrink: 0; margin-top: 1px; }
+
+      /* Groups panel */
+      .groups-panel { margin: 0 0 1.75rem; }
+      .groups-panel-header {
+        display: flex; align-items: flex-start; justify-content: space-between;
+        gap: 0.75rem; margin-bottom: 0.75rem; flex-wrap: wrap;
+      }
+      .groups-cards { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+      .group-card {
+        background: var(--bg-card); border: 1.5px solid var(--border);
+        border-radius: var(--radius-sm); padding: 0.75rem 1rem;
+        flex: 1 1 180px; min-width: 160px; max-width: 320px;
+      }
+      .group-card-header {
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 0.5rem; margin-bottom: 0.5rem;
+      }
+      .group-card-title {
+        font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.05em; color: var(--text-muted);
+      }
+      .group-remove-btn {
+        background: none; border: 1.5px solid rgba(208,92,92,0.4); border-radius: 6px;
+        padding: 0.12rem 0.45rem; font-size: 0.68rem; font-weight: 600;
+        color: #9a3434; cursor: pointer; font-family: inherit; transition: background 0.1s;
+      }
+      .group-remove-btn:hover { background: #ffecec; }
+      .group-value-chips { display: flex; flex-wrap: wrap; gap: 0.3rem; min-height: 22px; }
+      .group-empty-note { font-size: 0.78rem; color: var(--text-muted); font-style: italic; }
+      .groups-empty-state {
+        padding: 0.85rem 1rem; border: 1.5px dashed var(--border); border-radius: var(--radius-sm);
+        color: var(--text-muted); font-size: 0.82rem; text-align: center; width: 100%;
+      }
+
+      /* Filter bar */
+      .register-filter-bar {
+        display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
+        margin-bottom: 0.75rem; padding: 0.55rem 0.75rem;
+        background: var(--bg-subtle); border: 1.5px solid var(--border);
+        border-radius: var(--radius-sm);
+      }
+      .register-filter-label {
+        font-size: 0.72rem; font-weight: 700; color: var(--text-muted);
+        text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap;
+      }
+      .filter-select {
+        padding: 0.28rem 1.6rem 0.28rem 0.6rem; border: 1.5px solid var(--border);
+        border-radius: 999px; color: var(--text); font-family: inherit;
+        font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: border-color 0.15s;
+        appearance: none; -webkit-appearance: none;
+        background: var(--bg-card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7 5'%3E%3Cpath d='M0 0l3.5 5L7 0z' fill='%23888'/%3E%3C/svg%3E") no-repeat right 0.45rem center / 7px 5px;
+      }
+      .filter-select:focus { outline: none; border-color: var(--accent); }
+      .filter-select.active { border-color: var(--accent); background-color: var(--accent-soft); color: var(--accent); }
+      .register-result-count {
+        font-size: 0.72rem; color: var(--text-muted); font-weight: 600;
+        margin-left: auto; white-space: nowrap;
+      }
+
+      /* Sortable table headers */
+      .register-table th.sortable { cursor: pointer; user-select: none; }
+      .register-table th.sortable:hover { color: var(--accent); }
+      .sort-indicator { margin-left: 3px; opacity: 0.45; font-size: 0.58rem; }
+      .sort-indicator.active { opacity: 1; color: var(--accent); }
+
+      /* Register empty/no-results */
+      .register-no-results {
+        text-align: center; padding: 2rem 1rem;
+        color: var(--text-muted); font-size: 0.875rem;
+      }
+    </style>
   </head>
   <body>
     <header class="topbar">
@@ -112,12 +206,16 @@
       <section id="phase2" hidden>
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-bottom:0.5rem">
           <div>
-            <h2 style="font-size:1rem;font-weight:700;margin:0">2 — Select grouping attributes</h2>
-            <p style="font-size:0.85rem;color:var(--text-muted);margin:0.2rem 0 0">Choose which columns from your data should define stakeholder groups. Selected columns will each get their own impact-level assignment screen.</p>
+            <h2 style="font-size:1rem;font-weight:700;margin:0">2 — How would you like to identify stakeholder groups?</h2>
+            <p style="font-size:0.85rem;color:var(--text-muted);margin:0.2rem 0 0">Select the attributes that best define distinct groups in your organisation. Each attribute you pick will get its own screen where you assign impact levels to specific values.</p>
           </div>
           <span id="dataCountBadge" class="plan-stat"></span>
         </div>
         <div class="column-selector-grid" id="columnSelectorGrid"></div>
+        <p class="personal-cols-note" id="personalColsNote" hidden>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Personal information columns (name, email, employee ID, etc.) are excluded from grouping — they still appear in the register.
+        </p>
         <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
           <button type="button" class="generate-plan-btn" id="continueToAttrsBtn">Continue with selected →</button>
           <button type="button" class="ghost-btn" id="backToPhase1Btn">← Change data source</button>
@@ -126,7 +224,7 @@
 
       <!-- ── Phase 3 is handled via modals ───────────────── -->
 
-      <!-- ── Phase 4: Snapshot + Register ───────────────── -->
+      <!-- ── Phase 4: Snapshot + Groups + Register ─────── -->
       <section id="phase4" hidden>
         <!-- Snapshot -->
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-bottom:1rem">
@@ -139,14 +237,45 @@
         <div class="snapshot-grid" id="snapshotCards"></div>
         <div class="snap-charts" id="snapshotCharts"></div>
 
+        <!-- Stakeholder Groups panel -->
+        <div class="groups-panel" id="groupsPanel">
+          <div class="groups-panel-header">
+            <div>
+              <h2 style="font-size:1rem;font-weight:700;margin:0">Stakeholder Groups</h2>
+              <p style="font-size:0.82rem;color:var(--text-muted);margin:0.15rem 0 0">Groups defined by the attributes you selected. Add or remove groups to refine your register.</p>
+            </div>
+            <button type="button" class="ghost-btn" id="addGroupBtn" style="white-space:nowrap;flex-shrink:0">+ Add Group</button>
+          </div>
+          <div class="groups-cards" id="groupCards"></div>
+        </div>
+
         <!-- Register -->
         <div class="register-toolbar">
           <div>
             <h2 style="font-size:1rem;font-weight:700;margin:0">Stakeholder Register</h2>
             <p style="font-size:0.85rem;color:var(--text-muted);margin:0">Full employee-level register with impact assignments.</p>
           </div>
-          <button type="button" class="generate-plan-btn" id="addStakeholderBtn" style="font-size:0.82rem;padding:0.5rem 1rem">+ Add Stakeholder</button>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center">
+            <button type="button" class="ghost-btn" id="downloadRegisterBtn" style="font-size:0.82rem;padding:0.5rem 1rem">↓ Download CSV</button>
+            <button type="button" class="generate-plan-btn" id="addStakeholderBtn" style="font-size:0.82rem;padding:0.5rem 1rem">+ Add Stakeholder</button>
+          </div>
         </div>
+
+        <!-- Filter bar -->
+        <div class="register-filter-bar" id="registerFilterBar">
+          <span class="register-filter-label">Filter:</span>
+          <select class="filter-select" id="filterImpact" aria-label="Filter by impact level">
+            <option value="">All impact levels</option>
+            <option value="direct">Direct</option>
+            <option value="indirect">Indirect</option>
+            <option value="external">External</option>
+            <option value="none">Not assigned</option>
+          </select>
+          <div id="attrFilters" style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center"></div>
+          <button type="button" class="ghost-btn" id="clearFiltersBtn" style="font-size:0.72rem;padding:0.25rem 0.65rem">✕ Clear</button>
+          <span class="register-result-count" id="registerResultCount"></span>
+        </div>
+
         <div class="register-scroll">
           <table class="register-table" id="registerTable">
             <thead id="registerHead"></thead>
@@ -245,6 +374,30 @@
       </div>
     </dialog>
 
+    <!-- Add Group modal -->
+    <dialog class="task-modal" id="addGroupModal" aria-labelledby="addGroupModalTitle">
+      <div class="task-modal-inner">
+        <div class="task-modal-header">
+          <h2 id="addGroupModalTitle">Add Stakeholder Group</h2>
+          <button type="button" class="task-modal-close" id="addGroupClose">✕</button>
+        </div>
+        <p style="font-size:0.85rem;color:var(--text-muted)">Choose an attribute to define a new stakeholder group. You'll then select which values are impacted and assign impact levels.</p>
+        <div class="task-form-grid" style="margin-top:0.5rem">
+          <div class="task-form-field full">
+            <label for="groupColSelect">Group by attribute</label>
+            <select id="groupColSelect"></select>
+          </div>
+        </div>
+        <div class="task-modal-footer">
+          <div></div>
+          <div class="task-modal-actions">
+            <button type="button" class="modal-cancel" id="addGroupCancel">Cancel</button>
+            <button type="button" class="modal-save" id="addGroupConfirm">Select Values →</button>
+          </div>
+        </div>
+      </div>
+    </dialog>
+
     <script>
     (() => {
       // ── User menu ────────────────────────────────────────────
@@ -266,19 +419,47 @@
       document.title = `Morp | Assess Change Radius`;
 
       // ── Storage ──────────────────────────────────────────────
-      const KEY = `metamor.${projectId}.radius2`;
+      const KEY          = `metamor.${projectId}.radius2`;
+      const ARTEFACT_KEY = projectId ? `metamor.${projectId}.outputs.stakeholderRegister` : null;
+
       function load() { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch { return null; } }
-      function save(d) { localStorage.setItem(KEY, JSON.stringify(d)); }
+
+      function save(d) {
+        localStorage.setItem(KEY, JSON.stringify(d));
+        saveArtefact();
+      }
+
+      function saveArtefact() {
+        if (!ARTEFACT_KEY || !register.length) return;
+        const displayCols = getDisplayCols();
+        const data = {
+          projectName,
+          columns: [...displayCols, 'Impact Level', 'Notes'],
+          rows: register.map(r => {
+            const row = {};
+            displayCols.forEach(c => { row[c] = r[c] || ''; });
+            row['Impact Level'] = r._impactLevel || '';
+            row['Notes'] = r._notes || '';
+            return row;
+          }),
+          totalCount: register.length,
+          groupingAttributes: selCols,
+          savedAt: new Date().toISOString(),
+        };
+        localStorage.setItem(ARTEFACT_KEY, JSON.stringify(data));
+      }
 
       // ── State ────────────────────────────────────────────────
-      let allColumns  = [];   // all columns detected from data
-      let allRows     = [];   // all employee rows from data
-      let selCols     = [];   // columns user selected for grouping
-      let attrVals    = {};   // { colName: [{value, impactLevel}] }
-      let attrQueue   = [];   // ordered list of selected columns for wizard
-      let attrIdx     = 0;
-      let register    = [];   // final employee rows with impactLevel
+      let allColumns    = [];
+      let allRows       = [];
+      let selCols       = [];
+      let attrVals      = {};
+      let attrQueue     = [];
+      let attrIdx       = 0;
+      let register      = [];
       let uploadedFiles = [];
+      let filterState   = {};          // { impact: '', colName: '', ... }
+      let sortState     = { col: null, dir: 'asc' };
 
       // ── Helpers ──────────────────────────────────────────────
       function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -308,6 +489,22 @@
           }
         }
         return best || null;
+      }
+
+      // ── Personal column detection ─────────────────────────────
+      const PERSONAL_EXACT = new Set([
+        'name','full name','employee name','first name','last name',
+        'emp id','employee id','staff id','employee number','emp no',
+        'personnel no','personnel number','id','contractor id',
+        'national id','ssn','date of birth','dob',
+      ]);
+      const PERSONAL_KEYWORDS = ['email','phone','mobile','address','passport'];
+
+      function isPersonalCol(col) {
+        const l = col.toLowerCase();
+        if (PERSONAL_EXACT.has(l)) return true;
+        if (PERSONAL_KEYWORDS.some(k => l.includes(k))) return true;
+        return false;
       }
 
       // ── Phase 1: Data source ─────────────────────────────────
@@ -344,12 +541,11 @@
         s.innerHTML = `<span style="width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block"></span> Connected to ${sys.options[sys.selectedIndex].text}`;
         s.hidden = false;
         erpModal.close();
-        await parseData([]); // demo data
+        await parseData([]);
       });
 
       // ── Parse data ───────────────────────────────────────────
       async function parseData(files) {
-        const btn = document.querySelector('.start-project-btn, .ds-status');
         try {
           const fd = new FormData();
           fd.append('projectName', projectName);
@@ -380,7 +576,15 @@
         grid.innerHTML = '';
         selCols = [];
 
-        allColumns.forEach(col => {
+        // Separate personal from grouping columns
+        const groupingCols = allColumns.filter(c => !isPersonalCol(c));
+        const personalCount = allColumns.length - groupingCols.length;
+
+        // Show note if any personal columns were filtered
+        const note = document.getElementById('personalColsNote');
+        note.hidden = personalCount === 0;
+
+        groupingCols.forEach(col => {
           const chip = document.createElement('span');
           chip.className = 'col-chip';
           chip.textContent = col;
@@ -429,22 +633,25 @@
         document.getElementById('attrIcon').textContent       = icon;
         document.getElementById('attrModalTitle').textContent = col;
         document.getElementById('attrLabelInstr').textContent = col.toLowerCase();
-        document.getElementById('attrProgress').textContent   = `${attrIdx+1} of ${attrQueue.length}`;
+        document.getElementById('attrProgress').textContent   = attrQueue.length > 1 ? `${attrIdx+1} of ${attrQueue.length}` : '';
         selectAllCheck.checked = false;
 
         attrItemList.innerHTML = '';
+        const existing = attrVals[col] || [];
         vals.forEach(val => {
           const div = document.createElement('div');
           div.className = 'attr-item';
           div.dataset.val = val;
           const id = 'ac-' + uid();
+          const prev = existing.find(e => e.value === val);
           div.innerHTML = `
-            <input type="checkbox" class="attr-check" id="${id}" />
+            <input type="checkbox" class="attr-check" id="${id}" ${prev ? 'checked' : ''} />
             <label class="attr-item-name" for="${id}">${esc(val)}</label>
-            <select class="impact-select il-none" disabled>
+            <select class="impact-select il-${prev ? prev.impactLevel : 'none'}" ${prev ? '' : 'disabled'}>
               <option value="">— level —</option>
-              ${IMPACT_LEVELS.map(il=>`<option value="${il.value}">${il.label}</option>`).join('')}
+              ${IMPACT_LEVELS.map(il=>`<option value="${il.value}"${prev && prev.impactLevel===il.value?' selected':''}>${il.label}</option>`).join('')}
             </select>`;
+          if (prev) div.classList.add('checked');
           attrItemList.appendChild(div);
 
           const cb  = div.querySelector('.attr-check');
@@ -472,16 +679,14 @@
             updateSelClass(sl);
           });
         };
-        selectAllCheck.replaceWith(selectAllCheck.cloneNode(true)); // remove old listener
+        selectAllCheck.replaceWith(selectAllCheck.cloneNode(true));
         const freshCheck = document.getElementById('selectAllCheck');
         freshCheck.addEventListener('change', saHandler);
 
         attrModal.showModal();
       }
 
-      function updateSelClass(sel) {
-        sel.className = `impact-select il-${sel.value || 'none'}`;
-      }
+      function updateSelClass(sel) { sel.className = `impact-select il-${sel.value || 'none'}`; }
       function syncSelAll() {
         const all = [...attrItemList.querySelectorAll('.attr-check')];
         document.getElementById('selectAllCheck').checked = all.length > 0 && all.every(c => c.checked);
@@ -511,7 +716,9 @@
 
       // ── Phase 4: Build register ──────────────────────────────
       function buildRegister() {
-        register = allRows.map((row, i) => ({
+        filterState = {};
+        sortState   = { col: null, dir: 'asc' };
+        register = allRows.map(row => ({
           ...row,
           _id:          uid(),
           _impactLevel: computeImpact(row),
@@ -525,6 +732,8 @@
         document.getElementById('phase2').hidden = true;
         document.getElementById('phase4').hidden = false;
         renderSnapshot();
+        renderGroupsPanel();
+        renderFilterBar();
         renderRegisterTable();
         document.getElementById('phase4').scrollIntoView({ behavior:'smooth', block:'start' });
       }
@@ -545,7 +754,6 @@
           <div class="snap-card-label">${c.label}</div>
         </div>`).join('');
 
-        // Bar charts per selected column
         const charts = document.getElementById('snapshotCharts');
         charts.innerHTML = '';
         selCols.slice(0, 4).forEach(col => {
@@ -566,35 +774,209 @@
         });
       }
 
-      // ── Register table ───────────────────────────────────────
-      const NAME_COLS = ['Name','Full Name','Employee Name','First Name'];
-      const MGR_COLS  = ['Line Manager','Manager','Direct Manager','Reporting Manager'];
-      const FH_COLS   = ['Function Head','Dept Head','Department Head','Head of Function','VP','Director'];
+      // ── Groups panel ─────────────────────────────────────────
+      function renderGroupsPanel() {
+        const cards = document.getElementById('groupCards');
+        cards.innerHTML = '';
 
-      function findCol(row, candidates) {
-        return candidates.find(c => allColumns.includes(c) && row[c]) || null;
+        if (!selCols.length) {
+          cards.innerHTML = '<div class="groups-empty-state">No groups defined. Click <strong>+ Add Group</strong> to define stakeholder groups by attribute.</div>';
+          return;
+        }
+
+        selCols.forEach(col => {
+          const vals = attrVals[col] || [];
+          const card = document.createElement('div');
+          card.className = 'group-card';
+          const chipsHtml = vals.length
+            ? vals.map(v => `<span class="impact-badge il-${v.impactLevel}" title="${esc(v.impactLevel)}">${esc(v.value)}</span>`).join('')
+            : '<span class="group-empty-note">No values selected</span>';
+          card.innerHTML = `
+            <div class="group-card-header">
+              <span class="group-card-title">${esc(col)}</span>
+              <button type="button" class="group-remove-btn" data-col="${esc(col)}" aria-label="Remove ${esc(col)} group">Remove</button>
+            </div>
+            <div class="group-value-chips">${chipsHtml}</div>`;
+          cards.appendChild(card);
+
+          card.querySelector('.group-remove-btn').addEventListener('click', () => {
+            if (!confirm(`Remove the "${col}" group? The register will be recomputed.`)) return;
+            selCols = selCols.filter(c => c !== col);
+            delete attrVals[col];
+            filterState = {};
+            sortState = { col: null, dir: 'asc' };
+            register = allRows.map(row => ({
+              ...row,
+              _id: row._id || uid(),
+              _impactLevel: computeImpact(row),
+              _notes: row._notes || '',
+            }));
+            save({ allColumns, allRows, selCols, attrVals, register, updatedAt: new Date().toISOString() });
+            renderSnapshot();
+            renderGroupsPanel();
+            renderFilterBar();
+            renderRegisterTable();
+          });
+        });
       }
 
+      // ── Add Group flow ───────────────────────────────────────
+      const addGroupModal = document.getElementById('addGroupModal');
+      document.getElementById('addGroupBtn').addEventListener('click', () => {
+        const groupingCols = allColumns.filter(c => !isPersonalCol(c));
+        const sel = document.getElementById('groupColSelect');
+        sel.innerHTML = groupingCols.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+        // Default to first col not yet in selCols, if any
+        const unsed = groupingCols.find(c => !selCols.includes(c));
+        if (unsed) sel.value = unsed;
+        addGroupModal.showModal();
+        setTimeout(() => sel.focus(), 50);
+      });
+      document.getElementById('addGroupClose').addEventListener('click',  () => addGroupModal.close());
+      document.getElementById('addGroupCancel').addEventListener('click', () => addGroupModal.close());
+      addGroupModal.addEventListener('click', e => { if (e.target === addGroupModal) addGroupModal.close(); });
+
+      document.getElementById('addGroupConfirm').addEventListener('click', () => {
+        const col = document.getElementById('groupColSelect').value;
+        if (!col) return;
+        addGroupModal.close();
+        if (!selCols.includes(col)) selCols.push(col);
+        attrQueue = [col];
+        attrIdx   = 0;
+        setTimeout(openAttrModal, 150);
+      });
+
+      // ── Filter bar ───────────────────────────────────────────
+      function renderFilterBar() {
+        const attrFiltersEl = document.getElementById('attrFilters');
+        attrFiltersEl.innerHTML = '';
+
+        const impactSel = document.getElementById('filterImpact');
+        impactSel.value = filterState.impact || '';
+        impactSel.className = `filter-select${filterState.impact ? ' active' : ''}`;
+
+        selCols.forEach(col => {
+          const vals = [...new Set(register.map(r => (r[col]||'').trim()).filter(Boolean))].sort();
+          if (!vals.length) return;
+          const wrapper = document.createElement('div');
+          wrapper.style.cssText = 'display:inline-flex;align-items:center;gap:0.3rem';
+          const label = document.createElement('span');
+          label.className = 'register-filter-label';
+          label.textContent = col + ':';
+          const sel = document.createElement('select');
+          const cur = filterState[col] || '';
+          sel.className = `filter-select${cur ? ' active' : ''}`;
+          sel.innerHTML = `<option value="">All</option>` + vals.map(v => `<option value="${esc(v)}"${cur===v?' selected':''}>${esc(v)}</option>`).join('');
+          sel.addEventListener('change', () => {
+            filterState[col] = sel.value;
+            sel.className = `filter-select${sel.value ? ' active' : ''}`;
+            renderRegisterTable();
+          });
+          wrapper.appendChild(label);
+          wrapper.appendChild(sel);
+          attrFiltersEl.appendChild(wrapper);
+        });
+
+        updateResultCount();
+      }
+
+      document.getElementById('filterImpact').addEventListener('change', e => {
+        filterState.impact = e.target.value;
+        e.target.className = `filter-select${e.target.value ? ' active' : ''}`;
+        renderRegisterTable();
+      });
+
+      document.getElementById('clearFiltersBtn').addEventListener('click', () => {
+        filterState = {};
+        sortState   = { col: null, dir: 'asc' };
+        renderFilterBar();
+        renderRegisterTable();
+      });
+
+      // ── Filter + sort ─────────────────────────────────────────
+      function getFilteredSortedRegister() {
+        let rows = [...register];
+
+        // Filters
+        if (filterState.impact) {
+          rows = rows.filter(r => filterState.impact === 'none' ? !r._impactLevel : r._impactLevel === filterState.impact);
+        }
+        selCols.forEach(col => {
+          if (filterState[col]) rows = rows.filter(r => (r[col]||'').trim() === filterState[col]);
+        });
+
+        // Sort
+        if (sortState.col) {
+          rows.sort((a, b) => {
+            const aVal = sortState.col === '_impactLevel' ? (IMPACT_RANK[a._impactLevel]||0) : String(a[sortState.col]||'');
+            const bVal = sortState.col === '_impactLevel' ? (IMPACT_RANK[b._impactLevel]||0) : String(b[sortState.col]||'');
+            if (sortState.col === '_impactLevel') {
+              return sortState.dir === 'asc' ? aVal - bVal : bVal - aVal;
+            }
+            const cmp = aVal.localeCompare(bVal);
+            return sortState.dir === 'asc' ? cmp : -cmp;
+          });
+        }
+
+        return rows;
+      }
+
+      function updateResultCount() {
+        const el = document.getElementById('registerResultCount');
+        if (!el) return;
+        const filtered = getFilteredSortedRegister();
+        const hasFilter = filterState.impact || selCols.some(c => filterState[c]);
+        el.textContent = hasFilter
+          ? `Showing ${filtered.length} of ${register.length}`
+          : `${register.length} stakeholder${register.length !== 1 ? 's' : ''}`;
+      }
+
+      // ── Register table ───────────────────────────────────────
       function renderRegisterTable() {
         const head  = document.getElementById('registerHead');
         const body  = document.getElementById('registerBody');
+        const displayCols = getDisplayCols();
 
-        // Fixed columns first, then selected attribute columns
-        const fixedCols = [];
-        ['Name','Full Name','Employee Name'].forEach(c => { if (allColumns.includes(c) && !fixedCols.includes(c)) fixedCols.push(c); });
-        ['Line Manager','Manager'].forEach(c => { if (allColumns.includes(c) && !fixedCols.includes(c)) fixedCols.push(c); });
-        ['Function Head','Dept Head','Department Head'].forEach(c => { if (allColumns.includes(c) && !fixedCols.includes(c)) fixedCols.push(c); });
-        const displayCols = [...new Set([...fixedCols, ...selCols])];
-
+        // Build sortable headers
         head.innerHTML = `<tr>
-          ${displayCols.map(c=>`<th>${esc(c)}</th>`).join('')}
-          <th>Impact Level</th>
+          ${displayCols.map(c => {
+            const isActive = sortState.col === c;
+            const indicator = isActive ? (sortState.dir === 'asc' ? '▲' : '▼') : '⇅';
+            return `<th class="sortable" data-sort="${esc(c)}">${esc(c)}<span class="sort-indicator${isActive?' active':''}">${indicator}</span></th>`;
+          }).join('')}
+          <th class="sortable" data-sort="_impactLevel">Impact Level<span class="sort-indicator${sortState.col==='_impactLevel'?' active':''}">
+            ${sortState.col === '_impactLevel' ? (sortState.dir === 'asc' ? '▲' : '▼') : '⇅'}</span></th>
           <th>Notes</th>
           <th style="width:36px"></th>
         </tr>`;
 
+        // Attach sort handlers
+        head.querySelectorAll('th.sortable').forEach(th => {
+          th.addEventListener('click', () => {
+            const col = th.dataset.sort;
+            if (sortState.col === col) {
+              sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
+            } else {
+              sortState.col = col;
+              sortState.dir = 'asc';
+            }
+            renderRegisterTable();
+          });
+        });
+
         body.innerHTML = '';
-        register.forEach(row => renderRow(row, displayCols));
+        const rows = getFilteredSortedRegister();
+
+        if (!rows.length) {
+          const colspan = displayCols.length + 3;
+          body.innerHTML = `<tr><td colspan="${colspan}" class="register-no-results">
+            ${register.length ? 'No stakeholders match the current filters. <button type="button" onclick="document.getElementById(\'clearFiltersBtn\').click()" style="background:none;border:none;color:var(--accent);cursor:pointer;font:inherit;font-weight:700;padding:0">Clear filters</button>' : 'No stakeholders in register yet.'}
+          </td></tr>`;
+        } else {
+          rows.forEach(row => renderRow(row, displayCols));
+        }
+
+        updateResultCount();
       }
 
       function renderRow(row, displayCols) {
@@ -619,6 +1001,33 @@
         return [...new Set([...fixedCols, ...selCols])];
       }
 
+      // ── Download CSV ──────────────────────────────────────────
+      document.getElementById('downloadRegisterBtn').addEventListener('click', () => {
+        const displayCols = getDisplayCols();
+        const rows        = getFilteredSortedRegister();
+        const headers     = [...displayCols, 'Impact Level', 'Notes'];
+
+        const escape = v => `"${String(v||'').replace(/"/g,'""')}"`;
+        const lines  = [
+          headers.map(escape).join(','),
+          ...rows.map(row => [
+            ...displayCols.map(c => escape(row[c]||'')),
+            escape(row._impactLevel||''),
+            escape(row._notes||''),
+          ].join(',')),
+        ];
+
+        const blob = new Blob([lines.join('\n')], { type:'text/csv' });
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href     = url;
+        a.download = `${projectName.replace(/[^a-z0-9]/gi,'_')}_stakeholder_register.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+
       // ── Add / Edit stakeholder modal ─────────────────────────
       const empModal = document.getElementById('empModal');
       let editingEmpId = null;
@@ -631,7 +1040,6 @@
         const fields = document.getElementById('empFormFields');
         fields.innerHTML = '';
 
-        // All data columns + impact level + notes
         const formCols = [...allColumns, '_impactLevel', '_notes'];
         formCols.forEach((col, i) => {
           const isHalf = i < formCols.length - 2;
@@ -669,6 +1077,8 @@
         save({ allColumns, allRows, selCols, attrVals, register, updatedAt: new Date().toISOString() });
         empModal.close();
         renderSnapshot();
+        renderGroupsPanel();
+        renderFilterBar();
         renderRegisterTable();
       });
 
@@ -693,14 +1103,18 @@
         save({ allColumns, allRows, selCols, attrVals, register, updatedAt: new Date().toISOString() });
         empModal.close();
         renderSnapshot();
+        renderGroupsPanel();
+        renderFilterBar();
         renderRegisterTable();
       });
 
       document.getElementById('addStakeholderBtn').addEventListener('click', () => openEmpModal(null));
+
       document.getElementById('rerunBtn').addEventListener('click', () => {
         document.getElementById('phase4').hidden = true;
         document.getElementById('phase2').hidden = false;
         attrIdx = 0; attrVals = {}; register = [];
+        filterState = {}; sortState = { col: null, dir: 'asc' };
       });
 
       // ── Restore saved state ──────────────────────────────────
@@ -720,21 +1134,21 @@
         return {
           columns:['Name','Title','Function','Department','Team','Seniority','Line Manager','Function Head','Region'],
           rows:[
-            {Name:'Sarah Chen',     Title:'Finance Manager',         Function:'Finance',    Department:'AP & AR',        Team:'Accounts Payable', Seniority:'Manager',              'Line Manager':'David Kim',    'Function Head':'Emma Wilson', Region:'APAC'},
-            {Name:'James Okafor',   Title:'HR Business Partner',     Function:'HR',         Department:'People & Culture',Team:'HRBP',            Seniority:'Senior Specialist',    'Line Manager':'Linda Park',   'Function Head':'Linda Park',  Region:'EMEA'},
-            {Name:'Maria Torres',   Title:'Operations Analyst',      Function:'Operations', Department:'Supply Chain',   Team:'Procurement',      Seniority:'Analyst',              'Line Manager':'Sam Reid',     'Function Head':'Tom Nguyen',  Region:'Americas'},
-            {Name:'Raj Patel',      Title:'IT Systems Engineer',     Function:'IT',         Department:'Infrastructure', Team:'ERP Support',      Seniority:'Engineer',             'Line Manager':'Claire Fox',   'Function Head':'Claire Fox',  Region:'APAC'},
-            {Name:'Emma Wilson',    Title:'VP Finance',              Function:'Finance',    Department:'Group Finance',  Team:'Leadership',       Seniority:'VP',                   'Line Manager':'CEO',          'Function Head':'Emma Wilson', Region:'Global HQ'},
-            {Name:'Tom Nguyen',     Title:'VP Operations',           Function:'Operations', Department:'Group Operations',Team:'Leadership',      Seniority:'VP',                   'Line Manager':'CEO',          'Function Head':'Tom Nguyen',  Region:'Global HQ'},
-            {Name:'Linda Park',     Title:'Chief People Officer',    Function:'HR',         Department:'Group HR',       Team:'Leadership',       Seniority:'C-Suite',              'Line Manager':'CEO',          'Function Head':'Linda Park',  Region:'Global HQ'},
-            {Name:'David Kim',      Title:'Finance Director',        Function:'Finance',    Department:'Regional Finance',Team:'APAC Finance',    Seniority:'Director',             'Line Manager':'Emma Wilson',  'Function Head':'Emma Wilson', Region:'APAC'},
-            {Name:'Claire Fox',     Title:'IT Director',             Function:'IT',         Department:'Technology',     Team:'Platform',         Seniority:'Director',             'Line Manager':'CTO',          'Function Head':'Claire Fox',  Region:'EMEA'},
-            {Name:'Sam Reid',       Title:'Procurement Manager',     Function:'Operations', Department:'Supply Chain',   Team:'Procurement',      Seniority:'Manager',              'Line Manager':'Tom Nguyen',   'Function Head':'Tom Nguyen',  Region:'Americas'},
-            {Name:'Aisha Mensah',   Title:'Payroll Specialist',      Function:'HR',         Department:'Compensation',  Team:'Payroll',          Seniority:'Specialist',           'Line Manager':'Linda Park',   'Function Head':'Linda Park',  Region:'EMEA'},
-            {Name:'Carlos Diaz',    Title:'Sales Operations Lead',   Function:'Sales',      Department:'Commercial',    Team:'Sales Ops',        Seniority:'Lead',                 'Line Manager':'VP Sales',     'Function Head':'VP Sales',    Region:'Americas'},
-            {Name:'Priya Sharma',   Title:'Risk & Compliance Analyst',Function:'Legal',     Department:'GRC',           Team:'Compliance',       Seniority:'Analyst',              'Line Manager':'GC',           'Function Head':'GC',          Region:'APAC'},
-            {Name:'Ben Müller',     Title:'Change Manager',          Function:'HR',         Department:'Org Effectiveness',Team:'Change Office', Seniority:'Manager',              'Line Manager':'Linda Park',   'Function Head':'Linda Park',  Region:'EMEA'},
-            {Name:'Yuki Tanaka',    Title:'FP&A Analyst',            Function:'Finance',    Department:'FP&A',          Team:'Planning',         Seniority:'Analyst',              'Line Manager':'David Kim',    'Function Head':'Emma Wilson', Region:'APAC'},
+            {Name:'Sarah Chen',     Title:'Finance Manager',         Function:'Finance',    Department:'AP & AR',        Team:'Accounts Payable', Seniority:'Manager',           'Line Manager':'David Kim',    'Function Head':'Emma Wilson', Region:'APAC'},
+            {Name:'James Okafor',   Title:'HR Business Partner',     Function:'HR',         Department:'People & Culture',Team:'HRBP',            Seniority:'Senior Specialist', 'Line Manager':'Linda Park',   'Function Head':'Linda Park',  Region:'EMEA'},
+            {Name:'Maria Torres',   Title:'Operations Analyst',      Function:'Operations', Department:'Supply Chain',   Team:'Procurement',      Seniority:'Analyst',           'Line Manager':'Sam Reid',     'Function Head':'Tom Nguyen',  Region:'Americas'},
+            {Name:'Raj Patel',      Title:'IT Systems Engineer',     Function:'IT',         Department:'Infrastructure', Team:'ERP Support',      Seniority:'Engineer',          'Line Manager':'Claire Fox',   'Function Head':'Claire Fox',  Region:'APAC'},
+            {Name:'Emma Wilson',    Title:'VP Finance',              Function:'Finance',    Department:'Group Finance',  Team:'Leadership',       Seniority:'VP',                'Line Manager':'CEO',          'Function Head':'Emma Wilson', Region:'Global HQ'},
+            {Name:'Tom Nguyen',     Title:'VP Operations',           Function:'Operations', Department:'Group Operations',Team:'Leadership',      Seniority:'VP',                'Line Manager':'CEO',          'Function Head':'Tom Nguyen',  Region:'Global HQ'},
+            {Name:'Linda Park',     Title:'Chief People Officer',    Function:'HR',         Department:'Group HR',       Team:'Leadership',       Seniority:'C-Suite',           'Line Manager':'CEO',          'Function Head':'Linda Park',  Region:'Global HQ'},
+            {Name:'David Kim',      Title:'Finance Director',        Function:'Finance',    Department:'Regional Finance',Team:'APAC Finance',    Seniority:'Director',          'Line Manager':'Emma Wilson',  'Function Head':'Emma Wilson', Region:'APAC'},
+            {Name:'Claire Fox',     Title:'IT Director',             Function:'IT',         Department:'Technology',     Team:'Platform',         Seniority:'Director',          'Line Manager':'CTO',          'Function Head':'Claire Fox',  Region:'EMEA'},
+            {Name:'Sam Reid',       Title:'Procurement Manager',     Function:'Operations', Department:'Supply Chain',   Team:'Procurement',      Seniority:'Manager',           'Line Manager':'Tom Nguyen',   'Function Head':'Tom Nguyen',  Region:'Americas'},
+            {Name:'Aisha Mensah',   Title:'Payroll Specialist',      Function:'HR',         Department:'Compensation',  Team:'Payroll',          Seniority:'Specialist',        'Line Manager':'Linda Park',   'Function Head':'Linda Park',  Region:'EMEA'},
+            {Name:'Carlos Diaz',    Title:'Sales Operations Lead',   Function:'Sales',      Department:'Commercial',    Team:'Sales Ops',        Seniority:'Lead',              'Line Manager':'VP Sales',     'Function Head':'VP Sales',    Region:'Americas'},
+            {Name:'Priya Sharma',   Title:'Risk & Compliance Analyst',Function:'Legal',     Department:'GRC',           Team:'Compliance',       Seniority:'Analyst',           'Line Manager':'GC',           'Function Head':'GC',          Region:'APAC'},
+            {Name:'Ben Müller',     Title:'Change Manager',          Function:'HR',         Department:'Org Effectiveness',Team:'Change Office', Seniority:'Manager',           'Line Manager':'Linda Park',   'Function Head':'Linda Park',  Region:'EMEA'},
+            {Name:'Yuki Tanaka',    Title:'FP&A Analyst',            Function:'Finance',    Department:'FP&A',          Team:'Planning',         Seniority:'Analyst',           'Line Manager':'David Kim',    'Function Head':'Emma Wilson', Region:'APAC'},
           ]
         };
       }
